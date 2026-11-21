@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { readableOn } from '../../lib/color'
-import { FONTS, fontStack } from '../../lib/fonts'
 import { autoAnchor, buildScale, defaultStatus, ROLE_INFO, ROLE_KEYS, STEPS, type DesignSystem, type RoleKey } from '../../lib/system'
 import { Icon } from '../Icon'
 import { ColorField, Popover } from '../ui'
@@ -88,40 +87,6 @@ export function RolesTab({ sys, palette, update }: { sys: DesignSystem; palette:
         </button>
       </div>
 
-      <section className="type-card">
-        <h2>Typography &amp; shape</h2>
-        <div className="type-grid">
-          <label className="field">
-            <span className="field-label">Heading font</span>
-            <select value={sys.fonts.heading} onChange={(e) => update((s) => void (s.fonts.heading = e.target.value))}>
-              {FONTS.map((f) => (
-                <option key={f.family}>{f.family}</option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            <span className="field-label">Body font</span>
-            <select value={sys.fonts.body} onChange={(e) => update((s) => void (s.fonts.body = e.target.value))}>
-              {FONTS.map((f) => (
-                <option key={f.family}>{f.family}</option>
-              ))}
-            </select>
-          </label>
-          <label className="slider">
-            <span className="row space-between">
-              <span>Corner radius</span>
-              <span className="muted">{sys.radius}px</span>
-            </span>
-            <input type="range" min={0} max={28} value={sys.radius} onChange={(e) => update((s) => void (s.radius = Number(e.target.value)))} />
-          </label>
-        </div>
-        <div className="type-sample" style={{ borderRadius: sys.radius }}>
-          <h3 style={{ fontFamily: fontStack(sys.fonts.heading) }}>Good design is as little design as possible</h3>
-          <p style={{ fontFamily: fontStack(sys.fonts.body) }}>
-            Body copy in {sys.fonts.body}. A comfortable line length is 60–75 characters, with a line height around 1.5 for easy reading on screens of every size.
-          </p>
-        </div>
-      </section>
     </div>
   )
 }

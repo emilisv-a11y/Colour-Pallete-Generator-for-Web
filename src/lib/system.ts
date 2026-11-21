@@ -1,5 +1,6 @@
 import { contrastRatio, fixContrast, hexToOklch, oklchToHex } from './color'
 import { apcaContrast } from './apca'
+import { DEFAULT_TYPE, type TypeSettings } from './typography'
 
 /* ============================================================================
    Design system model
@@ -38,7 +39,11 @@ export type DesignSystem = {
   fonts: { heading: string; body: string }
   radius: number
   notes: string
+  /** fluid typography settings (absent in systems saved before this feature) */
+  type?: TypeSettings
 }
+
+export const typeOf = (sys: DesignSystem): TypeSettings => ({ ...DEFAULT_TYPE, ...(sys.type ?? {}) })
 
 /* ---------- Scales ---------- */
 
@@ -321,6 +326,7 @@ export function systemFromPalette(hexes: string[], name = 'My design system'): D
     fonts: { heading: 'Manrope', body: 'Manrope' },
     radius: 10,
     notes: '',
+    type: { ...DEFAULT_TYPE },
   }
 }
 
