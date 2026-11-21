@@ -1575,6 +1575,102 @@ textarea {
   opacity: 1;
 }
 
+/* Mesh gradient */
+.mesh-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+}
+.mesh-stage {
+  display: flex;
+  justify-content: center;
+}
+.mesh-wrap {
+  position: relative;
+  width: 100%;
+  max-height: 70vh;
+  max-width: calc(70vh * 2);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  cursor: crosshair;
+  touch-action: none;
+}
+.mesh-wrap canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.mesh-dot {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.35), 0 4px 10px rgb(0 0 0 / 0.3);
+  cursor: grab;
+  touch-action: none;
+}
+.mesh-dot.on {
+  box-shadow: 0 0 0 2px #000, 0 0 0 5px #fff, 0 4px 12px rgb(0 0 0 / 0.35);
+  z-index: 2;
+}
+.mesh-dot:active {
+  cursor: grabbing;
+}
+.mesh-text {
+  position: absolute;
+  left: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  max-width: 70%;
+}
+.mesh-text h2 {
+  font-size: clamp(1.4rem, 4vw, 2.8rem);
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+.mesh-text p {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+.mesh-side {
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.mesh-points {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.base-chip {
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+.base-chip span {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgb(255 255 255 / 0.8);
+  color: #111;
+}
+.mesh-page select {
+  height: 36px;
+}
+@media (max-width: 960px) {
+  .mesh-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Visualizer */
 .role-pickers {
   display: grid;

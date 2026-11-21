@@ -28,6 +28,7 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [x] Saved colours (heart on swatches and colour pages; Library tab; included in backups)
 - [x] Collage/moodboard maker: layouts, sizes, palette band, palette from images, PNG export
 - [x] Tailwind colour reference: copy as HEX/class/CSS var/OKLCH; nearest Tailwind colour (CIEDE2000)
+- [x] Mesh gradient generator: draggable points, CSS layers (preview matches the CSS output) or smooth OKLab blend, grain, text preview, CSS and WebP/PNG/JPG export
 
 ## Phase 3: web design
 - Semantic roles (primary, secondary, accent, neutral, background, surface, text, success, warning, error, info)

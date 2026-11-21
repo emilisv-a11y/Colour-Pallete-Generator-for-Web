@@ -62,3 +62,11 @@ describe('data', () => {
     expect(r.text).toBe('#264653')
   })
 })
+
+import { meshCss } from '../mesh'
+describe('mesh gradient', () => {
+  it('builds layered CSS', () => {
+    const css = meshCss({ base: '#000000', mode: 'css', sharpness: 2, grain: 0, points: [{ id: 'a', color: '#ff0000', x: 10, y: 20, spread: 50 }] })
+    expect(css).toBe('background-color: #000000;\nbackground-image:\n  radial-gradient(at 10% 20%, #ff0000 0px, #ff000000 50%);')
+  })
+})
