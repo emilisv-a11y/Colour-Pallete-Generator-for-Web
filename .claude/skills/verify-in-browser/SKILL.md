@@ -1,0 +1,50 @@
+---
+name: verify-in-browser
+description: Playwright verification recipes used in D5 WebTool (preview server, screenshots, phone overflow check, console errors, downloads, checking rendered pixels or real CSS against computed values). Use after building or changing any page in this repo, before telling the user it works.
+---
+
+# Verify in the browser
+
+Chromium and Playwright are preinstalled, so `require('playwright')` works and needs no install. Keep test scripts in the session scratchpad, not in the repo.
+
+## Setup
+
+```bash
+npm run build && (npx vite preview --port 4173 >/dev/null 2>&1 &)
+# ...run the node script...
+pkill -f "vite preview"
+```
+
+Pages live at `http://localhost:4173/#/<route>` (hash router). Seed state through the UI or `localStorage` (`d5wt:*` keys). For example, open `#/generate/<hex-hex-...>` first so the generator has a known palette, and use the "Create from current palette" button on `#/system`.
+
+## Always check
+
+```js
+const errs = []
+p.on('pageerror', e => errs.push(e.message))
+p.on('console', m => m.type() === 'error' && errs.push(m.text()))
+// ...interactions...
+// phone overflow (must be <= 390):
+await m.evaluate(() => document.querySelector('.app-main').scrollWidth)
+```
+
+- Screenshot each new screen at 1400px wide and at a 390×844 phone. Read the PNGs and look at them before reporting.
+- `.app-main` is the scroll container, so `fullPage` and element screenshots get clipped. Use a tall viewport (e.g. 1400×3200) to capture long pages.
+
+## Proving numbers are right, not just that the page renders
+
+- **CSS output:** render the generated CSS in a real element at several viewport widths and compare `getComputedStyle` with the expected values. That's how the `clamp()` type scale was proven to be within 0.05px.
+- **Canvas previews:** read pixels back with `getImageData` and compare them with the app's own analysis. The mesh preview vs CSS was within 2/255, and text-on-image p02 was 4.60 vs the reported 4.55.
+- **Downloads:** use `p.waitForEvent('download')` then `fs.copyFileSync(await d.path(), ...)`. Validate the file:
+  - JSON: parse it.
+  - ZIP: inspect it with Python's `zipfile`.
+  - WOFF2: check the magic bytes are `wOF2`.
+  - Fonts: serve the extracted folder with `python3 -m http.server` and confirm `document.fonts` shows them loaded, with zero requests to Google.
+- **External URLs:** if the app builds URLs (e.g. Google Fonts css2), fetch a random sample in a throwaway vitest file and assert they all return 200. Delete the file afterwards.
+
+## Selector pitfalls seen here
+
+- `hasText: 'Serif'` also matches "Sans serif", and `'Brand'` matches "Subtle brand". Use anchored regexes: `{ hasText: /^Serif$/ }`, `{ hasText: /^\s*Brand$/ }`.
+- Wait for CSS transitions (about 400ms) before reading hover colours.
+- Test pages with non-ASCII text need `<meta charset="utf-8">`.
+- Vitest hides `console.log` from passing tests. Use `process.stderr.write(...)` for one-off diagnostics.

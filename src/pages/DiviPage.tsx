@@ -410,6 +410,15 @@ function ChecklistTab({ sys }: { sys: NonNullable<ReturnType<typeof useDesignSys
         </>
       ),
     },
+    {
+      id: 'selfhost',
+      title: 'Optional: self-host the fonts',
+      body: (
+        <>
+          For EU privacy, download the font package from <Link to="/system">Design system → Type → Self-host fonts</Link> and follow its README instead of loading fonts from Google.
+        </>
+      ),
+    },
     { id: 'import', title: 'Import the Divi 5 file', body: 'Download it from the Import file tab and import it where you exported your presets. Your global colours, variables and presets appear in the builder.' },
     { id: 'check', title: 'Check the colours and variables', body: 'Open the colour picker and the variable manager. You should see the scales (e.g. "Primary 500"), semantic colours (e.g. "Text", "On Primary") and the fluid text, space and radius variables.' },
     { id: 'apply', title: 'Apply presets', body: 'Use the section, heading, text and button presets. The Section planner tab shows which preset belongs on which background.' },
