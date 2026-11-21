@@ -4,13 +4,17 @@ import { Icon } from '../components/Icon'
 import { MiniPalette } from '../components/generator/Panels'
 import { Segmented, useCopy, useToast } from '../components/ui'
 import { downloadText, paletteSlug } from '../lib/exports'
+import { readableOn } from '../lib/color'
+import { useColorNames } from '../lib/names'
 import {
   deletePalette,
   deleteSession,
   getActiveSessionId,
   getPalettes,
   getProjects,
+  getSavedColors,
   getSessions,
+  toggleSavedColor,
   importBackup,
   makeBackup,
   savePalette,
@@ -26,7 +30,7 @@ export default function LibraryPage() {
   const toast = useToast()
   const copy = useCopy()
   const gen = useGenerator()
-  const [tab, setTab] = useState<'palettes' | 'sessions'>('palettes')
+  const [tab, setTab] = useState<'palettes' | 'colors' | 'sessions'>('palettes')
   const [project, setProject] = useState('')
   const [q, setQ] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
@@ -37,6 +41,8 @@ export default function LibraryPage() {
   const sessions = getSessions().filter((s) => !q || `${s.name} ${s.notes}`.toLowerCase().includes(q.toLowerCase()))
   const projects = getProjects()
   const activeId = getActiveSessionId()
+  const { name: colorName } = useColorNames()
+  const savedColors = getSavedColors().filter((c) => !q || `${c.hex} ${colorName(c.hex)}`.toLowerCase().includes(q.toLowerCase()))
 
   const rename = (p: SavedPalette) => {
     const name = prompt('Palette name', p.name)
@@ -69,7 +75,7 @@ export default function LibraryPage() {
               if (!f) return
               try {
                 const r = importBackup(await f.text())
-                toast(`Imported ${r.palettes} palette(s), ${r.sessions} session(s)`)
+                toast(`Imported ${r.palettes} palette(s), ${r.sessions} session(s) and saved colours`)
               } catch (err) {
                 alert((err as Error).message)
               }
@@ -86,6 +92,7 @@ export default function LibraryPage() {
           onChange={setTab}
           options={[
             { id: 'palettes', label: `Palettes (${getPalettes().length})` },
+            { id: 'colors', label: `Colours (${getSavedColors().length})` },
             { id: 'sessions', label: `Sessions (${getSessions().length})` },
           ]}
         />
@@ -136,6 +143,41 @@ export default function LibraryPage() {
                   </button>
                   <button className="icon-btn danger" title="Delete" aria-label="Delete palette" onClick={() => confirm(`Delete “${p.name}”?`) && deletePalette(p.id)}>
                     <Icon name="trash" size={16} />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </>
+      )}
+
+      {tab === 'colors' && (
+        <>
+          {savedColors.length === 0 && (
+            <div className="empty">
+              <p>No saved colours yet. Use the heart on a generator swatch or on a colour's detail page.</p>
+            </div>
+          )}
+          {savedColors.length >= 2 && (
+            <div className="row">
+              <Link className="btn" to={`/generate/${paletteSlug(savedColors.slice(0, 10).map((c) => c.hex))}`}>
+                <Icon name="wand" size={16} /> Open {Math.min(10, savedColors.length)} in generator
+              </Link>
+            </div>
+          )}
+          <div className="color-grid">
+            {savedColors.map((c) => (
+              <article key={c.hex} className="color-tile">
+                <Link to={`/color/${c.hex.slice(1)}`} className="color-tile-swatch" style={{ background: c.hex, color: readableOn(c.hex) }}>
+                  {c.hex.slice(1).toUpperCase()}
+                </Link>
+                <div className="row">
+                  <span className="grow small">{colorName(c.hex)}</span>
+                  <button className="icon-btn" onClick={() => copy(c.hex.toUpperCase())} aria-label={`Copy ${c.hex}`} title="Copy">
+                    <Icon name="copy" size={14} />
+                  </button>
+                  <button className="icon-btn danger" onClick={() => toggleSavedColor(c.hex)} aria-label={`Remove ${c.hex}`} title="Remove">
+                    <Icon name="trash" size={14} />
                   </button>
                 </div>
               </article>

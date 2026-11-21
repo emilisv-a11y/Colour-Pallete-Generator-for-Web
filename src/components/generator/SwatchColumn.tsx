@@ -3,9 +3,9 @@ import { CSS } from '@dnd-kit/utilities'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { readableOn, shadeStrip, swatchLabel, type FormatId } from '../../lib/color'
-import type { Swatch } from '../../lib/storage'
+import { isSavedColor, toggleSavedColor, useStorageVersion, type Swatch } from '../../lib/storage'
 import { Icon } from '../Icon'
-import { ColorField, Popover, useCopy } from '../ui'
+import { ColorField, Popover, useCopy, useToast } from '../ui'
 
 type Props = {
   swatch: Swatch
@@ -30,6 +30,8 @@ export function SwatchColumn(p: Props) {
   const [picker, setPicker] = useState(false)
   const [shades, setShades] = useState(false)
   const copy = useCopy()
+  const toast = useToast()
+  useStorageVersion()
   const fg = readableOn(p.display)
   const hex = p.swatch.hex
 
@@ -103,6 +105,15 @@ export function SwatchColumn(p: Props) {
             </button>
             <button className="tool" onClick={() => copy(hex.toUpperCase())} title="Copy HEX" aria-label="Copy HEX">
               <Icon name="copy" />
+            </button>
+            <button
+              className={`tool ${isSavedColor(hex) ? 'saved' : ''}`}
+              onClick={() => toast(toggleSavedColor(hex) ? `Saved ${hex.toUpperCase()} to your colours` : `Removed ${hex.toUpperCase()}`)}
+              title={isSavedColor(hex) ? 'Remove from saved colours' : 'Save colour'}
+              aria-label={isSavedColor(hex) ? 'Remove from saved colours' : 'Save colour'}
+              aria-pressed={isSavedColor(hex)}
+            >
+              <Icon name="heart" />
             </button>
             <Link className="tool" to={`/color/${hex.slice(1)}`} title="Colour details" aria-label="Colour details">
               <Icon name="info" />

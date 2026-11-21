@@ -1,12 +1,47 @@
-import { useEffect } from 'react'
-import { HashRouter, Navigate, NavLink, Route, Routes } from 'react-router-dom'
+import { lazy, Suspense, useEffect, useState } from 'react'
+import { HashRouter, Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { Icon } from './components/Icon'
-import { ToastProvider } from './components/ui'
+import { Popover, ToastProvider } from './components/ui'
 import { getTheme, setTheme, useStorageVersion, type ThemePref } from './lib/storage'
 import ColorPage from './pages/ColorPage'
 import ContrastPage from './pages/ContrastPage'
 import GeneratorPage from './pages/GeneratorPage'
 import LibraryPage from './pages/LibraryPage'
+const ExplorePage = lazy(() => import('./pages/ExplorePage'))
+const ImagePage = lazy(() => import('./pages/ImagePage'))
+const GradientPage = lazy(() => import('./pages/GradientPage'))
+const VisualizerPage = lazy(() => import('./pages/VisualizerPage'))
+const TailwindPage = lazy(() => import('./pages/TailwindPage'))
+const CollagePage = lazy(() => import('./pages/CollagePage'))
+
+const MORE = [
+  { to: '/color', label: 'Colour details' },
+  { to: '/tailwind', label: 'Tailwind colours' },
+  { to: '/collage', label: 'Collage & moodboard' },
+]
+
+function MoreMenu() {
+  const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
+  const active = MORE.some((m) => pathname.startsWith(m.to))
+  useEffect(() => setOpen(false), [pathname])
+  return (
+    <div className="pop-anchor">
+      <button className={`nav-more ${active ? 'active' : ''}`} onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-haspopup="menu">
+        More <Icon name="chevronDown" size={14} />
+      </button>
+      {open && (
+        <Popover onClose={() => setOpen(false)} className="nav-menu">
+          {MORE.map((m) => (
+            <NavLink key={m.to} to={m.to} role="menuitem">
+              {m.label}
+            </NavLink>
+          ))}
+        </Popover>
+      )}
+    </div>
+  )
+}
 import { GeneratorProvider } from './state/GeneratorContext'
 
 const THEMES: { id: ThemePref; icon: 'monitor' | 'sun' | 'moon'; label: string }[] = [
@@ -36,8 +71,12 @@ function Header() {
       </NavLink>
       <nav className="main-nav" aria-label="Main">
         <NavLink to="/generate">Generator</NavLink>
-        <NavLink to="/color">Colours</NavLink>
+        <NavLink to="/explore">Explore</NavLink>
+        <NavLink to="/image">Image</NavLink>
+        <NavLink to="/gradient">Gradient</NavLink>
+        <NavLink to="/visualize">Visualizer</NavLink>
         <NavLink to="/contrast">Contrast</NavLink>
+        <MoreMenu />
         <NavLink to="/library">Library</NavLink>
       </nav>
       <button className="icon-btn" onClick={() => setTheme(next.id)} title={`${current.label} (switch to ${next.label.toLowerCase()})`} aria-label={`Switch to ${next.label}`}>
@@ -55,14 +94,22 @@ export default function App() {
           <div className="app">
             <Header />
             <main className="app-main">
+              <Suspense fallback={<div className="page muted">Loading…</div>}>
               <Routes>
                 <Route path="/" element={<Navigate to="/generate" replace />} />
                 <Route path="/generate/:colors?" element={<GeneratorPage />} />
                 <Route path="/color/:hex?" element={<ColorPage />} />
                 <Route path="/contrast/:fg?/:bg?" element={<ContrastPage />} />
                 <Route path="/library" element={<LibraryPage />} />
+                <Route path="/explore" element={<ExplorePage />} />
+                <Route path="/image" element={<ImagePage />} />
+                <Route path="/gradient" element={<GradientPage />} />
+                <Route path="/visualize" element={<VisualizerPage />} />
+                <Route path="/tailwind" element={<TailwindPage />} />
+                <Route path="/collage" element={<CollagePage />} />
                 <Route path="*" element={<Navigate to="/generate" replace />} />
               </Routes>
+              </Suspense>
             </main>
           </div>
         </GeneratorProvider>

@@ -14,10 +14,21 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 - **Export:** CSS variables, SCSS, LESS, Tailwind v4 `@theme`, Tailwind v3 config, JSON, JS array, XML, GIMP/Inkscape `.gpl`, PNG, SVG, share link, HTML snippet.
 - **Colour details page:** every notation, tints and shades, harmonies, contrast on white/black, colour-blindness views, similar named colours.
 - **Contrast checker:** WCAG 2.2 AA/AAA for text and UI components, a live preview, and one-click fixes that keep hue and saturation.
-- **Library:** saved palettes, grouped by project.
+- **Library:** saved palettes (grouped by project) and saved colours.
 - **Sessions:** save or load your whole working state (palette, locks, full undo history, settings).
   - The working state is also autosaved in the browser.
   - Back up or restore everything as a JSON file.
+
+## Phase 2 features
+
+- **Explore:** 215 curated palettes. Filter by colour family, style and number of colours; search by name, tag or hex.
+- **Image picker:** extract 2–10 colours from an uploaded, pasted or dropped image (balanced, vibrant or muted), then drag the pickers to fine-tune.
+- **Gradient maker:** linear, radial and conic gradients with draggable stops and OKLab/OKLCH/sRGB blending. Outputs CSS with a fallback and a Tailwind class, and can turn a gradient into a palette.
+- **Visualizer:** the current palette on a landing page, dashboard, mobile app, poster and brand card, with automatic or manual colour roles and light/dark modes.
+- **More exports:** PDF palette sheet and Adobe Swatch Exchange (`.ase`).
+- **Saved colours:** heart a colour in the generator or on its details page.
+- **Collage & moodboard:** images plus a palette band, in several layouts and sizes, exported as PNG.
+- **Tailwind colours:** the default palette, copyable as HEX, class, CSS variable or OKLCH, plus a nearest-Tailwind-colour finder.
 
 Data is stored in the browser's `localStorage`. The data shapes are plain JSON so a backend can be added later.
 

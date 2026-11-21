@@ -21,6 +21,7 @@ import {
 } from '../lib/color'
 import { loadNames, nearestNames, useColorNames } from '../lib/names'
 import { paletteSlug } from '../lib/exports'
+import { isSavedColor, toggleSavedColor, useStorageVersion } from '../lib/storage'
 
 function SwatchRow({ hexes, highlight }: { hexes: string[]; highlight?: string }) {
   return (
@@ -60,6 +61,7 @@ export default function ColorPage() {
   const { hex: param } = useParams()
   const navigate = useNavigate()
   const copy = useCopy()
+  useStorageVersion()
   const { ready, name } = useColorNames()
   const hex = normalizeHex(param ?? '')
   const [similar, setSimilar] = useState<{ hex: string; name: string }[]>([])
@@ -104,6 +106,9 @@ export default function ColorPage() {
         <div className="row wrap">
           <button className="btn btn-glass" onClick={() => copy(hex.toUpperCase())}>
             <Icon name="copy" size={16} /> Copy
+          </button>
+          <button className="btn btn-glass" onClick={() => toggleSavedColor(hex)} aria-pressed={isSavedColor(hex)}>
+            <Icon name={isSavedColor(hex) ? 'check' : 'heart'} size={16} /> {isSavedColor(hex) ? 'Saved' : 'Save colour'}
           </button>
           <Link className="btn btn-glass" to={`/generate/${paletteSlug(harmony(hex, [0, 150, 210]).concat(monochromatic(hex, 2)))}`}>
             <Icon name="wand" size={16} /> Palette from this

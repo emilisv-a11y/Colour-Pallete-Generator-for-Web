@@ -19,12 +19,15 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [x] Sessions: save/load the full working state; autosave; JSON backup and restore
 - [x] GitHub Pages deploy workflow
 
-## Phase 2: Coolors-style extras
-- Image picker (extract a palette from an upload, with draggable pickers)
-- Gradient maker (linear, radial, conic; multiple stops; CSS) and palette from a gradient
-- Palette visualizer on sample designs
-- Explore page: a curated set of a few hundred palettes, searchable by colour, style and number of colours
-- PDF and Adobe ASE export; saved colours; collage/moodboard maker; Tailwind colour reference
+## Phase 2: Coolors-style extras ✅
+- [x] Image picker: k-means extraction in OKLab, balanced/vibrant/muted, draggable pickers, paste/drop/upload, sample image
+- [x] Gradient maker: linear/radial/conic, draggable stops, OKLab/OKLCH/sRGB blending, CSS with fallback, Tailwind class, palette from gradient
+- [x] Palette visualizer: landing page, dashboard, mobile app, poster, brand; auto roles, manual role picking, light/dark, shuffle
+- [x] Explore: 215 curated palettes; filter by colour family, style, size; search; sort; save/open
+- [x] PDF and Adobe ASE export (no dependencies)
+- [x] Saved colours (heart on swatches and colour pages; Library tab; included in backups)
+- [x] Collage/moodboard maker: layouts, sizes, palette band, palette from images, PNG export
+- [x] Tailwind colour reference: copy as HEX/class/CSS var/OKLCH; nearest Tailwind colour (CIEDE2000)
 
 ## Phase 3: web design
 - Semantic roles (primary, secondary, accent, neutral, background, surface, text, success, warning, error, info)
