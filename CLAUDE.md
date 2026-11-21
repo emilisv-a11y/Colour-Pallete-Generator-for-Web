@@ -18,7 +18,7 @@ A colour palette and design-system platform for web design, with extra tools for
 | 2 | Explore (215 palettes), image picker, gradients, mesh gradient, visualizer, collage, Tailwind, PDF/ASE, saved colours | live |
 | 3 | Design system: roles, 50–950 scales, light/dark tokens, accessibility (WCAG + APCA), live preview, token exports, brand kit, fluid type (clamp), Google Fonts library (1,908 families) | live |
 | 4 | Divi 5: import file builder (colours, variables, presets), section planner, CSS helpers, checklist | live |
-| Extras | Text-on-image checker (`/text-on-image`) + self-hosted fonts (Design system → Type) | **pushed to branch, NOT merged yet**: commit `b024365`; the merge question was interrupted. Ask before merging. |
+| Extras | Text-on-image checker (`/text-on-image`) + self-hosted fonts (Design system → Type) | live |
 
 The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.md`.
 
