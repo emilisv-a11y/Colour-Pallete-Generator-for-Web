@@ -3,6 +3,7 @@ import { downloadText } from '../../lib/exports'
 import { fontStack, loadFonts } from '../../lib/fonts'
 import { getFont, loadLibrary, loadPreviewFont, PAIRINGS, previewFamily, type GFont } from '../../lib/googleFonts'
 import { FontLibrary } from '../FontLibrary'
+import { SelfHostFonts } from './SelfHostFonts'
 import { typeOf, type DesignSystem } from '../../lib/system'
 import {
   exportType,
@@ -339,6 +340,8 @@ export function TypeTab({ sys, update }: { sys: DesignSystem; update: (fn: (s: D
           })}
         </div>
       </section>
+
+      <SelfHostFonts sys={sys} />
 
       <section className="type-card">
         <div className="row space-between wrap">

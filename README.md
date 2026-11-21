@@ -54,6 +54,11 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 - **CSS & classes:** CSS for Theme Options with light/dark tokens, fluid type/spacing and helper classes.
 - **Checklist:** step-by-step handoff with saved progress.
 
+## Extras
+
+- **Text on image checker** (Tools): upload a hero image, position the text, and see the worst-case contrast of every pixel behind it, with a heatmap of failing pixels and desktop/tablet/phone crops. One click finds the lightest solid overlay, edge scrim or text panel that passes WCAG AA for white or black text, with CSS and Divi steps.
+- **Self-hosted fonts** (Design system → Type): download the chosen Google Fonts as a ZIP of WOFF2 files, with `@font-face` CSS and step-by-step Divi instructions, so visitors' browsers never contact Google (EU privacy). Pick weights, italics and languages (e.g. Latin Extended for Lithuanian); file sizes are shown first.
+
 Data is stored in the browser's `localStorage`. The data shapes are plain JSON so a backend can be added later.
 
 ## Development
