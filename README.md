@@ -24,6 +24,7 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 - **Explore:** 215 curated palettes. Filter by colour family, style and number of colours; search by name, tag or hex.
 - **Image picker:** extract 2–10 colours from an uploaded, pasted or dropped image (balanced, vibrant or muted), then drag the pickers to fine-tune.
 - **Gradient maker:** linear, radial and conic gradients with draggable stops and OKLab/OKLCH/sRGB blending. Outputs CSS with a fallback and a Tailwind class, and can turn a gradient into a palette.
+- **Mesh gradient:** drag up to 8 colour points over a base colour. Two styles: pure CSS layers (tiny, scalable, ready for a Divi section) or a smooth perceptual blend exported as WebP/PNG/JPG up to 4K. Optional grain and a text preview.
 - **Visualizer:** the current palette on a landing page, dashboard, mobile app, poster and brand card, with automatic or manual colour roles and light/dark modes.
 - **More exports:** PDF palette sheet and Adobe Swatch Exchange (`.ase`).
 - **Saved colours:** heart a colour in the generator or on its details page.

@@ -65,9 +65,14 @@ export default function GradientPage() {
 
   return (
     <div className="page gradient-page">
-      <header className="page-head">
-        <h1>Gradient maker</h1>
-        <p className="muted">Build linear, radial and conic gradients. Perceptual blending (OKLab/OKLCH) avoids the muddy grey middle you get with plain sRGB.</p>
+      <header className="page-head row space-between wrap">
+        <div>
+          <h1>Gradient maker</h1>
+          <p className="muted">Build linear, radial and conic gradients. Perceptual blending (OKLab/OKLCH) avoids the muddy grey middle you get with plain sRGB.</p>
+        </div>
+        <Link className="btn" to="/mesh">
+          Mesh gradients <Icon name="external" size={14} />
+        </Link>
       </header>
 
       <div className="gradient-preview" style={{ background: gradientCss(g) }} />

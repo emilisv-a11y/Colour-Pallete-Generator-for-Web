@@ -10,6 +10,7 @@ import LibraryPage from './pages/LibraryPage'
 const ExplorePage = lazy(() => import('./pages/ExplorePage'))
 const ImagePage = lazy(() => import('./pages/ImagePage'))
 const GradientPage = lazy(() => import('./pages/GradientPage'))
+const MeshPage = lazy(() => import('./pages/MeshPage'))
 const VisualizerPage = lazy(() => import('./pages/VisualizerPage'))
 const TailwindPage = lazy(() => import('./pages/TailwindPage'))
 const CollagePage = lazy(() => import('./pages/CollagePage'))
@@ -74,6 +75,7 @@ function Header() {
         <NavLink to="/explore">Explore</NavLink>
         <NavLink to="/image">Image</NavLink>
         <NavLink to="/gradient">Gradient</NavLink>
+        <NavLink to="/mesh">Mesh</NavLink>
         <NavLink to="/visualize">Visualizer</NavLink>
         <NavLink to="/contrast">Contrast</NavLink>
         <MoreMenu />
@@ -104,6 +106,7 @@ export default function App() {
                 <Route path="/explore" element={<ExplorePage />} />
                 <Route path="/image" element={<ImagePage />} />
                 <Route path="/gradient" element={<GradientPage />} />
+                <Route path="/mesh" element={<MeshPage />} />
                 <Route path="/visualize" element={<VisualizerPage />} />
                 <Route path="/tailwind" element={<TailwindPage />} />
                 <Route path="/collage" element={<CollagePage />} />
