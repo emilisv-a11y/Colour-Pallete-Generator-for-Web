@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { normalizeHex } from '../../lib/color'
 import { fontStack } from '../../lib/fonts'
-import { allTokenNames, bucketOf, buildTokens, type Bucket, type DesignSystem, type Mode, type Tokens } from '../../lib/system'
+import { allTokenNames, bucketOf, buildTokens, typeOf, type Bucket, type DesignSystem, type Mode, type Tokens } from '../../lib/system'
+import { spaceScale, typeScale } from '../../lib/typography'
 
 export function tokenVars(t: Tokens, sys: DesignSystem): React.CSSProperties {
   const v: Record<string, string> = {}
@@ -9,6 +10,13 @@ export function tokenVars(t: Tokens, sys: DesignSystem): React.CSSProperties {
   v['--font-heading'] = fontStack(sys.fonts.heading)
   v['--font-body'] = fontStack(sys.fonts.body)
   v['--radius'] = `${sys.radius}px`
+  // fluid type: semantic element sizes from the scale, plus spacing
+  const ts = typeOf(sys)
+  typeScale(ts).forEach((st) => {
+    if (st.el) v[`--fs-${st.el}`] = st.css
+    v[`--step-${st.step}`] = st.css
+  })
+  spaceScale(ts).forEach((sp) => (v[`--space-${sp.name}`] = sp.css))
   return v as React.CSSProperties
 }
 

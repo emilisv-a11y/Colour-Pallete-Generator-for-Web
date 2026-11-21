@@ -40,6 +40,7 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 - **Preview:** a realistic website with working hover/active/focus/disabled states, light and dark mode, and a measured 60-30-10 colour balance.
 - **Export:** CSS variables (light + dark), SCSS, Tailwind v4/v3, W3C Design Tokens, Tokens Studio for Figma, Bootstrap 5.3, JSON.
 - **Brand kit:** a printable brand-guidelines page (print or save as PDF).
+- **Responsive typography (Type tab):** a fluid type scale and spacing scale written as `clamp()` values (rem + vw, so browser zoom keeps working). Set the small/large screen sizes, body size and scale ratio, then preview at any screen width with a size chart. Warns about text that may not scale properly when zoomed (WCAG 1.4.4) and about very small text. Exports CSS, Tailwind v4, SCSS and JSON.
 - **Fonts & radius:** heading/body Google Fonts pairing and corner radius, carried into the preview, brand kit and exports.
 
 Data is stored in the browser's `localStorage`. The data shapes are plain JSON so a backend can be added later.

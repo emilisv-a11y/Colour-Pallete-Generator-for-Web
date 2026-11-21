@@ -5,7 +5,8 @@ import { useDesignSystem } from '../components/system/useDesignSystem'
 import { cmykValues, formatColor, readableOn, rgbValues } from '../lib/color'
 import { fontStack, googleFontsUrl, loadFonts } from '../lib/fonts'
 import { useColorNames } from '../lib/names'
-import { autoAnchor, BRAND_ROLES, buildScales, buildTokens, checkPairs, ROLE_INFO, ROLE_KEYS, STATUS_ROLES, STEPS, type RoleKey } from '../lib/system'
+import { autoAnchor, BRAND_ROLES, buildScales, buildTokens, checkPairs, ROLE_INFO, ROLE_KEYS, STATUS_ROLES, STEPS, typeOf, type RoleKey } from '../lib/system'
+import { typeScale } from '../lib/typography'
 
 function ColorSpec({ role, hex, big }: { role: RoleKey; hex: string; big?: boolean }) {
   const { name } = useColorNames()
@@ -181,6 +182,24 @@ export default function BrandKitPage() {
             </p>
             <code className="small">{googleFontsUrl([sys.fonts.heading, sys.fonts.body])}</code>
           </div>
+        </div>
+        <h3>Type scale</h3>
+        <p className="muted small">
+          Fluid sizes from a {typeOf(sys).minVw}px to a {typeOf(sys).maxVw}px wide screen.
+        </p>
+        <div className="bk-typescale">
+          {typeScale(typeOf(sys))
+            .filter((t) => t.el)
+            .map((t) => (
+              <div key={t.step}>
+                <span className="muted small">
+                  {t.el} · {Math.round(t.min)}–{Math.round(t.max)}px · line height {t.lineHeight}
+                </span>
+                <p style={{ fontFamily: t.el?.startsWith('h') ? heading : body, fontSize: Math.min(t.max, 44), fontWeight: t.el?.startsWith('h') ? 750 : 400, lineHeight: t.lineHeight, margin: 0 }}>
+                  {t.el?.startsWith('h') ? 'Heading example' : 'Body text example for paragraphs'}
+                </p>
+              </div>
+            ))}
         </div>
         <h2>Gradient</h2>
         <div className="bk-gradient" style={{ background: `linear-gradient(90deg in oklab, ${sys.roles.primary.hex}, ${sys.roles.secondary.hex}, ${sys.roles.accent.hex})`, borderRadius: sys.radius }} />

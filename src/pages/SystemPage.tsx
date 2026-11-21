@@ -6,6 +6,7 @@ import { AccessibilityTab } from '../components/system/AccessibilityTab'
 import { PreviewTab } from '../components/system/PreviewTab'
 import { RolesTab } from '../components/system/RolesTab'
 import { ScalesTab, TokensTab } from '../components/system/ScalesTokensTabs'
+import { TypeTab } from '../components/system/TypeTab'
 import { useDesignSystem } from '../components/system/useDesignSystem'
 import { CodeBlock, Segmented, useToast } from '../components/ui'
 import { downloadText } from '../lib/exports'
@@ -15,7 +16,7 @@ import { buildTokens, checkPairs, systemFromPalette, type DesignSystem, type Mod
 import { exportTokens, TOKEN_FORMATS, type TokenFormat } from '../lib/tokens'
 import { useGenerator } from '../state/GeneratorContext'
 
-type Tab = 'roles' | 'scales' | 'tokens' | 'a11y' | 'preview' | 'export'
+type Tab = 'roles' | 'scales' | 'tokens' | 'type' | 'a11y' | 'preview' | 'export'
 const TAB_KEY = 'd5wt:systemTab'
 
 function ExportTab({ sys }: { sys: DesignSystem }) {
@@ -114,9 +115,9 @@ export default function SystemPage() {
           <button
             className="btn"
             onClick={() => {
-              if (!confirm('Rebuild roles from the current generator palette? Fonts and radius are kept; overrides are cleared.')) return
+              if (!confirm('Rebuild roles from the current generator palette? Fonts, typography and radius are kept; overrides are cleared.')) return
               const fresh = systemFromPalette(palette, sys.name)
-              setSystem({ ...fresh, fonts: sys.fonts, radius: sys.radius, notes: sys.notes })
+              setSystem({ ...fresh, fonts: sys.fonts, radius: sys.radius, notes: sys.notes, type: sys.type })
               toast('Rebuilt from current palette')
             }}
           >
@@ -137,6 +138,7 @@ export default function SystemPage() {
             { id: 'roles', label: 'Roles' },
             { id: 'scales', label: 'Scales' },
             { id: 'tokens', label: 'Tokens' },
+            { id: 'type', label: 'Type' },
             { id: 'a11y', label: fails ? `Accessibility (${fails})` : 'Accessibility ✓' },
             { id: 'preview', label: 'Preview' },
             { id: 'export', label: 'Export' },
@@ -158,6 +160,7 @@ export default function SystemPage() {
       {tab === 'roles' && <RolesTab sys={sys} palette={palette} update={update} />}
       {tab === 'scales' && <ScalesTab sys={sys} />}
       {tab === 'tokens' && <TokensTab sys={sys} update={update} />}
+      {tab === 'type' && <TypeTab sys={sys} update={update} />}
       {tab === 'a11y' && <AccessibilityTab sys={sys} mode={mode} update={update} />}
       {tab === 'preview' && <PreviewTab sys={sys} mode={mode} />}
       {tab === 'export' && <ExportTab sys={sys} />}

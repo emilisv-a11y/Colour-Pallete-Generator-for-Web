@@ -1,5 +1,6 @@
 import { fontStack, googleFontsUrl } from './fonts'
-import { allTokenNames, buildScales, buildTokens, ROLE_KEYS, STEPS, type DesignSystem, type Tokens } from './system'
+import { allTokenNames, buildScales, buildTokens, ROLE_KEYS, STEPS, typeOf, type DesignSystem, type Tokens } from './system'
+import { exportType, typeScale } from './typography'
 
 export type TokenFormat = 'css' | 'scss' | 'tailwind4' | 'tailwind3' | 'dtcg' | 'tokens-studio' | 'bootstrap' | 'json'
 
@@ -63,7 +64,8 @@ ${cssBlock(dark, '    ')}
 ${cssBlock(dark)}
   color-scheme: dark;
 }
-`
+
+${exportType(typeOf(sys), 'css', sys.fonts, { heading: fontStack(sys.fonts.heading), body: fontStack(sys.fonts.body) })}`
     case 'scss': {
       const map = (t: Tokens) => names.map((n) => `  '${n}': ${t[n].hex},`).join('\n')
       return `// ${header(sys)}
@@ -114,7 +116,8 @@ ${names.map((n) => `  --${n}: ${light[n].hex};`).join('\n')}
 [data-theme=dark] {
 ${names.map((n) => `  --${n}: ${dark[n].hex};`).join('\n')}
 }
-`
+
+${exportType(typeOf(sys), 'tailwind4')}`
     case 'tailwind3':
       return `// ${header(sys)}
 // Semantic colours read CSS variables: add the "CSS variables" export to your stylesheet.
@@ -224,6 +227,7 @@ ${ROLE_KEYS.map((r) => scales[r].map((h, i) => `$${r}-${STEPS[i]}: ${h};`).join(
             dark: Object.fromEntries(names.map((n) => [n, dark[n].hex])),
             fonts: sys.fonts,
             radius: sys.radius,
+            typography: Object.fromEntries(typeScale(typeOf(sys)).map((t) => [t.name, { clamp: t.css, minPx: t.min, maxPx: t.max, lineHeight: t.lineHeight }])),
           },
           null,
           2,
