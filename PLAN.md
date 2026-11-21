@@ -44,15 +44,16 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [x] Google Fonts library: all 1,908 families built in (search, category, language, variable, sort, live previews), pairing ideas, optional live refresh with a Google Fonts API key; `npm run fonts:update` rebuilds the catalogue
 - [x] Responsive typography: fluid type and spacing scales with clamp() (rem + vw, zoom-safe), viewport preview and chart, WCAG 1.4.4 zoom check, CSS/Tailwind v4/SCSS/JSON export; used in the live preview, token exports and brand kit
 
-## Phase 4: Divi 5
-- Global colours and Design Variables export. **Waiting on a sample Divi 5 JSON export from the user.**
-- Preset pack generator: buttons, section backgrounds, text, blurb, CTA, pricing, forms
-- CSS for Divi: custom properties and helper classes for Theme Options or a child theme
-- Divi colour picker default swatches
-- Divi-style layout previews
-- Section colour planner (background order down a page, with contrast-checked text and buttons)
-- Divi gradient export
-- Guided handoff checklist
+## Phase 4: Divi 5 ✅
+Built from a real Divi 5 presets export (same file structure, `$variable(...)$` references, option-group presets).
+- [x] Upload the site's current Divi export: summary of global colours (resolving linked/relative colours), variables and presets; open its colours in the generator
+- [x] Import file: global colours (scales + semantic colours, optionally linked to the scales; Divi's Primary/Heading/Body colours), number variables (fluid text sizes, spacing, radius as clamp()), presets (H1–H6, text, buttons, sections, radius/padding group presets)
+- [x] Merges by name with the uploaded export: reuses existing ids, keeps the site's default presets, lists every existing item that changes (old → new), option to keep current values
+- [x] Stable ids so re-importing updates instead of duplicating; reference checker (no broken links)
+- [x] Section colour planner with contrast checks, preset and CSS class per section
+- [x] CSS for Theme Options: tokens (light/dark), fluid type and spacing, helper classes (d5-section-*, d5-card…)
+- [x] Handoff checklist (saved progress)
+- [ ] Verify an import on a real Divi 5 site and adjust anything Divi treats differently
 
 ## Later: backend
 - Sync palettes and sessions across devices. Hostinger Business (PHP + MySQL) or Cloudflare (Workers + D1) are both options.

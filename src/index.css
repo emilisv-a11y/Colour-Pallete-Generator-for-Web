@@ -146,6 +146,12 @@ textarea {
   resize: vertical;
   width: 100%;
 }
+select {
+  padding-top: 0;
+  padding-bottom: 0;
+  min-height: 36px;
+  line-height: 1.3;
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -3084,6 +3090,235 @@ textarea {
   padding: 12px;
   background: var(--surface-2);
   border-radius: var(--radius-sm);
+}
+
+/* Divi 5 page */
+.divi-site {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.divi-site-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.divi-colors,
+.divi-vars {
+  list-style: none;
+  margin: 6px 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+.divi-colors li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.divi-vars li {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.divi-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.divi-options fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.divi-options legend {
+  padding: 0 6px;
+  font-weight: 750;
+}
+.divi-options fieldset,
+.type-settings fieldset {
+  min-width: 0;
+}
+.divi-options select {
+  height: 36px;
+  width: 100%;
+  min-width: 0;
+}
+.divi-check {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 0.88rem;
+}
+.divi-check input {
+  margin-top: 3px;
+  accent-color: var(--accent);
+}
+.divi-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.divi-summary > div {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.divi-summary .ok {
+  background: var(--pass-bg);
+  color: var(--pass);
+  border-color: transparent;
+}
+.divi-summary .warn {
+  background: var(--fail-bg);
+  border-color: transparent;
+}
+.divi-affected {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+.divi-affected.updating {
+  background: var(--accent-soft);
+}
+.divi-affected ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.divi-affected li {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+}
+.divi-change-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  columns: 2 280px;
+  font-size: 0.82rem;
+}
+.divi-change-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  break-inside: avoid;
+}
+.planner {
+  display: flex;
+  flex-direction: column;
+}
+.plan-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(240px, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+.plan-preview {
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-bottom: 0;
+}
+.plan-row:last-child .plan-preview {
+  border-bottom: 1px solid var(--border);
+}
+.plan-preview h3 {
+  font-size: 1.4rem;
+  margin: 0 0 6px;
+}
+.plan-preview p {
+  margin: 0 0 14px;
+}
+.plan-btn {
+  display: inline-block;
+  padding: 9px 18px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.plan-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.plan-side select {
+  height: 34px;
+}
+.plan-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.divi-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.divi-checklist label {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+}
+.divi-checklist label > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.divi-checklist input {
+  margin-top: 4px;
+  accent-color: var(--accent);
+}
+.divi-checklist li.done label {
+  opacity: 0.6;
+}
+.divi-checklist li.done strong {
+  text-decoration: line-through;
+}
+.step-num {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  font-weight: 800;
+  font-size: 0.8rem;
+  flex: none;
+}
+@media (max-width: 760px) {
+  .divi-site-body,
+  .plan-row {
+    grid-template-columns: 1fr;
+  }
+  .plan-side {
+    padding-top: 6px;
+  }
 }
 
 /* Live preview site (all colours from tokens) */

@@ -44,6 +44,16 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 - **Google Fonts library:** browse every Google Fonts family (1,908) from the Type tab: search, filter by category, language support (e.g. Latin Extended for Lithuanian) and variable fonts, sort by popularity, name, last update or number of weights, with live previews in your own text. Twelve one-click pairing ideas. Optionally add your own Google Fonts API key to fetch the newest list with Google's popularity ranking (the key stays in your browser). Rebuild the built-in catalogue with `npm run fonts:update`.
 - **Fonts & radius:** heading/body Google Fonts pairing and corner radius, carried into the preview, brand kit and exports.
 
+## Phase 4 features (Divi 5)
+
+- **Your Divi site:** upload a presets export from Divi 5 to see its global colours (including linked and relative colours), variables and presets.
+- **Import file:** a Divi 5 JSON file with global colours (scales and semantic colours, linked so editing a scale colour in Divi updates the rest), number variables (fluid `text-*`, `space-*`, `radius-*` as `clamp()`), and presets for headings H1–H6, text, buttons, sections, and radius/padding option groups.
+  - Merges with your uploaded export by name: existing ids are reused, default presets are kept, and every existing item that would change is listed (old → new), with an option to keep your current values instead.
+  - Re-importing updates items instead of duplicating them.
+- **Section planner:** arrange section backgrounds down a page; each shows contrast-checked heading, text, link and button colours with the presets and CSS class to use.
+- **CSS & classes:** CSS for Theme Options with light/dark tokens, fluid type/spacing and helper classes.
+- **Checklist:** step-by-step handoff with saved progress.
+
 Data is stored in the browser's `localStorage`. The data shapes are plain JSON so a backend can be added later.
 
 ## Development

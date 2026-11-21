@@ -45,7 +45,9 @@ function ExportTab({ sys }: { sys: DesignSystem }) {
         {f.note}
       </p>
       <CodeBlock code={code} label={f.label} />
-      <p className="muted small">Divi 5 global colours, variables and presets come in Phase 4 (once the sample Divi export file is available).</p>
+      <p className="muted small">
+        Building with Divi 5? The <Link to="/divi">Divi 5 page</Link> turns this system into global colours, variables and presets.
+      </p>
     </div>
   )
 }

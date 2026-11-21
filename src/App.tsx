@@ -16,6 +16,7 @@ const TailwindPage = lazy(() => import('./pages/TailwindPage'))
 const CollagePage = lazy(() => import('./pages/CollagePage'))
 const SystemPage = lazy(() => import('./pages/SystemPage'))
 const BrandKitPage = lazy(() => import('./pages/BrandKitPage'))
+const DiviPage = lazy(() => import('./pages/DiviPage'))
 
 const MORE = [
   { to: '/image', label: 'Image picker' },
@@ -83,6 +84,7 @@ function Header() {
         <NavLink to="/system" className={({ isActive }) => (isActive || location.hash.startsWith('#/brand-kit') ? 'active' : '')}>
           Design system
         </NavLink>
+        <NavLink to="/divi">Divi 5</NavLink>
         <NavLink to="/contrast">Contrast</NavLink>
         <NavLink to="/library">Library</NavLink>
       </nav>
@@ -117,6 +119,7 @@ export default function App() {
                 <Route path="/collage" element={<CollagePage />} />
                 <Route path="/system" element={<SystemPage />} />
                 <Route path="/brand-kit" element={<BrandKitPage />} />
+                <Route path="/divi" element={<DiviPage />} />
                 <Route path="*" element={<Navigate to="/generate" replace />} />
               </Routes>
               </Suspense>
