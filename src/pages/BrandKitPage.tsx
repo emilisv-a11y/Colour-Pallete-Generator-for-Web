@@ -46,7 +46,7 @@ function ColorSpec({ role, hex, big }: { role: RoleKey; hex: string; big?: boole
 export default function BrandKitPage() {
   const { sys, update } = useDesignSystem()
   useEffect(() => {
-    if (sys) loadFonts([sys.fonts.heading, sys.fonts.body])
+    if (sys) loadFonts([sys.fonts.heading, sys.fonts.body], sys.fonts.meta)
   }, [sys?.fonts.heading, sys?.fonts.body]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!sys) {
@@ -65,8 +65,8 @@ export default function BrandKitPage() {
   const light = buildTokens(sys, 'light', scales)
   const dark = buildTokens(sys, 'dark', scales)
   const pairs = checkPairs(light).filter((p) => p.pass && /^(text|on-|primary-text|secondary-text|accent-text)/.test(p.fg) && !/hover|surface-raised/.test(p.bg))
-  const heading = fontStack(sys.fonts.heading)
-  const body = fontStack(sys.fonts.body)
+  const heading = fontStack(sys.fonts.heading, sys.fonts.meta)
+  const body = fontStack(sys.fonts.body, sys.fonts.meta)
 
   return (
     <div className="page brand-kit">
@@ -180,7 +180,7 @@ export default function BrandKitPage() {
             <p style={{ fontFamily: body, fontSize: '1.05rem', margin: '6px 0' }}>
               Body text should be easy to read at 16px or larger, with generous line height and enough contrast against its background.
             </p>
-            <code className="small">{googleFontsUrl([sys.fonts.heading, sys.fonts.body])}</code>
+            <code className="small">{googleFontsUrl([sys.fonts.heading, sys.fonts.body], sys.fonts.meta)}</code>
           </div>
         </div>
         <h3>Type scale</h3>

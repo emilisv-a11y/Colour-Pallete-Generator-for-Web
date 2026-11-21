@@ -29,7 +29,7 @@ function scaleVars(sys: DesignSystem, indent = '  ') {
 }
 
 function fontVars(sys: DesignSystem, indent = '  ') {
-  return `${indent}--font-heading: ${fontStack(sys.fonts.heading)};\n${indent}--font-body: ${fontStack(sys.fonts.body)};\n${indent}--radius: ${sys.radius}px;`
+  return `${indent}--font-heading: ${fontStack(sys.fonts.heading, sys.fonts.meta)};\n${indent}--font-body: ${fontStack(sys.fonts.body, sys.fonts.meta)};\n${indent}--radius: ${sys.radius}px;`
 }
 
 export function exportTokens(sys: DesignSystem, format: TokenFormat): string {
@@ -41,7 +41,7 @@ export function exportTokens(sys: DesignSystem, format: TokenFormat): string {
   switch (format) {
     case 'css':
       return `/* ${header(sys)} */
-/* Fonts: <link rel="stylesheet" href="${googleFontsUrl([sys.fonts.heading, sys.fonts.body])}"> */
+/* Fonts: <link rel="stylesheet" href="${googleFontsUrl([sys.fonts.heading, sys.fonts.body], sys.fonts.meta)}"> */
 :root {
   /* scales */
 ${scaleVars(sys)}
@@ -65,7 +65,7 @@ ${cssBlock(dark)}
   color-scheme: dark;
 }
 
-${exportType(typeOf(sys), 'css', sys.fonts, { heading: fontStack(sys.fonts.heading), body: fontStack(sys.fonts.body) })}`
+${exportType(typeOf(sys), 'css', sys.fonts, { heading: fontStack(sys.fonts.heading, sys.fonts.meta), body: fontStack(sys.fonts.body, sys.fonts.meta) })}`
     case 'scss': {
       const map = (t: Tokens) => names.map((n) => `  '${n}': ${t[n].hex},`).join('\n')
       return `// ${header(sys)}
@@ -83,8 +83,8 @@ $theme-dark: (
 ${map(dark)}
 );
 
-$font-heading: ${fontStack(sys.fonts.heading)};
-$font-body: ${fontStack(sys.fonts.body)};
+$font-heading: ${fontStack(sys.fonts.heading, sys.fonts.meta)};
+$font-body: ${fontStack(sys.fonts.body, sys.fonts.meta)};
 $radius: ${sys.radius}px;
 
 // Usage: @each $name, $value in $theme-light { --#{$name}: #{$value}; }
@@ -99,8 +99,8 @@ $radius: ${sys.radius}px;
 @theme {
 ${ROLE_KEYS.map((r) => scales[r].map((h, i) => `  --color-${r}-${STEPS[i]}: ${h};`).join('\n')).join('\n')}
 
-  --font-heading: ${fontStack(sys.fonts.heading)};
-  --font-body: ${fontStack(sys.fonts.body)};
+  --font-heading: ${fontStack(sys.fonts.heading, sys.fonts.meta)};
+  --font-body: ${fontStack(sys.fonts.body, sys.fonts.meta)};
   --radius-brand: ${sys.radius}px;
 }
 
@@ -204,8 +204,8 @@ $link-color:       ${light['primary-text'].hex};
 $focus-ring-color: rgba(${hexRgb(light['focus-ring'].hex)}, .5);
 $border-radius:    ${sys.radius}px;
 
-$font-family-sans-serif: ${fontStack(sys.fonts.body)};
-$headings-font-family:   ${fontStack(sys.fonts.heading)};
+$font-family-sans-serif: ${fontStack(sys.fonts.body, sys.fonts.meta)};
+$headings-font-family:   ${fontStack(sys.fonts.heading, sys.fonts.meta)};
 
 // Dark colour mode (Bootstrap 5.3+, <html data-bs-theme="dark">)
 $body-bg-dark:          ${dark.bg.hex};

@@ -7,8 +7,8 @@ import { spaceScale, typeScale } from '../../lib/typography'
 export function tokenVars(t: Tokens, sys: DesignSystem): React.CSSProperties {
   const v: Record<string, string> = {}
   allTokenNames().forEach((n) => (v[`--${n}`] = t[n].hex))
-  v['--font-heading'] = fontStack(sys.fonts.heading)
-  v['--font-body'] = fontStack(sys.fonts.body)
+  v['--font-heading'] = fontStack(sys.fonts.heading, sys.fonts.meta)
+  v['--font-body'] = fontStack(sys.fonts.body, sys.fonts.meta)
   v['--radius'] = `${sys.radius}px`
   // fluid type: semantic element sizes from the scale, plus spacing
   const ts = typeOf(sys)

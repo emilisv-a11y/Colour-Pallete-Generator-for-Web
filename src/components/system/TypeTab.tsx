@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { downloadText } from '../../lib/exports'
-import { FONTS, fontStack } from '../../lib/fonts'
+import { fontStack, loadFonts } from '../../lib/fonts'
+import { getFont, loadLibrary, loadPreviewFont, PAIRINGS, previewFamily, type GFont } from '../../lib/googleFonts'
+import { FontLibrary } from '../FontLibrary'
 import { typeOf, type DesignSystem } from '../../lib/system'
 import {
   exportType,
@@ -91,12 +93,42 @@ export function TypeTab({ sys, update }: { sys: DesignSystem; update: (fn: (s: D
   const s = typeOf(sys)
   const [vw, setVw] = useState(1280)
   const [format, setFormat] = useState<TypeFormat>('css')
+  const [picking, setPicking] = useState<'heading' | 'body' | null>(null)
+
+  // Load the library so weights/categories of any chosen font are known, and preview the pairing fonts.
+  useEffect(() => {
+    loadLibrary()
+    PAIRINGS.forEach((p) => {
+      loadPreviewFont(p.heading, p.heading)
+      loadPreviewFont(p.body, `+ ${p.body}same family`)
+    })
+  }, [])
+
+  const metaOf = (f: GFont) => ({ category: f.category, weights: f.weights, italic: f.italic, variable: f.variable })
+  const pickFont = (role: 'heading' | 'body', f: GFont) =>
+    update((x) => {
+      x.fonts[role] = f.family
+      const keep = [x.fonts.heading, x.fonts.body]
+      x.fonts.meta = Object.fromEntries(Object.entries({ ...(x.fonts.meta ?? {}), [f.family]: metaOf(f) }).filter(([k]) => keep.includes(k)))
+    })
+  const applyPair = async (h: string, b: string) => {
+    await loadLibrary()
+    const hf = getFont(h),
+      bf = getFont(b)
+    if (!hf || !bf) return
+    update((x) => {
+      x.fonts.heading = h
+      x.fonts.body = b
+      x.fonts.meta = { [h]: metaOf(hf), [b]: metaOf(bf) }
+    })
+    loadFonts([h, b], { [h]: metaOf(hf), [b]: metaOf(bf) })
+  }
   const set = (patch: Partial<TypeSettings>) => update((x) => void (x.type = { ...typeOf(x), ...patch }))
   const steps = typeScale(s)
   const space = [...spaceScale(s), ...spacePairs(s)]
   const issues = typeIssues(s)
-  const heading = fontStack(sys.fonts.heading)
-  const body = fontStack(sys.fonts.body)
+  const heading = fontStack(sys.fonts.heading, sys.fonts.meta)
+  const body = fontStack(sys.fonts.body, sys.fonts.meta)
   const stacks = { heading, body }
   const code = exportType(s, format, sys.fonts, stacks)
   const maxSpace = Math.max(...space.map((x) => x.max))
@@ -106,22 +138,15 @@ export function TypeTab({ sys, update }: { sys: DesignSystem; update: (fn: (s: D
       <section className="type-card">
         <h2>Fonts &amp; shape</h2>
         <div className="type-grid">
-          <label className="field">
-            <span className="field-label">Heading font</span>
-            <select value={sys.fonts.heading} onChange={(e) => update((x) => void (x.fonts.heading = e.target.value))}>
-              {FONTS.map((f) => (
-                <option key={f.family}>{f.family}</option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            <span className="field-label">Body font</span>
-            <select value={sys.fonts.body} onChange={(e) => update((x) => void (x.fonts.body = e.target.value))}>
-              {FONTS.map((f) => (
-                <option key={f.family}>{f.family}</option>
-              ))}
-            </select>
-          </label>
+          {(['heading', 'body'] as const).map((role) => (
+            <div key={role} className="field">
+              <span className="field-label">{role === 'heading' ? 'Heading font' : 'Body font'}</span>
+              <button className="font-pick-btn" onClick={() => setPicking(role)} style={{ fontFamily: role === 'heading' ? heading : body }}>
+                <span>{sys.fonts[role]}</span>
+                <span className="muted small">Change</span>
+              </button>
+            </div>
+          ))}
           <label className="slider">
             <span className="row space-between">
               <span>Corner radius</span>
@@ -130,6 +155,19 @@ export function TypeTab({ sys, update }: { sys: DesignSystem; update: (fn: (s: D
             <input type="range" min={0} max={28} value={sys.radius} onChange={(e) => update((x) => void (x.radius = Number(e.target.value)))} />
           </label>
         </div>
+        <div className="pairings">
+          <span className="field-label">Pairing ideas</span>
+          <div className="pairing-list">
+            {PAIRINGS.map((p) => (
+              <button key={p.heading + p.body} className="pairing" onClick={() => applyPair(p.heading, p.body)} title={p.note}>
+                <strong style={{ fontFamily: `'${previewFamily(p.heading)}'` }}>{p.heading}</strong>
+                <span style={{ fontFamily: `'${previewFamily(p.body)}'` }}>{p.body === p.heading ? 'same family' : `+ ${p.body}`}</span>
+                <small className="muted">{p.note}</small>
+              </button>
+            ))}
+          </div>
+        </div>
+        {picking && <FontLibrary role={picking} current={sys.fonts[picking]} onClose={() => setPicking(null)} onPick={(f) => (pickFont(picking, f), setPicking(null))} />}
       </section>
 
       <section className="type-card">
