@@ -73,7 +73,7 @@ export default function SystemPage() {
   }
 
   useEffect(() => {
-    if (sys) loadFonts([sys.fonts.heading, sys.fonts.body])
+    if (sys) loadFonts([sys.fonts.heading, sys.fonts.body], sys.fonts.meta)
   }, [sys?.fonts.heading, sys?.fonts.body]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!sys) {

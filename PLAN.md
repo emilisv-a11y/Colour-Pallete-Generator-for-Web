@@ -41,6 +41,7 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [x] Printable brand kit page (print or save as PDF)
 - [x] Font pairing (18 Google Fonts) and corner radius, used in the preview, brand kit and exports
 - [x] Design system saved in sessions and backups
+- [x] Google Fonts library: all 1,908 families built in (search, category, language, variable, sort, live previews), pairing ideas, optional live refresh with a Google Fonts API key; `npm run fonts:update` rebuilds the catalogue
 - [x] Responsive typography: fluid type and spacing scales with clamp() (rem + vw, zoom-safe), viewport preview and chart, WCAG 1.4.4 zoom check, CSS/Tailwind v4/SCSS/JSON export; used in the live preview, token exports and brand kit
 
 ## Phase 4: Divi 5

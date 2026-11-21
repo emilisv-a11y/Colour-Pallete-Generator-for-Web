@@ -1,6 +1,7 @@
 import { contrastRatio, fixContrast, hexToOklch, oklchToHex } from './color'
 import { apcaContrast } from './apca'
 import { DEFAULT_TYPE, type TypeSettings } from './typography'
+import type { FontMeta } from './googleFonts'
 
 /* ============================================================================
    Design system model
@@ -36,7 +37,8 @@ export type DesignSystem = {
   name: string
   roles: Record<RoleKey, SystemRole>
   overrides: Record<Mode, Record<string, string>>
-  fonts: { heading: string; body: string }
+  /** meta: weights/category of the chosen Google Fonts, saved so font URLs stay valid offline */
+  fonts: { heading: string; body: string; meta?: Record<string, FontMeta> }
   radius: number
   notes: string
   /** fluid typography settings (absent in systems saved before this feature) */

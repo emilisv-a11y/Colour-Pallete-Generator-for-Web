@@ -2976,6 +2976,116 @@ textarea {
   }
 }
 
+/* Google Fonts library */
+.font-pick-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 1.05rem;
+  cursor: pointer;
+  text-align: left;
+}
+.font-pick-btn:hover {
+  border-color: var(--text-2);
+}
+.font-pick-btn .small {
+  font-family: var(--font);
+}
+.pairings {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 14px;
+}
+.pairing-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+}
+.pairing {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+}
+.pairing:hover {
+  border-color: var(--text-2);
+}
+.pairing strong {
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+.font-lib-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: -8px;
+  z-index: 2;
+  background: var(--surface);
+  padding: 4px 0 8px;
+}
+.font-lib-controls select {
+  height: 38px;
+  padding-top: 0;
+  padding-bottom: 0;
+  max-width: 100%;
+}
+.font-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.font-row {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.font-row.current {
+  border-color: var(--accent);
+}
+.font-row-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.font-row-head .muted {
+  flex: 1;
+  min-width: 140px;
+}
+.font-preview {
+  margin: 6px 0 0;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.font-lib-source {
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+.api-box {
+  margin-top: 10px;
+  padding: 12px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+}
+
 /* Live preview site (all colours from tokens) */
 .pv-frame {
   border-radius: 16px;
