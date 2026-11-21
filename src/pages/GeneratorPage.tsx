@@ -1,7 +1,7 @@
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core'
 import { horizontalListSortingStrategy, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { AdjustPanel, applyAdjust, ExportModal, HistoryPopover, SaveModal, SessionsModal, ShortcutsModal } from '../components/generator/Panels'
 import { SwatchColumn } from '../components/generator/SwatchColumn'
@@ -178,6 +178,9 @@ export default function GeneratorPage() {
             </select>
           </label>
           <span className="divider" />
+          <Link className="icon-btn" to="/visualize" title="View on sample designs" aria-label="Visualize palette">
+            <Icon name="layout" />
+          </Link>
           <button className="icon-btn" onClick={toggleFullscreen} title="Fullscreen (F)" aria-label="Fullscreen">
             <Icon name="maximize" />
           </button>

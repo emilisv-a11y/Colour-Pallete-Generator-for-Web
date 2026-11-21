@@ -42,6 +42,7 @@ export type Backup = {
   exportedAt: string
   palettes: SavedPalette[]
   sessions: Session[]
+  colors?: SavedColor[]
 }
 
 const KEYS = {
@@ -50,6 +51,7 @@ const KEYS = {
   current: 'd5wt:current',
   activeSession: 'd5wt:activeSession',
   contrast: 'd5wt:contrast',
+  colors: 'd5wt:colors',
   theme: 'd5wt:theme',
 } as const
 
@@ -124,6 +126,17 @@ export function deletePalette(id: string) {
 
 export const getProjects = () => [...new Set(getPalettes().map((p) => p.project).filter(Boolean))].sort()
 
+/* ---------- saved single colours ---------- */
+export type SavedColor = { hex: string; savedAt: number }
+export const getSavedColors = () => read<SavedColor[]>(KEYS.colors, [])
+export const isSavedColor = (hex: string) => getSavedColors().some((c) => c.hex === hex)
+export function toggleSavedColor(hex: string): boolean {
+  const list = getSavedColors()
+  const exists = list.some((c) => c.hex === hex)
+  write(KEYS.colors, exists ? list.filter((c) => c.hex !== hex) : [{ hex, savedAt: Date.now() }, ...list])
+  return !exists
+}
+
 /* ---------- sessions ---------- */
 export const getSessions = () => read<Session[]>(KEYS.sessions, [])
 
@@ -182,7 +195,7 @@ export const setTheme = (t: ThemePref) => write(KEYS.theme, t)
 
 /* ---------- backup ---------- */
 export function makeBackup(): Backup {
-  return { app: 'd5-webtool', version: 1, exportedAt: new Date().toISOString(), palettes: getPalettes(), sessions: getSessions() }
+  return { app: 'd5-webtool', version: 1, exportedAt: new Date().toISOString(), palettes: getPalettes(), sessions: getSessions(), colors: getSavedColors() }
 }
 
 /** Merge a backup into existing data. Items with the same id are replaced. Returns counts. */
@@ -198,6 +211,10 @@ export function importBackup(json: string): { palettes: number; sessions: number
   }
   write(KEYS.palettes, merge(getPalettes(), data.palettes))
   write(KEYS.sessions, merge(getSessions(), data.sessions))
+  if (Array.isArray(data.colors)) {
+    const have = new Set(getSavedColors().map((c) => c.hex))
+    write(KEYS.colors, [...getSavedColors(), ...data.colors.filter((c) => !have.has(c.hex))])
+  }
   return { palettes: data.palettes.length, sessions: data.sessions.length }
 }
 

@@ -32,6 +32,10 @@ const paths = {
   wand: 'M15 4V2M15 10V8M11 6h2M17 6h2M4 20l10-10M13 5l1 1',
   arrowLeft: 'M19 12H5M11 6l-6 6 6 6',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
+  heart: 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z',
+  layout: 'M3 4h18v16H3zM3 10h18M9 10v10',
+  image: 'M3 5h18v14H3zM8 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM21 16l-5-5-9 8',
+  chevronDown: 'M6 9l6 6 6-6',
 } as const
 
 export type IconName = keyof typeof paths

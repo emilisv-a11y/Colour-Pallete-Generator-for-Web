@@ -14,6 +14,7 @@ import {
   type Naming,
 } from '../../lib/exports'
 import { colorName } from '../../lib/names'
+import { paletteAse, palettePdf } from '../../lib/files'
 import {
   deleteSession,
   getActiveSessionId,
@@ -64,7 +65,7 @@ export function ExportModal({ hexes, onClose }: { hexes: string[]; onClose: () =
         onChange={setTab}
         options={[
           { id: 'code', label: 'Code' },
-          { id: 'image', label: 'Image' },
+          { id: 'image', label: 'Image & files' },
           { id: 'link', label: 'Link & embed' },
         ]}
       />
@@ -113,8 +114,14 @@ export function ExportModal({ hexes, onClose }: { hexes: string[]; onClose: () =
             <button className="btn" onClick={() => downloadText(svg, `palette-${paletteSlug(hexes)}.svg`, 'image/svg+xml')}>
               <Icon name="download" size={16} /> SVG
             </button>
+            <button className="btn" onClick={() => downloadBlob(palettePdf(hexes), `palette-${paletteSlug(hexes)}.pdf`)}>
+              <Icon name="download" size={16} /> PDF
+            </button>
+            <button className="btn" onClick={() => downloadBlob(paletteAse(hexes), `palette-${paletteSlug(hexes)}.ase`)} title="Adobe Swatch Exchange: Photoshop, Illustrator, InDesign, Affinity">
+              <Icon name="download" size={16} /> Adobe ASE
+            </button>
           </div>
-          <p className="muted small">PDF and Adobe swatch (ASE) export arrive in Phase 2.</p>
+          <p className="muted small">PDF includes HEX, RGB, CMYK, HSL and OKLCH values. ASE imports into Adobe apps and Affinity as a swatch group. GIMP/Inkscape palettes are under Code → .gpl.</p>
         </div>
       )}
       {tab === 'link' && (
