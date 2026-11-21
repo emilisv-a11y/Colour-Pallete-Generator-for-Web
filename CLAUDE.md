@@ -19,15 +19,15 @@ A colour palette and design-system platform for web design, with extra tools for
 | 3 | Design system: roles, 50–950 scales, light/dark tokens, accessibility (WCAG + APCA), live preview, token exports, brand kit, fluid type (clamp), Google Fonts library (1,908 families) | live |
 | 4 | Divi 5: import file builder (colours, variables, presets), section planner, CSS helpers, checklist | live |
 | Extras | Text-on-image checker (`/text-on-image`) + self-hosted fonts (Design system → Type) | live |
+| Projects | Client projects (header switcher, `/projects`) + handoff ZIP (EN/LT) | live |
 
 The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.md`.
 
-**Recommended next** (the owner picked the first two, which are now done):
-1. Client projects + handoff ZIP (brand kit PDF, Divi JSON, CSS, tokens, fonts, README).
-2. Backend + client review/approval links.
-3. Read a Divi site back into a design system (round trip), with a diff.
-4. More tokens: shadows, borders, motion, button sizes, content widths → Divi variables.
-5. Divi layouts library (needs a sample Divi Library layout export), dark-mode toggle for Divi, gradient background presets (needs a sample preset with a gradient), logo checker, favicon/OG image generator, industry starter kits, version history, command palette, PWA.
+**Recommended next** (text-on-image, self-hosted fonts and client projects + handoff are done):
+1. Backend + client review/approval links.
+2. Read a Divi site back into a design system (round trip), with a diff.
+3. More tokens: shadows, borders, motion, button sizes, content widths → Divi variables.
+4. Divi layouts library (needs a sample Divi Library layout export), dark-mode toggle for Divi, gradient background presets (needs a sample preset with a gradient), logo checker, favicon/OG image generator, industry starter kits, version history, command palette, PWA.
 
 ## Stack and commands
 
@@ -53,6 +53,8 @@ Hosting: GitHub Pages via `.github/workflows/deploy.yml` (runs on push to `main`
 - `src/lib/apca.ts` (APCA 0.0.98G-4g), `typography.ts` (fluid clamp scale + spacing), `tokens.ts` (CSS/SCSS/Tailwind v3/v4/DTCG/Tokens Studio/Bootstrap/JSON exports).
 - `src/lib/googleFonts.ts` (catalogue, popularity, API-key refresh, preview fonts under the private name `d5p-<family>`), `fonts.ts` (`metaFor`, `fontStack`, `googleFontsUrl`: only request weights a family has), `selfHost.ts` (WOFF2 ZIP).
 - `src/lib/divi.ts`: **Divi 5** parse/build/merge, section planner, CSS helpers. See the `divi5-export-format` skill.
+- `src/lib/projects.ts`: **client projects**. Tools use per-project *working keys* in localStorage (`WORKING_KEYS`: system, generator state, Divi data…). `switchProject` saves them into the old project and loads the new one's copy; `ensureProjects()` runs in `main.tsx` before render (migrates old data). `<main>` is keyed by the active project id so pages remount after a switch. Palettes and sessions carry `projectId` (the old free-text `project` field is now shown as "Group").
+- `src/lib/handoff.ts` + `handoffText.ts` (EN/LT strings): handoff ZIP builder; text files are built synchronously (testable), binaries (PDF/ASE/PNG/fonts) are added in the browser. Lithuanian copy was written by Claude: ask the owner to proofread it.
 - `src/lib/imageText.ts`: per-pixel text-on-image contrast, overlays (solid / scrim with hold / box), `findOpacity`.
 - Pages are in `src/pages/*`; the less-used ones are lazy-loaded in `App.tsx`. Tools live under the "Tools" dropdown (`MORE` list in `App.tsx`).
 

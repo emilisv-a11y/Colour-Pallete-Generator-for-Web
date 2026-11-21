@@ -18,6 +18,9 @@ const CollagePage = lazy(() => import('./pages/CollagePage'))
 const SystemPage = lazy(() => import('./pages/SystemPage'))
 const BrandKitPage = lazy(() => import('./pages/BrandKitPage'))
 const DiviPage = lazy(() => import('./pages/DiviPage'))
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
+import { ProjectSwitcher } from './components/projects/ProjectsUI'
+import { getActiveProjectId } from './lib/projects'
 
 const MORE = [
   { to: '/image', label: 'Image picker' },
@@ -90,10 +93,21 @@ function Header() {
         <NavLink to="/contrast">Contrast</NavLink>
         <NavLink to="/library">Library</NavLink>
       </nav>
+      <ProjectSwitcher />
       <button className="icon-btn" onClick={() => setTheme(next.id)} title={`${current.label} (switch to ${next.label.toLowerCase()})`} aria-label={`Switch to ${next.label}`}>
         <Icon name={current.icon} />
       </button>
     </header>
+  )
+}
+
+/** Main area, re-mounted when the active project changes so every page reloads its data. */
+function ProjectMain({ children }: { children: React.ReactNode }) {
+  useStorageVersion()
+  return (
+    <main className="app-main" key={getActiveProjectId() ?? 'none'}>
+      {children}
+    </main>
   )
 }
 
@@ -104,7 +118,7 @@ export default function App() {
         <GeneratorProvider>
           <div className="app">
             <Header />
-            <main className="app-main">
+            <ProjectMain>
               <Suspense fallback={<div className="page muted">Loading…</div>}>
               <Routes>
                 <Route path="/" element={<Navigate to="/generate" replace />} />
@@ -123,10 +137,11 @@ export default function App() {
                 <Route path="/system" element={<SystemPage />} />
                 <Route path="/brand-kit" element={<BrandKitPage />} />
                 <Route path="/divi" element={<DiviPage />} />
+                <Route path="/projects" element={<ProjectsPage />} />
                 <Route path="*" element={<Navigate to="/generate" replace />} />
               </Routes>
               </Suspense>
-            </main>
+            </ProjectMain>
           </div>
         </GeneratorProvider>
       </ToastProvider>

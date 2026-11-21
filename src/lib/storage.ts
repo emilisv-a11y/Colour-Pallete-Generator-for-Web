@@ -12,7 +12,10 @@ export type SavedPalette = {
   id: string
   name: string
   colors: string[]
+  /** free-text group label shown in the Library */
   project: string
+  /** client project this palette belongs to */
+  projectId?: string
   createdAt: number
   updatedAt: number
 }
@@ -33,6 +36,8 @@ export type Session = {
   createdAt: number
   updatedAt: number
   generator: GeneratorSnapshot
+  /** client project this session belongs to */
+  projectId?: string
   /** Free-form slot for later phases (contrast checker pairs, roles, Divi settings...). */
   extra: Record<string, unknown>
 }
@@ -44,6 +49,7 @@ export type Backup = {
   palettes: SavedPalette[]
   sessions: Session[]
   colors?: SavedColor[]
+  projects?: unknown[]
 }
 
 const KEYS = {
@@ -62,7 +68,7 @@ export const uid = () =>
     ? crypto.randomUUID()
     : Math.random().toString(36).slice(2) + Date.now().toString(36)
 
-function read<T>(key: string, fallback: T): T {
+export function read<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key)
     return raw ? (JSON.parse(raw) as T) : fallback
@@ -71,7 +77,7 @@ function read<T>(key: string, fallback: T): T {
   }
 }
 
-function write(key: string, value: unknown) {
+export function write(key: string, value: unknown) {
   try {
     localStorage.setItem(key, JSON.stringify(value))
   } catch (e) {
@@ -114,7 +120,7 @@ export function savePalette(p: Omit<SavedPalette, 'id' | 'createdAt' | 'updatedA
   if (existing) {
     Object.assign(existing, p, { updatedAt: now })
   } else {
-    list.unshift({ ...p, id: p.id ?? uid(), createdAt: now, updatedAt: now })
+    list.unshift({ ...p, projectId: p.projectId ?? activeProjectId() ?? undefined, id: p.id ?? uid(), createdAt: now, updatedAt: now })
   }
   write(KEYS.palettes, list)
 }
@@ -126,7 +132,10 @@ export function deletePalette(id: string) {
   )
 }
 
-export const getProjects = () => [...new Set(getPalettes().map((p) => p.project).filter(Boolean))].sort()
+export const getPaletteGroups = () => [...new Set(getPalettes().map((p) => p.project).filter(Boolean))].sort()
+
+/** Id of the active client project (kept here to avoid an import cycle with projects.ts). */
+export const activeProjectId = () => read<string | null>('d5wt:activeProject', null)
 
 /* ---------- saved single colours ---------- */
 export type SavedColor = { hex: string; savedAt: number }
@@ -155,7 +164,7 @@ export function saveSession(s: Omit<Session, 'createdAt' | 'updatedAt' | 'id'> &
     saved = { ...list[idx], ...s, id: list[idx].id, updatedAt: now }
     list[idx] = saved
   } else {
-    saved = { ...s, id: s.id ?? uid(), createdAt: now, updatedAt: now }
+    saved = { ...s, projectId: s.projectId ?? activeProjectId() ?? undefined, id: s.id ?? uid(), createdAt: now, updatedAt: now }
     list.unshift(saved)
   }
   write(KEYS.sessions, list)
@@ -201,7 +210,7 @@ export const setTheme = (t: ThemePref) => write(KEYS.theme, t)
 
 /* ---------- backup ---------- */
 export function makeBackup(): Backup {
-  return { app: 'd5-webtool', version: 1, exportedAt: new Date().toISOString(), palettes: getPalettes(), sessions: getSessions(), colors: getSavedColors() }
+  return { app: 'd5-webtool', version: 1, exportedAt: new Date().toISOString(), palettes: getPalettes(), sessions: getSessions(), colors: getSavedColors(), projects: read<unknown[]>('d5wt:projects', []) }
 }
 
 /** Merge a backup into existing data. Items with the same id are replaced. Returns counts. */
@@ -217,6 +226,12 @@ export function importBackup(json: string): { palettes: number; sessions: number
   }
   write(KEYS.palettes, merge(getPalettes(), data.palettes))
   write(KEYS.sessions, merge(getSessions(), data.sessions))
+  if (Array.isArray(data.projects)) {
+    // merge by id; the active project's live working data stays as it is
+    const map = new Map(read<{ id: string }[]>('d5wt:projects', []).map((p) => [p.id, p]))
+    ;(data.projects as { id: string }[]).filter((p) => p && typeof p.id === 'string').forEach((p) => map.set(p.id, p))
+    write('d5wt:projects', [...map.values()])
+  }
   if (Array.isArray(data.colors)) {
     const have = new Set(getSavedColors().map((c) => c.hex))
     write(KEYS.colors, [...getSavedColors(), ...data.colors.filter((c) => !have.has(c.hex))])
