@@ -31,6 +31,17 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 - **Collage & moodboard:** images plus a palette band, in several layouts and sizes, exported as PNG.
 - **Tailwind colours:** the default palette, copyable as HEX, class, CSS variable or OKLCH, plus a nearest-Tailwind-colour finder.
 
+## Phase 3 features (Design system)
+
+- **Roles:** primary, secondary, accent, neutral and four status colours, assigned automatically from the generator palette and editable.
+- **Scales:** each role becomes an 11-step 50–950 scale in OKLCH. You choose which step your exact brand colour sits on.
+- **Tokens:** light and dark semantic tokens (`bg`, `surface`, `text`, `primary`, `on-primary`, `primary-hover`, `primary-subtle`, `focus-ring`…), picked so text pairs pass WCAG 2.2 AA. Any token can be overridden.
+- **Accessibility:** 43 promised pairs checked with WCAG 2.2 or APCA, one-click fixes, and a full contrast matrix.
+- **Preview:** a realistic website with working hover/active/focus/disabled states, light and dark mode, and a measured 60-30-10 colour balance.
+- **Export:** CSS variables (light + dark), SCSS, Tailwind v4/v3, W3C Design Tokens, Tokens Studio for Figma, Bootstrap 5.3, JSON.
+- **Brand kit:** a printable brand-guidelines page (print or save as PDF).
+- **Fonts & radius:** heading/body Google Fonts pairing and corner radius, carried into the preview, brand kit and exports.
+
 Data is stored in the browser's `localStorage`. The data shapes are plain JSON so a backend can be added later.
 
 ## Development

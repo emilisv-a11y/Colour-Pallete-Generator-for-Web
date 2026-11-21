@@ -1,6 +1,7 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import type { FormatId, VisionId } from './color'
 import type { ModeId } from './generate'
+import type { DesignSystem } from './system'
 
 /* All persistence lives in localStorage for now. The shapes below are deliberately
    plain JSON so they can later be synced to a backend without migration pain. */
@@ -52,6 +53,7 @@ const KEYS = {
   activeSession: 'd5wt:activeSession',
   contrast: 'd5wt:contrast',
   colors: 'd5wt:colors',
+  system: 'd5wt:system',
   theme: 'd5wt:theme',
 } as const
 
@@ -136,6 +138,10 @@ export function toggleSavedColor(hex: string): boolean {
   write(KEYS.colors, exists ? list.filter((c) => c.hex !== hex) : [{ hex, savedAt: Date.now() }, ...list])
   return !exists
 }
+
+/* ---------- design system ---------- */
+export const getSystem = () => read<DesignSystem | null>(KEYS.system, null)
+export const setSystem = (s: DesignSystem | null) => write(KEYS.system, s)
 
 /* ---------- sessions ---------- */
 export const getSessions = () => read<Session[]>(KEYS.sessions, [])

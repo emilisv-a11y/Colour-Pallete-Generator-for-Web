@@ -19,6 +19,7 @@ import {
   makeBackup,
   savePalette,
   saveSession,
+  setSystem,
   useStorageVersion,
   type SavedPalette,
 } from '../lib/storage'
@@ -210,6 +211,7 @@ export default function LibraryPage() {
                     onClick={() => {
                       if (s.id !== activeId && !confirm(`Load “${s.name}”? Your current working palette and history will be replaced.`)) return
                       gen.loadSnapshot(s.generator)
+                      if (s.extra?.system) setSystem(s.extra.system as never)
                       saveSession({ ...s })
                       navigate(`/generate/${paletteSlug(s.generator.present.map((x) => x.hex))}`)
                     }}
