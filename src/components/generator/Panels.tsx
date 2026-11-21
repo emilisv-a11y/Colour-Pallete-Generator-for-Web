@@ -18,7 +18,8 @@ import { paletteAse, palettePdf } from '../../lib/files'
 import {
   deleteSession,
   getActiveSessionId,
-  getProjects,
+  getPaletteGroups,
+  activeProjectId,
   getSessions,
   getSystem,
   importBackup,
@@ -162,7 +163,7 @@ export function SaveModal({ hexes, onClose }: { hexes: string[]; onClose: () => 
     .join(' & ')
   const [name, setName] = useState(defaultName || 'Untitled palette')
   const [project, setProject] = useState('')
-  const projects = getProjects()
+  const projects = getPaletteGroups()
   const save = () => {
     savePalette({ name: name.trim() || 'Untitled palette', project: project.trim(), colors: hexes })
     toast('Palette saved to Library')
@@ -196,7 +197,7 @@ export function SaveModal({ hexes, onClose }: { hexes: string[]; onClose: () => 
           <input value={name} onChange={(e) => setName(e.target.value)} />
         </label>
         <label className="field">
-          <span className="field-label">Project (optional)</span>
+          <span className="field-label">Group (optional)</span>
           <input value={project} onChange={(e) => setProject(e.target.value)} list="project-list" placeholder="e.g. Client website" />
           <datalist id="project-list">
             {projects.map((p) => (
@@ -216,7 +217,8 @@ export function SessionsModal({ onClose }: { onClose: () => void }) {
   useStorageVersion()
   const gen = useGenerator()
   const toast = useToast()
-  const sessions = getSessions()
+  const projectId = activeProjectId()
+  const sessions = getSessions().filter((s) => !projectId || s.projectId === projectId)
   const activeId = getActiveSessionId()
   const active = sessions.find((s) => s.id === activeId)
   const [name, setName] = useState('')

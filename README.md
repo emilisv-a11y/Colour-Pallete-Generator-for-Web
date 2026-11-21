@@ -59,6 +59,11 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 - **Text on image checker** (Tools): upload a hero image, position the text, and see the worst-case contrast of every pixel behind it, with a heatmap of failing pixels and desktop/tablet/phone crops. One click finds the lightest solid overlay, edge scrim or text panel that passes WCAG AA for white or black text, with CSS and Divi steps.
 - **Self-hosted fonts** (Design system → Type): download the chosen Google Fonts as a ZIP of WOFF2 files, with `@font-face` CSS and step-by-step Divi instructions, so visitors' browsers never contact Google (EU privacy). Pick weights, italics and languages (e.g. Latin Extended for Lithuanian); file sizes are shown first.
 
+## Client projects & handoff
+
+- **Projects:** one per client, each with its own design system, palettes, sessions and Divi settings, plus client name, website, notes and status. Switch projects from the header; manage them on the Projects page (duplicate, archive, delete).
+- **Handoff ZIP:** one download per project for the client or developer, in English or Lithuanian: a README with Divi install steps, standalone brand guidelines (open in a browser, print to PDF), palette files (PDF, Adobe ASE, GIMP, PNG, SVG), design tokens, fluid typography, Divi 5 import file + CSS + section plan, and self-hosted fonts. Choose what to include and see the size first.
+
 Data is stored in the browser's `localStorage`. The data shapes are plain JSON so a backend can be added later.
 
 ## Development

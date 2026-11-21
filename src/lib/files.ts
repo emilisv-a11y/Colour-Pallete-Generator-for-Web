@@ -58,9 +58,10 @@ function pdfText(s: string) {
   // Standard Helvetica uses WinAnsi; replace anything outside Latin-1 and escape PDF specials.
   return s
     .replace(/[\u2018\u2019]/g, "'")
-    .replace(/[\u201c\u201d]/g, '"')
+    .replace(/[\u201c\u201d\u201e]/g, '"')
     .replace(/[\u2013\u2014]/g, '-')
-    .replace(/[^\x20-\xff]/g, '?').replace(/([\\()])/g, '\\$1')
+    // letters outside Latin-1 (e.g. Lithuanian ą, č, ė) lose their accent rather than becoming "?"
+    .replace(/[^\x20-\xff]/g, (ch) => ch.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^\x20-\xff]/g, '') || '?').replace(/([\\()])/g, '\\$1')
 }
 
 /** A landscape A4 PDF: big swatches plus a table of values for each colour. */

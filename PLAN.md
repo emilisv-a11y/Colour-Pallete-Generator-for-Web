@@ -59,5 +59,10 @@ Built from a real Divi 5 presets export (same file structure, `$variable(...)$` 
 - [x] Text on image checker: measures every pixel behind the text, failing-pixel heatmap, desktop/tablet/phone crops, finds the lightest solid overlay, edge scrim (with hold) or text panel for white or black text; CSS and Divi steps
 - [x] Self-hosted fonts: choose weights, italics and languages; merges variable-font files; sizes; ZIP with WOFF2 files, @font-face CSS and Divi README (no requests to Google)
 
+## Client projects + handoff ✅
+- [x] Projects: one per client with its own design system, palettes, sessions, Divi export/options/section plan and checklist; client, website, notes, status (Draft → In progress → Ready for handoff → Done), archive, duplicate, delete
+- [x] Header project switcher; existing work moved into "My first project" on first run; Library and Sessions scoped to the open project; projects in backups
+- [x] Handoff ZIP (English or Lithuanian): README.html with install steps, standalone brand-kit.html (prints to PDF), palette PDF/ASE/GPL/PNG/SVG, design tokens, fluid typography, Divi 5 import + CSS + section plan, self-hosted WOFF2 fonts; size estimate; verified offline with zero requests to Google
+
 ## Later: backend
 - Sync palettes and sessions across devices. Hostinger Business (PHP + MySQL) or Cloudflare (Workers + D1) are both options.

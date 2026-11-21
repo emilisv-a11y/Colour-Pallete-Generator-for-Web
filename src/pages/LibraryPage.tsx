@@ -11,7 +11,7 @@ import {
   deleteSession,
   getActiveSessionId,
   getPalettes,
-  getProjects,
+  getPaletteGroups,
   getSavedColors,
   getSessions,
   toggleSavedColor,
@@ -24,6 +24,7 @@ import {
   type SavedPalette,
 } from '../lib/storage'
 import { useGenerator } from '../state/GeneratorContext'
+import { getActiveProject, getActiveProjectId, syncActive } from '../lib/projects'
 
 export default function LibraryPage() {
   useStorageVersion()
@@ -33,14 +34,17 @@ export default function LibraryPage() {
   const gen = useGenerator()
   const [tab, setTab] = useState<'palettes' | 'colors' | 'sessions'>('palettes')
   const [project, setProject] = useState('')
+  const [scope, setScope] = useState<'project' | 'all'>('project')
+  const currentProject = getActiveProject()
+  const inScope = (x: { projectId?: string }) => scope === 'all' || x.projectId === getActiveProjectId()
   const [q, setQ] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
   const palettes = getPalettes().filter(
-    (p) => (!project || p.project === project) && (!q || `${p.name} ${p.project} ${p.colors.join(' ')}`.toLowerCase().includes(q.toLowerCase())),
+    (p) => inScope(p) && (!project || p.project === project) && (!q || `${p.name} ${p.project} ${p.colors.join(' ')}`.toLowerCase().includes(q.toLowerCase())),
   )
-  const sessions = getSessions().filter((s) => !q || `${s.name} ${s.notes}`.toLowerCase().includes(q.toLowerCase()))
-  const projects = getProjects()
+  const sessions = getSessions().filter((s) => inScope(s) && (!q || `${s.name} ${s.notes}`.toLowerCase().includes(q.toLowerCase())))
+  const projects = getPaletteGroups()
   const activeId = getActiveSessionId()
   const { name: colorName } = useColorNames()
   const savedColors = getSavedColors().filter((c) => !q || `${c.hex} ${colorName(c.hex)}`.toLowerCase().includes(q.toLowerCase()))
@@ -48,7 +52,7 @@ export default function LibraryPage() {
   const rename = (p: SavedPalette) => {
     const name = prompt('Palette name', p.name)
     if (name === null) return
-    const proj = prompt('Project (leave empty for none)', p.project)
+    const proj = prompt('Group (leave empty for none)', p.project)
     savePalette({ ...p, name: name.trim() || p.name, project: (proj ?? p.project).trim() })
   }
 
@@ -60,7 +64,7 @@ export default function LibraryPage() {
           <p className="muted">Everything is stored in this browser. Download a backup to move it to another computer.</p>
         </div>
         <div className="row wrap">
-          <button className="btn" onClick={() => downloadText(JSON.stringify(makeBackup(), null, 2), `d5-webtool-backup-${new Date().toISOString().slice(0, 10)}.json`, 'application/json')}>
+          <button className="btn" onClick={() => (syncActive(gen.snapshot()), downloadText(JSON.stringify(makeBackup(), null, 2), `d5-webtool-backup-${new Date().toISOString().slice(0, 10)}.json`, 'application/json'))}>
             <Icon name="download" size={16} /> Download backup
           </button>
           <button className="btn" onClick={() => fileRef.current?.click()}>
@@ -92,18 +96,24 @@ export default function LibraryPage() {
           value={tab}
           onChange={setTab}
           options={[
-            { id: 'palettes', label: `Palettes (${getPalettes().length})` },
+            { id: 'palettes', label: `Palettes (${getPalettes().filter(inScope).length})` },
             { id: 'colors', label: `Colours (${getSavedColors().length})` },
-            { id: 'sessions', label: `Sessions (${getSessions().length})` },
+            { id: 'sessions', label: `Sessions (${getSessions().filter(inScope).length})` },
           ]}
         />
         <label className="color-search grow">
           <Icon name="search" size={16} />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name, project or hex" aria-label="Search library" />
         </label>
+        {tab !== 'colors' && (
+          <select value={scope} onChange={(e) => setScope(e.target.value as 'project' | 'all')} aria-label="Which project">
+            <option value="project">{currentProject ? `Project: ${currentProject.name}` : 'This project'}</option>
+            <option value="all">All projects</option>
+          </select>
+        )}
         {tab === 'palettes' && projects.length > 0 && (
-          <select value={project} onChange={(e) => setProject(e.target.value)} aria-label="Filter by project">
-            <option value="">All projects</option>
+          <select value={project} onChange={(e) => setProject(e.target.value)} aria-label="Filter by group">
+            <option value="">All groups</option>
             {projects.map((p) => (
               <option key={p}>{p}</option>
             ))}

@@ -144,3 +144,9 @@ export function paletteReducer(state: PaletteState, action: PaletteAction): Pale
       return { ...action.state, editing: false }
   }
 }
+
+/** A brand-new generator state (random palette, default settings) for a fresh project. */
+export function freshSnapshot(): import('../lib/storage').GeneratorSnapshot {
+  const s = initialState()
+  return { present: s.present, past: [], future: [], mode: 'auto', format: 'hex', vision: 'normal' }
+}
