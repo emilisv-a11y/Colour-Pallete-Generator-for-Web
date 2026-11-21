@@ -194,7 +194,7 @@ export function Segmented<T extends string>({
   return (
     <div className="segmented" role="radiogroup" aria-label={label}>
       {options.map((o) => (
-        <button key={o.id} role="radio" aria-checked={value === o.id} className={value === o.id ? 'on' : ''} onClick={() => onChange(o.id)}>
+        <button key={o.id} type="button" role="radio" aria-checked={value === o.id} className={value === o.id ? 'on' : ''} onClick={() => onChange(o.id)}>
           {o.label}
         </button>
       ))}

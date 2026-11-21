@@ -64,6 +64,16 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 - **Projects:** one per client, each with its own design system, palettes, sessions and Divi settings, plus client name, website, notes and status. Switch projects from the header; manage them on the Projects page (duplicate, archive, delete).
 - **Handoff ZIP:** one download per project for the client or developer, in English or Lithuanian: a README with Divi install steps, standalone brand guidelines (open in a browser, print to PDF), palette files (PDF, Adobe ASE, GIMP, PNG, SVG), design tokens, fluid typography, Divi 5 import file + CSS + section plan, and self-hosted fonts. Choose what to include and see the size first.
 
+## Server features (your own domain on Hostinger)
+
+When the app runs on your own domain with the included PHP server (setup guide: [docs/HOSTINGER.md](docs/HOSTINGER.md)):
+
+- **Sign in & sync:** projects, palettes, sessions and saved colours sync between computers. The app still works offline; changes sync when you're back.
+- **Team:** the owner adds teammates, who share the same projects.
+- **Client review links:** a private link (optional PIN and expiry) where the client sees the brand guidelines, the website preview in light and dark mode and colour options, comments, picks a favourite and approves. In English or Lithuanian. You see the feedback and reply from the project.
+
+On GitHub Pages (no server) these features are hidden and everything stays in the browser.
+
 Data is stored in the browser's `localStorage`. The data shapes are plain JSON so a backend can be added later.
 
 ## Development

@@ -54,7 +54,7 @@ function measureCoverage(root: HTMLElement, tokens: Tokens): Record<Bucket, numb
   return { ...buckets, byToken: [...area.entries()].map(([n, a]) => [n, a / total] as [string, number]).sort((a, b) => b[1] - a[1]) }
 }
 
-function Site() {
+export function Site() {
   return (
     <div className="pv-site">
       <nav className="pv-nav">
