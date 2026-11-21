@@ -6,4 +6,6 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   base: './',
   plugins: [react()],
+  // `npm run dev` talks to a local PHP API (server/dev/start.sh) at the same /api path used in production
+  server: { proxy: { '/api': 'http://127.0.0.1:8080' } },
 })

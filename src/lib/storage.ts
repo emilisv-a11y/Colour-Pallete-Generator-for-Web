@@ -125,7 +125,19 @@ export function savePalette(p: Omit<SavedPalette, 'id' | 'createdAt' | 'updatedA
   write(KEYS.palettes, list)
 }
 
+/* ---------- deletion markers, so deletes reach other devices when syncing ---------- */
+export type Tombstone = { kind: 'project' | 'palette' | 'session'; id: string; at: number }
+export const getTombstones = () => read<Tombstone[]>('d5wt:tombstones', [])
+export function addTombstone(kind: Tombstone['kind'], id: string) {
+  try {
+    localStorage.setItem('d5wt:tombstones', JSON.stringify([...getTombstones().filter((t) => !(t.kind === kind && t.id === id)), { kind, id, at: Date.now() }].slice(-500)))
+  } catch {
+    /* ignore */
+  }
+}
+
 export function deletePalette(id: string) {
+  addTombstone('palette', id)
   write(
     KEYS.palettes,
     getPalettes().filter((p) => p.id !== id),
@@ -144,6 +156,11 @@ export const isSavedColor = (hex: string) => getSavedColors().some((c) => c.hex 
 export function toggleSavedColor(hex: string): boolean {
   const list = getSavedColors()
   const exists = list.some((c) => c.hex === hex)
+  try {
+    localStorage.setItem('d5wt:colorsUpdated', String(Date.now()))
+  } catch {
+    /* ignore */
+  }
   write(KEYS.colors, exists ? list.filter((c) => c.hex !== hex) : [{ hex, savedAt: Date.now() }, ...list])
   return !exists
 }
@@ -173,6 +190,7 @@ export function saveSession(s: Omit<Session, 'createdAt' | 'updatedAt' | 'id'> &
 }
 
 export function deleteSession(id: string) {
+  addTombstone('session', id)
   write(
     KEYS.sessions,
     getSessions().filter((s) => s.id !== id),

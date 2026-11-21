@@ -1,0 +1,78 @@
+-- D5 WebTool database schema (MySQL 5.7+ / MariaDB 10.3+, utf8mb4).
+-- Created automatically by setup.php; kept here for reference and manual installs.
+
+CREATE TABLE IF NOT EXISTS d5_users (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(190) NOT NULL UNIQUE,
+  name VARCHAR(120) NOT NULL DEFAULT '',
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('owner','member') NOT NULL DEFAULT 'member',
+  must_change_password TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_login DATETIME NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS d5_tokens (
+  token_hash CHAR(64) NOT NULL PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  expires_at DATETIME NOT NULL,
+  INDEX (user_id),
+  FOREIGN KEY (user_id) REFERENCES d5_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS d5_rate (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  bucket VARCHAR(190) NOT NULL,
+  at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX (bucket, at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Shared workspace: projects, palettes, sessions and settings, synced last-write-wins per item.
+CREATE TABLE IF NOT EXISTS d5_items (
+  kind VARCHAR(20) NOT NULL,
+  id VARCHAR(64) NOT NULL,
+  data LONGTEXT NULL,
+  updated_at BIGINT NOT NULL,
+  deleted TINYINT(1) NOT NULL DEFAULT 0,
+  seq BIGINT UNSIGNED NOT NULL,
+  updated_by INT UNSIGNED NULL,
+  PRIMARY KEY (kind, id),
+  INDEX (seq)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS d5_counter (
+  name VARCHAR(20) NOT NULL PRIMARY KEY,
+  value BIGINT UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS d5_reviews (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  token VARCHAR(64) NOT NULL UNIQUE,
+  project_id VARCHAR(64) NOT NULL,
+  title VARCHAR(190) NOT NULL DEFAULT '',
+  lang VARCHAR(5) NOT NULL DEFAULT 'en',
+  snapshot LONGTEXT NOT NULL,
+  pin_hash VARCHAR(255) NULL,
+  expires_at DATETIME NULL,
+  active TINYINT(1) NOT NULL DEFAULT 1,
+  created_by INT UNSIGNED NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  views INT UNSIGNED NOT NULL DEFAULT 0,
+  last_viewed DATETIME NULL,
+  INDEX (project_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS d5_review_events (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  review_id INT UNSIGNED NOT NULL,
+  kind ENUM('comment','choice','approve') NOT NULL,
+  item VARCHAR(64) NOT NULL DEFAULT 'general',
+  author VARCHAR(120) NOT NULL DEFAULT '',
+  from_owner TINYINT(1) NOT NULL DEFAULT 0,
+  body TEXT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX (review_id),
+  FOREIGN KEY (review_id) REFERENCES d5_reviews(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { HandoffModal, ProjectModal, statusLabel, useSwitchProject } from '../components/projects/ProjectsUI'
+import { ClientReviewModal } from '../components/projects/ClientReview'
+import { useSync } from '../state/SyncContext'
 import { Segmented, useToast } from '../components/ui'
 import { deleteProject, duplicateProject, getActiveProjectId, getProjectList, projectGenerator, projectSystem, STATUSES, updateProject, type Project, type ProjectStatus } from '../lib/projects'
 import { getPalettes, getSessions, useStorageVersion } from '../lib/storage'
@@ -23,6 +25,8 @@ export default function ProjectsPage() {
   const [view, setView] = useState<'active' | 'archived'>('active')
   const [editing, setEditing] = useState<Project | null | 'new'>(null)
   const [handoff, setHandoff] = useState<Project | null>(null)
+  const [review, setReview] = useState<Project | null>(null)
+  const sync = useSync()
   const activeId = getActiveProjectId()
   const all = getProjectList()
   const list = all.filter((p) => (view === 'archived' ? p.archived : !p.archived)).sort((a, b) => (a.id === activeId ? -1 : b.id === activeId ? 1 : b.updatedAt - a.updatedAt))
@@ -99,6 +103,11 @@ export default function ProjectsPage() {
                   <button className="btn btn-small" onClick={() => setHandoff(p)} title="Download the client handoff package">
                     <Icon name="download" size={14} /> Handoff ZIP
                   </button>
+                  {sync.available && (
+                    <button className="btn btn-small" onClick={() => setReview(p)} title="Private link for client comments and approval">
+                      <Icon name="share" size={14} /> Client review
+                    </button>
+                  )}
                   <button className="icon-btn" onClick={() => setEditing(p)} title="Edit details" aria-label={`Edit ${p.name}`}>
                     <Icon name="edit" size={16} />
                   </button>
@@ -146,6 +155,7 @@ export default function ProjectsPage() {
 
       {editing && <ProjectModal project={editing === 'new' ? undefined : editing} onClose={() => setEditing(null)} />}
       {handoff && <HandoffModal project={handoff} onClose={() => setHandoff(null)} />}
+      {review && <ClientReviewModal project={review} onClose={() => setReview(null)} />}
       <p className="muted small">Status: {STATUSES.map((s) => statusLabel(s.id)).join(' → ')}. Downloading a handoff package moves Draft and In progress projects to “Ready for handoff”.</p>
     </div>
   )

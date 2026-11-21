@@ -6,7 +6,7 @@
    and loads the new project's copy, so every tool keeps working unchanged.
    ========================================================================== */
 
-import { getPalettes, getSessions, read, uid, write, type GeneratorSnapshot } from './storage'
+import { addTombstone, getPalettes, getSessions, read, uid, write, type GeneratorSnapshot } from './storage'
 import type { DesignSystem } from './system'
 
 export const PROJECTS_KEY = 'd5wt:projects'
@@ -82,6 +82,19 @@ export function updateProject(id: string, patch: Partial<Omit<Project, 'id' | 'c
   saveList(getProjectList().map((p) => (p.id === id ? { ...p, ...patch, updatedAt: Date.now() } : p)))
 }
 
+/** Copy the live working keys into the active project only if they changed (keeps `updatedAt` meaningful for sync). */
+export function syncActiveIfChanged(generator?: GeneratorSnapshot | null): boolean {
+  const id = getActiveProjectId()
+  if (!id) return false
+  const list = getProjectList()
+  const p = list.find((x) => x.id === id)
+  if (!p) return false
+  const data = snapshotWorking(generator)
+  if (JSON.stringify(data) === JSON.stringify(p.data)) return false
+  saveList(list.map((x) => (x.id === id ? { ...x, data, updatedAt: Date.now() } : x)))
+  return true
+}
+
 /** Copy the live working keys into the active project (e.g. before a backup or handoff). */
 export function syncActive(generator?: GeneratorSnapshot | null) {
   const id = getActiveProjectId()
@@ -133,6 +146,7 @@ export function duplicateProject(id: string, generator?: GeneratorSnapshot | nul
 /** Delete a project. Its palettes and sessions are kept but no longer belong to a project. */
 export function deleteProject(id: string) {
   if (id === getActiveProjectId()) throw new Error('Switch to another project before deleting this one.')
+  addTombstone('project', id)
   saveList(getProjectList().filter((p) => p.id !== id))
   write(
     'd5wt:palettes',

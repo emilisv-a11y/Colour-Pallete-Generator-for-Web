@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# server secrets (written by setup.php on the host)
+server/api/config.php

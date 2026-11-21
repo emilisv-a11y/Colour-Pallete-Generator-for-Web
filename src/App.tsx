@@ -19,6 +19,10 @@ const SystemPage = lazy(() => import('./pages/SystemPage'))
 const BrandKitPage = lazy(() => import('./pages/BrandKitPage'))
 const DiviPage = lazy(() => import('./pages/DiviPage'))
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
+const AccountPage = lazy(() => import('./pages/AccountPage'))
+const ReviewPage = lazy(() => import('./pages/ReviewPage'))
+import { AccountButton } from './components/account/AccountButton'
+import { SyncProvider } from './state/SyncContext'
 import { ProjectSwitcher } from './components/projects/ProjectsUI'
 import { getActiveProjectId } from './lib/projects'
 
@@ -94,6 +98,7 @@ function Header() {
         <NavLink to="/library">Library</NavLink>
       </nav>
       <ProjectSwitcher />
+      <AccountButton />
       <button className="icon-btn" onClick={() => setTheme(next.id)} title={`${current.label} (switch to ${next.label.toLowerCase()})`} aria-label={`Switch to ${next.label}`}>
         <Icon name={current.icon} />
       </button>
@@ -111,11 +116,27 @@ function ProjectMain({ children }: { children: React.ReactNode }) {
   )
 }
 
+/** Client review links render on their own, without the app's navigation. */
+function Shell({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation()
+  if (pathname.startsWith('/review/'))
+    return (
+      <Suspense fallback={<div className="page muted">Loading…</div>}>
+        <Routes>
+          <Route path="/review/:token" element={<ReviewPage />} />
+        </Routes>
+      </Suspense>
+    )
+  return <>{children}</>
+}
+
 export default function App() {
   return (
     <HashRouter>
       <ToastProvider>
         <GeneratorProvider>
+          <SyncProvider>
+          <Shell>
           <div className="app">
             <Header />
             <ProjectMain>
@@ -138,11 +159,14 @@ export default function App() {
                 <Route path="/brand-kit" element={<BrandKitPage />} />
                 <Route path="/divi" element={<DiviPage />} />
                 <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/account" element={<AccountPage />} />
                 <Route path="*" element={<Navigate to="/generate" replace />} />
               </Routes>
               </Suspense>
             </ProjectMain>
           </div>
+          </Shell>
+          </SyncProvider>
         </GeneratorProvider>
       </ToastProvider>
     </HashRouter>

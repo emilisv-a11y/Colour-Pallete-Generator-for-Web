@@ -20,14 +20,14 @@ A colour palette and design-system platform for web design, with extra tools for
 | 4 | Divi 5: import file builder (colours, variables, presets), section planner, CSS helpers, checklist | live |
 | Extras | Text-on-image checker (`/text-on-image`) + self-hosted fonts (Design system → Type) | live |
 | Projects | Client projects (header switcher, `/projects`) + handoff ZIP (EN/LT) | live |
+| Backend | PHP/MySQL API on Hostinger Business: sign-in, team, sync, client review links (`#/review/<token>`) | code merged = deployed to GitHub Pages (cloud features hidden there); goes live on the owner's domain after they follow `docs/HOSTINGER.md` (secrets + setup.php). Check with the owner whether that's done. |
 
 The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.md`.
 
-**Recommended next** (text-on-image, self-hosted fonts and client projects + handoff are done):
-1. Backend + client review/approval links.
-2. Read a Divi site back into a design system (round trip), with a diff.
-3. More tokens: shadows, borders, motion, button sizes, content widths → Divi variables.
-4. Divi layouts library (needs a sample Divi Library layout export), dark-mode toggle for Divi, gradient background presets (needs a sample preset with a gradient), logo checker, favicon/OG image generator, industry starter kits, version history, command palette, PWA.
+**Recommended next** (text-on-image, self-hosted fonts, projects + handoff and the backend are done):
+1. Read a Divi site back into a design system (round trip), with a diff.
+2. More tokens: shadows, borders, motion, button sizes, content widths → Divi variables.
+3. Divi layouts library (needs a sample Divi Library layout export), dark-mode toggle for Divi, gradient background presets (needs a sample preset with a gradient), logo checker, favicon/OG image generator, industry starter kits, version history, command palette, PWA.
 
 ## Stack and commands
 
@@ -55,6 +55,9 @@ Hosting: GitHub Pages via `.github/workflows/deploy.yml` (runs on push to `main`
 - `src/lib/divi.ts`: **Divi 5** parse/build/merge, section planner, CSS helpers. See the `divi5-export-format` skill.
 - `src/lib/projects.ts`: **client projects**. Tools use per-project *working keys* in localStorage (`WORKING_KEYS`: system, generator state, Divi data…). `switchProject` saves them into the old project and loads the new one's copy; `ensureProjects()` runs in `main.tsx` before render (migrates old data). `<main>` is keyed by the active project id so pages remount after a switch. Palettes and sessions carry `projectId` (the old free-text `project` field is now shown as "Group").
 - `src/lib/handoff.ts` + `handoffText.ts` (EN/LT strings): handoff ZIP builder; text files are built synchronously (testable), binaries (PDF/ASE/PNG/fonts) are added in the browser. Lithuanian copy was written by Claude: ask the owner to proofread it.
+- **Backend** (`server/`, see `server/README.md`): `server/api/index.php` router + `src/core.php` (PDO, auth tokens in `d5wt_auth` HttpOnly cookie, rate limits, `X-Requested-With: d5wt` CSRF header) + `src/routes.php` (auth, users, sync, reviews, public `/r/<token>`). `setup.php` creates tables/config/owner once and locks. `config.php` is never committed or deployed (gitignored, excluded in the FTP action). Hostinger is the owner's; Claude cannot log in there.
+- Frontend: `src/lib/api.ts` (relative `api/` base, works in subfolders), `src/lib/sync.ts` (collect/apply, tombstones in `d5wt:tombstones`, `firstPull` replaces the untouched placeholder project), `src/state/SyncContext.tsx` (detects backend via `/api/health`, auto-sync every 45 s), `AccountPage`, `components/projects/ClientReview.tsx`, `pages/ReviewPage.tsx` (rendered without app chrome by `Shell` in `App.tsx`), `lib/review.ts` (snapshot + EN/LT strings).
+- Local full stack: `server/dev/start.sh` (MariaDB + `php -S` with `server/dev/router.php` mimicking .htaccess; `npm run dev` proxies `/api`). `node server/dev/api-test.mjs` needs an empty DB.
 - `src/lib/imageText.ts`: per-pixel text-on-image contrast, overlays (solid / scrim with hold / box), `findOpacity`.
 - Pages are in `src/pages/*`; the less-used ones are lazy-loaded in `App.tsx`. Tools live under the "Tools" dropdown (`MORE` list in `App.tsx`).
 
@@ -62,6 +65,7 @@ Hosting: GitHub Pages via `.github/workflows/deploy.yml` (runs on push to `main`
 
 - **`.page > section` only.** A generic `.page section` style once broke grid layouts inside previews. Keep page-level selectors scoped to direct children, and use `<div>` inside templates.
 - **Fieldsets need `min-width: 0`**, or long select labels cause horizontal overflow on phones. Selects use `padding-block: 0` + `min-height: 36px` (text clipped otherwise). Checkboxes get `flex: none`.
+- Buttons inside forms must be `type="button"` unless they submit (the shared `Segmented` once submitted the review form).
 - Always test at **390px width** and check `.app-main` `scrollWidth`, which must stay ≤ 390.
 - **Google Fonts:** requesting a weight a family doesn't have makes the whole css2 request fail. Variable fonts use `wght@lo..hi`. Preview subsets (`&text=`) must be renamed (`d5p-`) or they shadow the real font and drop glyphs.
 - `fonts.gstatic.com` and `fonts.googleapis.com` send `Access-Control-Allow-Origin: *`; `fonts.google.com/metadata` is blocked from the sandbox and has no CORS. The Developer API needs the user's key.
