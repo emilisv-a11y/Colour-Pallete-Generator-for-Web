@@ -19,7 +19,7 @@ A colour palette and design-system platform for web design, with extra tools for
 | 3 | Design system: roles, 50–950 scales, light/dark tokens, accessibility (WCAG + APCA), live preview, token exports, brand kit, fluid type (clamp), Google Fonts library (1,908 families) | live |
 | 4 | Divi 5: import file builder (colours, variables, presets), section planner, CSS helpers, checklist | live |
 | Extras | Text-on-image checker (`/text-on-image`) + self-hosted fonts (Design system → Type) | live |
-| Projects | Client projects (header switcher, `/projects`) + handoff ZIP (EN/LT) | built on branch; see git log / ask before merging |
+| Projects | Client projects (header switcher, `/projects`) + handoff ZIP (EN/LT) | live |
 
 The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.md`.
 
