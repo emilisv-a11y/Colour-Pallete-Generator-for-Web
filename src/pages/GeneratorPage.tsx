@@ -181,6 +181,9 @@ export default function GeneratorPage() {
           <Link className="icon-btn" to="/visualize" title="View on sample designs" aria-label="Visualize palette">
             <Icon name="layout" />
           </Link>
+          <Link className="icon-btn" to="/system" title="Build a design system from this palette" aria-label="Design system">
+            <Icon name="grid" />
+          </Link>
           <button className="icon-btn" onClick={toggleFullscreen} title="Fullscreen (F)" aria-label="Fullscreen">
             <Icon name="maximize" />
           </button>

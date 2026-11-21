@@ -30,16 +30,17 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [x] Tailwind colour reference: copy as HEX/class/CSS var/OKLCH; nearest Tailwind colour (CIEDE2000)
 - [x] Mesh gradient generator: draggable points, CSS layers (preview matches the CSS output) or smooth OKLab blend, grain, text preview, CSS and WebP/PNG/JPG export
 
-## Phase 3: web design
-- Semantic roles (primary, secondary, accent, neutral, background, surface, text, success, warning, error, info)
-- 50–950 shade scales (OKLCH), with a choice of which step the original colour sits on
-- Automatic dark mode with safe contrast
-- Accessibility matrix (WCAG 2.2 and APCA) with one-click fixes
-- Live website preview and a 60-30-10 coverage check
-- UI state colours: hover, active, focus, disabled, border
-- Token exports: W3C DTCG, Tokens Studio, Tailwind, Bootstrap, CSS light/dark
-- Brand kit page (printable)
-- Optional: font pairing preview
+## Phase 3: web design ✅
+- [x] Semantic roles: primary, secondary, accent, neutral, success, warning, error, info (auto-assigned from the palette, all editable)
+- [x] 50–950 OKLCH scales, with a choice of which step the exact brand colour sits on
+- [x] Light and dark semantic tokens (67 per mode) chosen so promised text pairs pass WCAG 2.2 AA; manual overrides
+- [x] Accessibility: 43 promised pairs (WCAG 2.2 and APCA) with one-click fixes, plus a full contrast matrix
+- [x] Live website preview with real hover/active/focus/disabled states, light/dark, and a measured 60-30-10 check
+- [x] UI state colours: hover, active, subtle, border, focus ring, disabled
+- [x] Token exports: CSS (light/dark), SCSS, Tailwind v4 and v3, W3C DTCG, Tokens Studio, Bootstrap 5.3, JSON
+- [x] Printable brand kit page (print or save as PDF)
+- [x] Font pairing (18 Google Fonts) and corner radius, used in the preview, brand kit and exports
+- [x] Design system saved in sessions and backups
 
 ## Phase 4: Divi 5
 - Global colours and Design Variables export. **Waiting on a sample Divi 5 JSON export from the user.**

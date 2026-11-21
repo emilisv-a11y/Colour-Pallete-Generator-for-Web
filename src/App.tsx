@@ -14,11 +14,16 @@ const MeshPage = lazy(() => import('./pages/MeshPage'))
 const VisualizerPage = lazy(() => import('./pages/VisualizerPage'))
 const TailwindPage = lazy(() => import('./pages/TailwindPage'))
 const CollagePage = lazy(() => import('./pages/CollagePage'))
+const SystemPage = lazy(() => import('./pages/SystemPage'))
+const BrandKitPage = lazy(() => import('./pages/BrandKitPage'))
 
 const MORE = [
-  { to: '/color', label: 'Colour details' },
-  { to: '/tailwind', label: 'Tailwind colours' },
+  { to: '/image', label: 'Image picker' },
+  { to: '/gradient', label: 'Gradient maker' },
+  { to: '/mesh', label: 'Mesh gradient' },
   { to: '/collage', label: 'Collage & moodboard' },
+  { to: '/tailwind', label: 'Tailwind colours' },
+  { to: '/color', label: 'Colour details' },
 ]
 
 function MoreMenu() {
@@ -29,7 +34,7 @@ function MoreMenu() {
   return (
     <div className="pop-anchor">
       <button className={`nav-more ${active ? 'active' : ''}`} onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-haspopup="menu">
-        More <Icon name="chevronDown" size={14} />
+        Tools <Icon name="chevronDown" size={14} />
       </button>
       {open && (
         <Popover onClose={() => setOpen(false)} className="nav-menu">
@@ -73,12 +78,12 @@ function Header() {
       <nav className="main-nav" aria-label="Main">
         <NavLink to="/generate">Generator</NavLink>
         <NavLink to="/explore">Explore</NavLink>
-        <NavLink to="/image">Image</NavLink>
-        <NavLink to="/gradient">Gradient</NavLink>
-        <NavLink to="/mesh">Mesh</NavLink>
-        <NavLink to="/visualize">Visualizer</NavLink>
-        <NavLink to="/contrast">Contrast</NavLink>
         <MoreMenu />
+        <NavLink to="/visualize">Visualizer</NavLink>
+        <NavLink to="/system" className={({ isActive }) => (isActive || location.hash.startsWith('#/brand-kit') ? 'active' : '')}>
+          Design system
+        </NavLink>
+        <NavLink to="/contrast">Contrast</NavLink>
         <NavLink to="/library">Library</NavLink>
       </nav>
       <button className="icon-btn" onClick={() => setTheme(next.id)} title={`${current.label} (switch to ${next.label.toLowerCase()})`} aria-label={`Switch to ${next.label}`}>
@@ -110,6 +115,8 @@ export default function App() {
                 <Route path="/visualize" element={<VisualizerPage />} />
                 <Route path="/tailwind" element={<TailwindPage />} />
                 <Route path="/collage" element={<CollagePage />} />
+                <Route path="/system" element={<SystemPage />} />
+                <Route path="/brand-kit" element={<BrandKitPage />} />
                 <Route path="*" element={<Navigate to="/generate" replace />} />
               </Routes>
               </Suspense>

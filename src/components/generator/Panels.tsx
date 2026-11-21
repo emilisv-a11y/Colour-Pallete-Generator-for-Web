@@ -20,7 +20,9 @@ import {
   getActiveSessionId,
   getProjects,
   getSessions,
+  getSystem,
   importBackup,
+  setSystem,
   savePalette,
   saveSession,
   sessionFile,
@@ -222,18 +224,19 @@ export function SessionsModal({ onClose }: { onClose: () => void }) {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const saveNew = () => {
-    const s = saveSession({ name: name.trim() || `Session ${new Date().toLocaleString()}`, notes, generator: gen.snapshot(), extra: {} })
+    const s = saveSession({ name: name.trim() || `Session ${new Date().toLocaleString()}`, notes, generator: gen.snapshot(), extra: { system: getSystem() } })
     toast(`Saved session “${s.name}”`)
     setName('')
     setNotes('')
   }
   const update = (s: Session) => {
-    saveSession({ ...s, generator: gen.snapshot() })
+    saveSession({ ...s, generator: gen.snapshot(), extra: { ...s.extra, system: getSystem() } })
     toast(`Updated “${s.name}”`)
   }
   const load = (s: Session) => {
     if (activeId !== s.id && !confirm(`Load “${s.name}”? Your current palette and history will be replaced. Save it as a session first if you want to keep it.`)) return
     gen.loadSnapshot(s.generator)
+    if (s.extra?.system) setSystem(s.extra.system as never)
     saveSession({ ...s }) // marks it active and bumps updatedAt
     toast(`Loaded “${s.name}”`)
     onClose()
@@ -242,7 +245,7 @@ export function SessionsModal({ onClose }: { onClose: () => void }) {
   return (
     <Modal title="Sessions" onClose={onClose} wide>
       <p className="muted">
-        A session stores your whole working state: the palette, locks, full undo history and generator settings. Your work is
+        A session stores your whole working state: the palette, locks, full undo history, generator settings and your design system. Your work is
         also autosaved in this browser, so closing the tab never loses it.
       </p>
 
