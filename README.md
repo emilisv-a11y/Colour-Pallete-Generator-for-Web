@@ -63,6 +63,8 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 ## Extras
 
 - **Logo checker** (Tools): upload an SVG (or PNG with transparency) to see it on your brand's backgrounds with a contrast rating that warns when part of the logo fades, change its colours, and download versions in one colour, white, black, brand colour and for brand backgrounds (SVG and PNG).
+- **Favicon & social images** (Tools, also linked from the Brand kit): a favicon and app icon set from your logo or initials in brand colours (favicon.ico 16/32/48, favicon.svg, iPhone and Android icons incl. adaptive, web manifest, HTML lines and install notes, as one ZIP), and social share images in four styles at 1200 × 630 and 1080 × 1080 (PNG/JPG), drawn with your fonts, Lithuanian letters included.
+- **Starter kits** (Tools): eight hand-picked starting points (bistro, café, law firm, consultant, spa, clinic, shop, studio) with palette, Latin Extended font pairing, radius, type scale, shadows and section plan; each passes every contrast check. Pick one to create a new client project.
 - **Text on image checker** (Tools): upload a hero image, position the text, and see the worst-case contrast of every pixel behind it, with a heatmap of failing pixels and desktop/tablet/phone crops. One click finds the lightest solid overlay, edge scrim or text panel that passes WCAG AA for white or black text, with CSS and Divi steps.
 - **Self-hosted fonts** (Design system → Type): download the chosen Google Fonts as a ZIP of WOFF2 files, with `@font-face` CSS and step-by-step Divi instructions, so visitors' browsers never contact Google (EU privacy). Pick weights, italics and languages (e.g. Latin Extended for Lithuanian); file sizes are shown first.
 

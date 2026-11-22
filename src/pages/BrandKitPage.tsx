@@ -75,6 +75,9 @@ export default function BrandKitPage() {
         <Link className="btn" to="/system">
           <Icon name="arrowLeft" size={16} /> Design system
         </Link>
+        <Link className="btn" to="/brand-assets" style={{ marginLeft: 'auto' }}>
+          Favicon &amp; social images
+        </Link>
         <button className="btn btn-primary" onClick={() => window.print()}>
           <Icon name="download" size={16} /> Print / save as PDF
         </button>

@@ -28,7 +28,7 @@ The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.
 **Current plan** (agreed with the owner, phases A → D, review + deploy after each; details at the end of `PLAN.md`):
 - A · shape & motion tokens: **done** (`src/lib/effects.ts`, Design system → "Shape & motion").
 - B · Divi extras: **done** (Divi page tabs Layouts + Dark mode, gradient presets, `/logo`). Built from the owner's samples (`testpage.json`, `Divi-Theme-Builder-Templates.json` in uploads; never commit them, they contain the owner's site content).
-- C · brand assets: favicon/app icons, social image, starter kits (food & hospitality, professional services, health & beauty, shops & creative; ~2 each).
+- C · brand assets: **done** (`/brand-assets`: `lib/brandAssets.ts` icons + ICO encoder + social canvas templates; `/starters`: `data/starterKits.ts` + `lib/starterKits.ts` → `kitProjectData` for `newProject`).
 - D · version history with diff, command palette (Ctrl/⌘+K), PWA, colour-blindness view in preview + section planner.
 
 ## Stack and commands
