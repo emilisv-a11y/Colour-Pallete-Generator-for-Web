@@ -59,7 +59,7 @@ Press **Finish setup**. The page creates the database tables, saves the connecti
 
 Browsers keep saved work per website address, so the new address starts empty.
 
-1. On the current site (GitHub Pages), open **Library → Download backup**.
+1. On the old site (GitHub Pages, before it was retired), open **Library → Download backup**.
 2. On `https://tools.yourdomain.lt`, open **Library → Import backup** and choose that file.
 3. Click **Sign in** (top right) and sign in. Your projects upload automatically.
 
@@ -71,7 +71,7 @@ Browsers keep saved work per website address, so the new address starts empty.
 
 - **Sync** runs automatically every minute while the app is open (and when you return to the tab). The tick next to your initial shows the status.
 - **Client review**: Projects → a project → **Client review** → **New review link**. The link is copied; send it to the client.
-- **Updates** deploy automatically when changes are merged into `main` (both GitHub Pages and Hostinger).
+- **Updates** deploy automatically when changes are merged into `main` (Hostinger; the old GitHub Pages copy is retired).
 - **Backups**: Hostinger keeps daily backups; **Library → Download backup** gives you your own copy any time.
 
 ## Troubleshooting

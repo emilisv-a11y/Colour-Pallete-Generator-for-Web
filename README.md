@@ -73,7 +73,7 @@ When the app runs on your own domain with the included PHP server (setup guide: 
 - **Team:** the owner adds teammates, who share the same projects.
 - **Client review links:** a private link (optional PIN and expiry) where the client sees the brand guidelines, the website preview in light and dark mode and colour options, comments, picks a favourite and approves. In English or Lithuanian. You see the feedback and reply from the project.
 
-On GitHub Pages (no server) these features are hidden and everything stays in the browser.
+Without the server (e.g. a static copy on Cloudflare Pages) these features are hidden, there is no sign-in screen and everything stays in the browser.
 
 Data is stored in the browser's `localStorage`. The data shapes are plain JSON so a backend can be added later.
 
@@ -90,14 +90,10 @@ npm run build    # static site in dist/
 
 The build is a fully static site in `dist/`. Routing uses the URL hash (`#/generate/...`), so it needs no server rewrite rules and works from any folder.
 
-### GitHub Pages (set up)
+### Live copy
 
-`.github/workflows/deploy.yml` builds and deploys on every push to `main`. It can also be started by hand from the Actions tab.
-
-1. Repo **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-2. Merge to `main` (or run the workflow manually). The site appears at `https://<user>.github.io/<repo>/`.
-
-Note: GitHub Pages on a **private** repository needs a paid GitHub plan. On a free plan, either make the repo public or use Cloudflare Pages.
+The app runs on the owner's own domain on Hostinger, behind a sign-in (see [docs/HOSTINGER.md](docs/HOSTINGER.md)); every push to `main` uploads it with `.github/workflows/deploy-hostinger.yml`.
+The earlier public GitHub Pages copy is retired: `.github/workflows/deploy.yml` now publishes only a short "no longer available" page.
 
 ### Cloudflare Pages (free, works with private repos)
 
