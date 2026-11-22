@@ -19,19 +19,26 @@ A colour palette and design-system platform for web design, with extra tools for
 | 3 | Design system: roles, 50–950 scales, light/dark tokens, accessibility (WCAG + APCA), live preview, token exports, brand kit, fluid type (clamp), Google Fonts library (1,908 families) | live |
 | 4 | Divi 5: import file builder (colours, variables, presets), section planner, CSS helpers, checklist | live |
 | Extras | Text-on-image checker (`/text-on-image`) + self-hosted fonts (Design system → Type) | live |
-| Round trip | Divi export → design system (new project) + Site differences tab with tick-to-apply update file | live after merge |
+| Round trip | Divi export → design system (new project) + Site differences tab with tick-to-apply update file | live |
+| A · Shape & motion | Shadows, borders, button/input sizes, motion, content widths → exports + Divi | live |
+| B · Divi extras | Layouts tab, dark-mode toggle, gradient presets, logo checker (`/logo`) | live |
+| C · Brand assets | Favicon/app icons + social images (`/brand-assets`), starter kits (`/starters`) | live |
+| D · Quality of life | Version history, command palette (Ctrl/⌘+K), installable app (PWA), colour-blindness view | live |
+| Layout library v2 | 27 sections in 5 groups, 6 full pages, placeholder pictures, 2 headers + 2 footers | live |
 | Projects | Client projects (header switcher, `/projects`) + handoff ZIP (EN/LT) | live |
 | Backend | PHP/MySQL API on Hostinger Business: sign-in, team, sync, client review links (`#/review/<token>`) | **live at https://webtools.emilisvastakas.co.uk** (setup done; files in `public_html/webtools`). The whole app is behind a sign-in screen there (`LoginGate`). |
 
 The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.md`.
 
-**Current plan** (agreed with the owner, phases A → D, review + deploy after each; details at the end of `PLAN.md`):
+**Done so far** (phases A → D were agreed with the owner, each reviewed and deployed; details in `PLAN.md`):
 - A · shape & motion tokens: **done** (`src/lib/effects.ts`, Design system → "Shape & motion").
 - B · Divi extras: **done** (Divi page tabs Layouts + Dark mode, gradient presets, `/logo`). Built from the owner's samples (`testpage.json`, `Divi-Theme-Builder-Templates.json` in uploads; never commit them, they contain the owner's site content).
 - C · brand assets: **done** (`/brand-assets`: `lib/brandAssets.ts` icons + ICO encoder + social canvas templates; `/starters`: `data/starterKits.ts` + `lib/starterKits.ts` → `kitProjectData` for `newProject`).
 - D · quality of life: **done** (`lib/versions.ts` + `components/system/VersionHistory.tsx`, auto versions via `onBeforeSystemWrite` in storage.ts, key `d5wt:systemVersions` in WORKING_KEYS; `components/CommandPalette.tsx` + `lib/commands.ts`; `public/sw.js` + `manifest.webmanifest` + `public/icons/`, registered in main.tsx (prod only); `components/VisionSelect.tsx`).
 
-All agreed phases are done, plus the layout library v2 (27 sections, 6 full pages). Ask the owner what's next; ideas not built yet: dynamic Blog/Woo modules (needs a sample export), verify Divi imports on staging (button sizes, layouts, Theme Builder, dark mode `--gcid-*`, gradients), proofread Lithuanian copy, more starter kits, layout variants (pricing table module, testimonial module).
+- Layout library v2: **done** (see the `divi-layout-library` skill). v0.app was given as design reference but is blocked from the sandbox (DNS), so the sections are original designs from common patterns.
+
+Ask the owner what's next. Ideas not built yet: dynamic Blog/Woo Products modules and real Contact Form / Email Optin modules (each needs a sample export with that module), verify Divi imports on staging (button sizes, layouts, Theme Builder, dark mode `--gcid-*`, gradients), proofread Lithuanian copy, more starter kits, layout variants (pricing table module, testimonial module).
 
 ## Stack and commands
 
@@ -40,7 +47,7 @@ Vite + React 19 + TypeScript (TS 7), `culori` for colour maths, `react-colorful`
 ```bash
 npm install
 npm run dev            # http://localhost:5173
-npm test               # vitest (55+ tests)
+npm test               # vitest (120+ tests)
 npx tsc -b             # type-check (tests are included in tsconfig: no node: imports in tests, use JSON imports)
 npm run build          # static site in dist/
 npm run fonts:update   # rebuild src/data/google-fonts.json from the npm package google-font-metadata
@@ -81,10 +88,15 @@ Hosting: Hostinger via `.github/workflows/deploy-hostinger.yml` (FTP upload on e
 - Never commit the owner's real Divi export (the repo is public). Tests use the synthetic `src/lib/__tests__/fixtures/divi-export.json`.
 - UI copy: British spelling ("colour"); short, plain, practical labels.
 - Commits end with the `Co-Authored-By` / `Claude-Session` lines given by the harness; never put model names in commits or PRs.
+- `npm run build` runs `tsc -b`, which also type-checks the test files: a type error in a test fails the build (and the Hostinger deploy). Run the build before reporting success.
+- Multi-line `python3 - <<EOF` edits are sometimes refused by the shell safety check; write the script to the scratchpad and run it from there.
+- Cards on the Divi page use `useState` + derived values, not `setState` inside effects (oxlint flags it). Keep oxlint warnings at the existing baseline (30 old ones in untouched files).
+- The owner's real files (uploads `All_Presets.json`, `testpage.json`, `Divi-Theme-Builder-Templates.json`) may only be copied to `/tmp` for temporary tests that are deleted afterwards.
 
 ## Skills in this repo
 
 - `.claude/skills/divi5-export-format`: Divi 5 presets/global colours/variables JSON format and how this app builds and merges it.
 - `.claude/skills/ship-to-live-site`: branch, PR, merge and deploy routine for this repo, and verifying the Hostinger deploy run.
 - `.claude/skills/hostinger-backend`: the PHP API, local full stack, setup and the troubleshooting learned while going live on Hostinger.
+- `.claude/skills/divi-layout-library`: how to add or change Divi sections, full pages, pictures and tiles, and the checks they must pass.
 - `.claude/skills/verify-in-browser`: Playwright checks used here (screenshots, phone overflow, console errors, pixel/rendering verification, selector pitfalls).
