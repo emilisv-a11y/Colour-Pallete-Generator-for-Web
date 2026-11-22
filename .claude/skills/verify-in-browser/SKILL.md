@@ -68,6 +68,7 @@ Production builds register `sw.js`. A fresh Playwright context starts with no ca
 - **Downloads with binaries:** decode and check magic bytes in Python (`ffd8ff` JPEG, `89504e` PNG, `wOF2` fonts), PNG size from bytes 16–24, ZIP contents with `zipfile`, ICO header with `struct.unpack('<HHH', ...)`.
 - **Iframes** (dark-mode preview): `p.frameLocator('.dm-frame')`; scroll the iframe into view first or clicks on fixed elements inside it time out on phones.
 - **Canvas output** (social images, icons): screenshot the canvas element and look at it; check long text and Lithuanian letters (ąčęėįšųūž) fit.
+- **Large layout preview** (`.lpv iframe`, srcdoc): get the frame with `p.frames().find(f => f !== p.mainFrame())`, wait ~2 s for fonts, then check inside it: section count, `getComputedStyle(h1).fontSize` (fluid: smaller at the 390px device), a button's `transform` after `hover()` (should become `matrix(..., -1)`), `.pv-row` collapsing to one column at Phone width. Use `.lpv button[role=radio]:has-text("Phone")` to switch devices. Placeholders must be `div.ph` boxes; a broken data-URI image shows its alt text.
 - **Modals** placed in the wrong JSX branch don't open: if a button seems dead, check the component renders in the branch that is actually showing.
 
 ## Selector pitfalls seen here

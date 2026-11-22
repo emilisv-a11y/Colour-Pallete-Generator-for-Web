@@ -25,7 +25,7 @@ A colour palette and design-system platform for web design, with extra tools for
 | C · Brand assets | Favicon/app icons + social images (`/brand-assets`), starter kits (`/starters`) | live |
 | D · Quality of life | Version history, command palette (Ctrl/⌘+K), installable app (PWA), colour-blindness view | live |
 | Layout library v2 | 27 sections in 5 groups, 6 full pages, placeholder pictures, 2 headers + 2 footers | live |
-| Layouts v3 | 46 sections in 9 groups, 13 full pages, Shop/Video modules, large iframe preview, hover/focus states, rem units | built (see PLAN) |
+| Layouts v3 | 46 sections in 9 groups, 13 full pages, Shop/Video modules, large iframe preview, hover/focus states, rem units, gradient stops linked to global colours | live |
 | Projects | Client projects (header switcher, `/projects`) + handoff ZIP (EN/LT) | live |
 | Backend | PHP/MySQL API on Hostinger Business: sign-in, team, sync, client review links (`#/review/<token>`) | **live at https://webtools.emilisvastakas.co.uk** (setup done; files in `public_html/webtools`). The whole app is behind a sign-in screen there (`LoginGate`). |
 
@@ -37,9 +37,11 @@ The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.
 - C · brand assets: **done** (`/brand-assets`: `lib/brandAssets.ts` icons + ICO encoder + social canvas templates; `/starters`: `data/starterKits.ts` + `lib/starterKits.ts` → `kitProjectData` for `newProject`).
 - D · quality of life: **done** (`lib/versions.ts` + `components/system/VersionHistory.tsx`, auto versions via `onBeforeSystemWrite` in storage.ts, key `d5wt:systemVersions` in WORKING_KEYS; `components/CommandPalette.tsx` + `lib/commands.ts`; `public/sw.js` + `manifest.webmanifest` + `public/icons/`, registered in main.tsx (prod only); `components/VisionSelect.tsx`).
 
-- Layout library v2: **done** (see the `divi-layout-library` skill). v0.app was given as design reference but is blocked from the sandbox (DNS), so the sections are original designs from common patterns.
+- Layout library v2 + v3: **done** (see the `divi-layout-library` skill). Sections are original designs from common patterns (v0.app was the owner's reference).
 
-**Waiting on the owner:** a presets export containing a nested number variable and a field with a variable combination (calc etc.); the Divi dev docs (`@divi/global-data`) don't document that format.
+**Next session starts here:** the owner is testing the Divi imports on a staging site. Ask for the results first and work through the "Staging test checklist" in `PLAN.md`.
+
+**Waiting on the owner:** a presets export containing a nested number variable and a field with a variable combination (calc etc.); the Divi dev docs (`@divi/global-data`) don't document that format. When it arrives: add semantic variables (e.g. `section-padding` → `space-xl-3xl`, `card-padding` → `space-m`) as nested references in `buildDiviImport`, use combinations where a field needs two values, extend `diviRead` (`resolveValue` already resolves nested content refs) and the tests.
 
 Ask the owner what's next. Ideas not built yet: dynamic Blog/Woo Products modules and real Contact Form / Email Optin modules (each needs a sample export with that module), verify Divi imports on staging (button sizes, layouts, Theme Builder, dark mode `--gcid-*`, gradients), proofread Lithuanian copy, more starter kits, layout variants (pricing table module, testimonial module).
 
@@ -50,7 +52,7 @@ Vite + React 19 + TypeScript (TS 7), `culori` for colour maths, `react-colorful`
 ```bash
 npm install
 npm run dev            # http://localhost:5173
-npm test               # vitest (120+ tests)
+npm test               # vitest (127+ tests)
 npx tsc -b             # type-check (tests are included in tsconfig: no node: imports in tests, use JSON imports)
 npm run build          # static site in dist/
 npm run fonts:update   # rebuild src/data/google-fonts.json from the npm package google-font-metadata
@@ -95,7 +97,8 @@ Hosting: Hostinger via `.github/workflows/deploy-hostinger.yml` (FTP upload on e
 - `npm run build` runs `tsc -b`, which also type-checks the test files: a type error in a test fails the build (and the Hostinger deploy). Run the build before reporting success.
 - Multi-line `python3 - <<EOF` edits are sometimes refused by the shell safety check; write the script to the scratchpad and run it from there.
 - Cards on the Divi page use `useState` + derived values, not `setState` inside effects (oxlint flags it). Keep oxlint warnings at the existing baseline (30 old ones in untouched files).
-- This session's cloud environment `Colour-Pallete-Generator-for-Web` allows `dev.elegantthemes.com` and `v0.app`. WebFetch may still fail with DNS errors right after a change; `curl` through the proxy works.
+- The cloud environment `Colour-Pallete-Generator-for-Web` (personal, saved for this repo) allows `dev.elegantthemes.com` and `v0.app` on top of package registries. WebFetch may fail with DNS errors even when the host is allowed; `curl` through the proxy works, then strip the HTML with Python.
+- Divi developer docs worth reading: `https://dev.elegantthemes.com/api/js/divi-global-data/functions/` (global colours/variables). The `divi-context-library/variables` page is about code constants, not design variables.
 - The owner's real files (uploads `testshoppage.json` too, `All_Presets.json`, `testpage.json`, `Divi-Theme-Builder-Templates.json`) may only be copied to `/tmp` for temporary tests that are deleted afterwards.
 
 ## Skills in this repo
