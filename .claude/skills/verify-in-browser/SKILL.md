@@ -48,6 +48,10 @@ await m.evaluate(() => document.querySelector('.app-main').scrollWidth)
 
 Run the local full stack, then: open any route and expect `text=Sign in to open the tool` with no `.app-header`; a wrong password shows `.form-error`; after signing in the requested route opens and survives a reload; avatar (`.account-btn`) → `.account-menu >> text=Sign out` returns to the sign-in screen; `#/review/<token>` opens without signing in.
 
+## Service worker (installable app)
+
+Production builds register `sw.js`. A fresh Playwright context starts with no cache, so tests are fine; but in a reused browser profile an old build can be served from the cache. To test offline: load a page, wait for `navigator.serviceWorker.ready`, reload once, then `context.setOffline(true)` and navigate: the app must still render. Never let the service worker cache `/api/`.
+
 ## Selector pitfalls seen here
 
 - `hasText: 'Serif'` also matches "Sans serif", and `'Brand'` matches "Subtle brand". Use anchored regexes: `{ hasText: /^Serif$/ }`, `{ hasText: /^\s*Brand$/ }`.

@@ -29,7 +29,9 @@ The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.
 - A · shape & motion tokens: **done** (`src/lib/effects.ts`, Design system → "Shape & motion").
 - B · Divi extras: **done** (Divi page tabs Layouts + Dark mode, gradient presets, `/logo`). Built from the owner's samples (`testpage.json`, `Divi-Theme-Builder-Templates.json` in uploads; never commit them, they contain the owner's site content).
 - C · brand assets: **done** (`/brand-assets`: `lib/brandAssets.ts` icons + ICO encoder + social canvas templates; `/starters`: `data/starterKits.ts` + `lib/starterKits.ts` → `kitProjectData` for `newProject`).
-- D · version history with diff, command palette (Ctrl/⌘+K), PWA, colour-blindness view in preview + section planner.
+- D · quality of life: **done** (`lib/versions.ts` + `components/system/VersionHistory.tsx`, auto versions via `onBeforeSystemWrite` in storage.ts, key `d5wt:systemVersions` in WORKING_KEYS; `components/CommandPalette.tsx` + `lib/commands.ts`; `public/sw.js` + `manifest.webmanifest` + `public/icons/`, registered in main.tsx (prod only); `components/VisionSelect.tsx`).
+
+All agreed phases are done. Ask the owner what's next; ideas not built yet: verify Divi imports on staging (button sizes, layouts, Theme Builder, dark mode `--gcid-*`, gradients), proofread Lithuanian copy, more starter kits, layout variants (pricing table module, testimonial module).
 
 ## Stack and commands
 

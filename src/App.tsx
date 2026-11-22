@@ -26,6 +26,7 @@ const AccountPage = lazy(() => import('./pages/AccountPage'))
 const ReviewPage = lazy(() => import('./pages/ReviewPage'))
 import { AccountButton } from './components/account/AccountButton'
 import { LoginGate } from './components/account/LoginGate'
+import { CommandPalette } from './components/CommandPalette'
 import { SyncProvider } from './state/SyncContext'
 import { ProjectSwitcher } from './components/projects/ProjectsUI'
 import { getActiveProjectId } from './lib/projects'
@@ -104,6 +105,9 @@ function Header() {
         <NavLink to="/contrast">Contrast</NavLink>
         <NavLink to="/library">Library</NavLink>
       </nav>
+      <button className="icon-btn cmdk-btn" type="button" onClick={() => window.dispatchEvent(new Event('d5wt:command-palette'))} title="Search tools and actions (Ctrl/⌘ + K)" aria-label="Search tools and actions">
+        <Icon name="search" />
+      </button>
       <ProjectSwitcher />
       <AccountButton />
       <button className="icon-btn" onClick={() => setTheme(next.id)} title={`${current.label} (switch to ${next.label.toLowerCase()})`} aria-label={`Switch to ${next.label}`}>
@@ -146,6 +150,7 @@ export default function App() {
           <Shell>
           <div className="app">
             <Header />
+            <CommandPalette />
             <ProjectMain>
               <Suspense fallback={<div className="page muted">Loading…</div>}>
               <Routes>

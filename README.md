@@ -43,6 +43,8 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 - **Responsive typography (Type tab):** a fluid type scale and spacing scale written as `clamp()` values (rem + vw, so browser zoom keeps working). Set the small/large screen sizes, body size and scale ratio, then preview at any screen width with a size chart. Warns about text that may not scale properly when zoomed (WCAG 1.4.4) and about very small text. Exports CSS, Tailwind v4, SCSS and JSON.
 - **Google Fonts library:** browse every Google Fonts family (1,908) from the Type tab: search, filter by category, language support (e.g. Latin Extended for Lithuanian) and variable fonts, sort by popularity, name, last update or number of weights, with live previews in your own text. Twelve one-click pairing ideas. Optionally add your own Google Fonts API key to fetch the newest list with Google's popularity ranking (the key stays in your browser). Rebuild the built-in catalogue with `npm run fonts:update`.
 - **Shape & motion:** shadows sm–xl tinted with the brand colour (black and stronger in dark mode), border widths, button sizes S/M/L (padding worked out from the type scale to reach each height), input height, motion durations and easing curves with a live demo (instant for visitors who ask their device for less motion), and narrow/container/wide content widths. Included in every token export, the brand kit, the live preview and Divi (number variables, *Button Size S/M/L* option-group presets and helper classes such as `d5-shadow-md`, `d5-lift`, `d5-narrow`).
+- **Version history:** Design system → History. Save named versions (e.g. "Sent to client"); one is also kept automatically before you start editing (at most every 15 minutes). See exactly what changed since a version (colours with swatches, fonts, type, shape, sizes) and restore it; the current state is saved first. Versions belong to the project and sync with it.
+- **Colour-blindness view:** "See as" in the live website preview and the Divi section planner (protanopia, deuteranopia, tritanopia, achromatopsia and milder forms).
 - **Fonts & radius:** heading/body Google Fonts pairing and corner radius, carried into the preview, brand kit and exports.
 
 ## Phase 4 features (Divi 5)
@@ -85,6 +87,11 @@ When the app runs on your own domain with the included PHP server (setup guide: 
 Without the server (e.g. a static copy on Cloudflare Pages) these features are hidden, there is no sign-in screen and everything stays in the browser.
 
 Data is stored in the browser's `localStorage`. The data shapes are plain JSON so a backend can be added later.
+
+## Quality of life
+
+- **Command palette:** press Ctrl + K (⌘ + K on a Mac) or the search icon in the header to jump to any tool, run an action (new palette, version history, backup, theme, new project, starter kits) or switch project.
+- **Installable app:** the site can be installed from the browser (Chrome/Edge: install icon in the address bar; Safari: Share → Add to Dock / Home Screen) and opens offline after the first visit. The PHP API is never cached, so sign-in, sync and review links always use live data.
 
 ## Development
 

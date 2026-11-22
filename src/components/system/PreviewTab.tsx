@@ -4,6 +4,8 @@ import { fontStack } from '../../lib/fonts'
 import { allTokenNames, bucketOf, buildTokens, typeOf, type Bucket, type DesignSystem, type Mode, type Tokens } from '../../lib/system'
 import { spaceScale, typeScale } from '../../lib/typography'
 import { effectVars } from '../../lib/effects'
+import type { VisionId } from '../../lib/color'
+import { simulateTokens, VisionSelect } from '../VisionSelect'
 
 export function tokenVars(t: Tokens, sys: DesignSystem, mode: Mode = 'light'): React.CSSProperties {
   const v: Record<string, string> = {}
@@ -169,7 +171,8 @@ export function Site() {
 }
 
 export function PreviewTab({ sys, mode }: { sys: DesignSystem; mode: Mode }) {
-  const tokens = buildTokens(sys, mode)
+  const [vision, setVision] = useState<VisionId>('normal')
+  const tokens = simulateTokens(buildTokens(sys, mode), vision)
   const ref = useRef<HTMLDivElement>(null)
   const [cov, setCov] = useState<ReturnType<typeof measureCoverage> | null>(null)
 
@@ -177,7 +180,7 @@ export function PreviewTab({ sys, mode }: { sys: DesignSystem; mode: Mode }) {
     const t = setTimeout(() => ref.current && setCov(measureCoverage(ref.current, tokens)), 50)
     return () => clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sys, mode])
+  }, [sys, mode, vision])
 
   const target: Record<Bucket, number> = { dominant: 0.6, secondary: 0.3, accent: 0.1 }
   const verdict = (b: Bucket) => {
@@ -217,6 +220,10 @@ export function PreviewTab({ sys, mode }: { sys: DesignSystem; mode: Mode }) {
           </p>
         </div>
       )}
+      <div className="row wrap space-between" style={{ alignItems: 'flex-end' }}>
+        <VisionSelect value={vision} onChange={setVision} />
+        {vision !== 'normal' && <span className="muted small">Simulated colour vision: check that buttons, links, errors and success states can still be told apart.</span>}
+      </div>
       <div className="pv-frame" ref={ref} style={tokenVars(tokens, sys, mode)} data-mode={mode}>
         <Site />
       </div>

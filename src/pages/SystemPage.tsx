@@ -8,6 +8,7 @@ import { RolesTab } from '../components/system/RolesTab'
 import { ScalesTab, TokensTab } from '../components/system/ScalesTokensTabs'
 import { TypeTab } from '../components/system/TypeTab'
 import { EffectsTab } from '../components/system/EffectsTab'
+import { VersionHistory } from '../components/system/VersionHistory'
 import { useDesignSystem } from '../components/system/useDesignSystem'
 import { CodeBlock, Segmented, useToast } from '../components/ui'
 import { downloadText } from '../lib/exports'
@@ -58,6 +59,21 @@ export default function SystemPage() {
   const toast = useToast()
   const { sys, update } = useDesignSystem()
   const palette = state.present.map((s) => s.hex)
+  // the command palette can open the history: via a flag (when navigating here) or an event (already here)
+  const [history, setHistory] = useState(() => {
+    try {
+      const v = sessionStorage.getItem('d5wt:openHistory') === '1'
+      sessionStorage.removeItem('d5wt:openHistory')
+      return v
+    } catch {
+      return false
+    }
+  })
+  useEffect(() => {
+    const open = () => setHistory(true)
+    window.addEventListener('d5wt:open-history', open)
+    return () => window.removeEventListener('d5wt:open-history', open)
+  }, [])
   const [tab, setTabState] = useState<Tab>(() => {
     try {
       return (localStorage.getItem(TAB_KEY) as Tab) || 'roles'
@@ -107,6 +123,7 @@ export default function SystemPage() {
 
   return (
     <div className="page system-page">
+      {history && <VersionHistory onClose={() => setHistory(false)} />}
       <header className="page-head row space-between wrap">
         <div className="grow">
           <input className="system-name" value={sys.name} onChange={(e) => update((s) => void (s.name = e.target.value))} aria-label="Design system name" />
@@ -115,6 +132,9 @@ export default function SystemPage() {
           </p>
         </div>
         <div className="row wrap">
+          <button className="btn" type="button" onClick={() => setHistory(true)}>
+            <Icon name="history" size={16} /> History
+          </button>
           <button
             className="btn"
             onClick={() => {

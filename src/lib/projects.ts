@@ -13,7 +13,7 @@ export const PROJECTS_KEY = 'd5wt:projects'
 export const ACTIVE_PROJECT_KEY = 'd5wt:activeProject'
 
 /** Per-project working keys. Anything not listed here (theme, saved colours, palettes list…) is shared. */
-export const WORKING_KEYS = ['d5wt:system', 'd5wt:current', 'd5wt:activeSession', 'd5wt:diviSource', 'd5wt:diviOpts', 'd5wt:sectionPlan', 'd5wt:diviChecklist'] as const
+export const WORKING_KEYS = ['d5wt:system', 'd5wt:current', 'd5wt:activeSession', 'd5wt:diviSource', 'd5wt:diviOpts', 'd5wt:sectionPlan', 'd5wt:diviChecklist', 'd5wt:systemVersions'] as const
 
 export type ProjectStatus = 'draft' | 'progress' | 'handoff' | 'done'
 export const STATUSES: { id: ProjectStatus; label: string }[] = [
