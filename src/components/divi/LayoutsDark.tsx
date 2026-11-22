@@ -5,6 +5,7 @@ import { brandButtonVariant, buildLayoutFile, colFraction, buildThemeBuilderFile
 import { FULL_PAGES } from '../../data/diviSections'
 import { placeholderCss, placeholderImages } from '../../lib/placeholders'
 import { tokenVars } from '../system/PreviewTab'
+import { LayoutPreview } from './LayoutPreview'
 import { effectsOf } from '../../lib/effects'
 import { downloadText } from '../../lib/exports'
 import { fontStack } from '../../lib/fonts'
@@ -54,7 +55,7 @@ export function SectionPreview({ spec, sys }: { spec: SectionSpec; sys: DesignSy
   }
   // number the pictures in reading order (same order as the placeholder files)
   const imageIndex = new Map<Item, number>()
-  spec.rows.forEach((row) => row.cols.forEach((col) => col.items.forEach((it) => it.type === 'image' && imageIndex.set(it, imageIndex.size))))
+  spec.rows.forEach((row) => row.cols.forEach((col) => col.items.forEach((it) => (it.type === 'image' || it.type === 'video') && imageIndex.set(it, imageIndex.size))))
   const item = (it: Item, i: number, c: ReturnType<typeof tile>, frac: number) => {
     switch (it.type) {
       case 'heading':
@@ -78,6 +79,19 @@ export function SectionPreview({ spec, sys }: { spec: SectionSpec; sys: DesignSy
             className={`lp-img lp-img-${it.kind}`}
             style={{ aspectRatio: String(it.ratio), background: placeholderCss(sys, imageIndex.get(it) ?? 0, it.kind), borderRadius: it.kind === 'avatar' ? '50%' : Math.min(sys.radius, 12), color: c.muted }}
           />
+        )
+      case 'video':
+        return <div key={i} className="lp-img lp-video" style={{ aspectRatio: '16 / 9', background: placeholderCss(sys, imageIndex.get(it) ?? 0, 'photo'), borderRadius: Math.min(sys.radius, 12) }} />
+      case 'shop':
+        return (
+          <div key={i} className="lp-shop">
+            {[0, 1, 2, 3].map((n) => (
+              <div key={n}>
+                <div className="lp-img" style={{ aspectRatio: '1', background: placeholderCss(sys, n, 'product'), borderRadius: Math.min(sys.radius, 10) }} />
+                <span style={{ color: c.heading }}>Product</span>
+              </div>
+            ))}
+          </div>
         )
       case 'accordion':
         return (
@@ -127,6 +141,7 @@ export function LayoutsTab({ sys, source }: { sys: DesignSystem; source: DiviExp
   const [busy, setBusy] = useState('')
   const [headerId, setHeaderId] = useState('header')
   const [footerId, setFooterId] = useState('footer')
+  const [preview, setPreview] = useState<{ ids: string[]; title: string; key: string; file: string } | null>(null)
   const toggle = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]))
   const slug = slugOf(sys.name)
   const shown = sections.filter((s) => filter === 'all' || s.group === filter)
@@ -142,8 +157,11 @@ export function LayoutsTab({ sys, source }: { sys: DesignSystem; source: DiviExp
     }
   }
 
+  const open = (ids: string[], title: string, key: string, file: string) => setPreview({ ids, title, key, file })
+
   return (
     <div className="stack">
+      {preview && <LayoutPreview sys={sys} ids={preview.ids} title={preview.title} busy={busy === preview.key} onClose={() => setPreview(null)} onDownload={preview.file ? () => run(preview.key, preview.ids, preview.file) : undefined} />}
       <p className="muted small" style={{ margin: 0 }}>
         Ready-made sections built from your presets, in the Divi 5 layout format. Each file carries the presets, colours and variables it uses, plus brand-tinted placeholder pictures that Divi imports into the Media Library, so it works on a fresh site.
         Cards, tiles and images use classes from the CSS &amp; classes tab: paste that CSS into Theme Options too. Text, links and pictures are placeholders to replace.
@@ -171,9 +189,14 @@ export function LayoutsTab({ sys, source }: { sys: DesignSystem; source: DiviExp
                   <strong>{pg.label}</strong>
                   <span className="muted small">{pg.sections.map(label).join(' · ')}</span>
                 </div>
-                <button className="btn btn-small btn-primary" type="button" disabled={!!busy} onClick={() => run(pg.id, pg.sections, `${slug}-${pg.id}-page-divi5-layout.json`)}>
-                  <Icon name="download" size={14} /> {busy === pg.id ? 'Preparing…' : 'Download page'}
-                </button>
+                <span className="row lp-actions">
+                  <button className="btn btn-small" type="button" onClick={() => open(pg.sections, `${pg.label} page`, pg.id, `${slug}-${pg.id}-page-divi5-layout.json`)}>
+                    <Icon name="eye" size={14} /> Preview
+                  </button>
+                  <button className="btn btn-small btn-primary" type="button" disabled={!!busy} onClick={() => run(pg.id, pg.sections, `${slug}-${pg.id}-page-divi5-layout.json`)}>
+                    <Icon name="download" size={14} /> {busy === pg.id ? 'Preparing…' : 'Download'}
+                  </button>
+                </span>
               </div>
             </article>
           ))}
@@ -183,9 +206,12 @@ export function LayoutsTab({ sys, source }: { sys: DesignSystem; source: DiviExp
           <div className="lp-grid">
             {shown.map((s) => (
               <article key={s.id} className={`lp-card ${picked.includes(s.id) ? 'on picked' : 'on'}`}>
-                <div className="lp-stage">
+                <button type="button" className="lp-stage lp-stage-btn" onClick={() => open([s.id], s.label, s.id, `${slug}-${s.id}-divi5-layout.json`)} aria-label={`Preview ${s.label}`} title="Open a large preview">
                   <SectionPreview spec={s} sys={sys} />
-                </div>
+                  <span className="lp-zoom" aria-hidden="true">
+                    <Icon name="eye" size={14} /> Preview
+                  </span>
+                </button>
                 <div className="lp-body">
                   <label className="divi-check">
                     <input type="checkbox" checked={picked.includes(s.id)} onChange={() => toggle(s.id)} /> <strong>{s.label}</strong>
@@ -232,16 +258,19 @@ export function LayoutsTab({ sys, source }: { sys: DesignSystem; source: DiviExp
             {LAYOUTS.filter((l) => l.part === part).map((s) => {
               const on = (part === 'header' ? headerId : footerId) === s.id
               return (
-                <label key={s.id} className={`lp-card lp-pick ${on ? 'on picked' : ''}`}>
-                  <div className="lp-stage lp-stage-short">
+                <div key={s.id} className={`lp-card lp-pick ${on ? 'on picked' : ''}`}>
+                  <button type="button" className="lp-stage lp-stage-short lp-stage-btn" onClick={() => setPreview({ ids: [s.id], title: s.label, key: s.id, file: '' })} aria-label={`Preview ${s.label}`}>
                     <SectionPreview spec={s} sys={sys} />
-                  </div>
-                  <div className="lp-body">
+                    <span className="lp-zoom" aria-hidden="true">
+                      <Icon name="eye" size={14} /> Preview
+                    </span>
+                  </button>
+                  <label className="lp-body">
                     <span className="divi-check">
                       <input type="radio" name={`tb-${part}`} checked={on} onChange={() => (part === 'header' ? setHeaderId(s.id) : setFooterId(s.id))} /> <strong>{s.label}</strong>
                     </span>
-                  </div>
-                </label>
+                  </label>
+                </div>
               )
             })}
           </div>

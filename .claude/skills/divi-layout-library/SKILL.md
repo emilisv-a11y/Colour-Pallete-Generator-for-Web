@@ -13,9 +13,13 @@ description: How D5 WebTool's Divi 5 layout library works and how to add or chan
 - `src/components/divi/LayoutsDark.tsx`: `SectionPreview` (HTML preview from the same spec) and `LayoutsTab` (group filter, tick-to-combine, full pages, header/footer radios, downloads with pictures).
 - CSS helpers the sections rely on are in `diviCss()` in `src/lib/divi.ts` (`d5-card`, `d5-lift`, `d5-tile-*`, `d5-img`, `d5-avatar`, `d5-logo`, `d5-table`, `d5-swatch`, `d5-section-*`). New classes go there **and** get preview styles in `index.css` under `.lp-section`.
 
+## Large preview
+
+`src/lib/layoutHtml.ts` renders specs as HTML for an iframe (`LayoutPreview`): `diviCss(sys)` + preview CSS (sections `.pv-sec-<kind>` use token variables so dark mode works; buttons `.d5-btn-<variant>` with hover; columns stack at ≤980px). New item types need a case there **and** in `sectionBlocks` **and** in the small `SectionPreview`.
+
 ## Writing a section
 
-A section is `{ id, group, label, kind, rows, part? }`. `kind` is the section background (light, surface, subtle, brand, secondary, dark). Rows hold columns `{ width, items, card?, tone? }`; items are `heading`, `text` (HTML), `button` (primary/secondary/outline/light), `accordion`, `image` (`kind`: photo/avatar/product/logo, `ratio`).
+A section is `{ id, group, label, kind, rows, part? }`. `kind` is the section background (light, surface, subtle, brand, secondary, dark). Rows hold columns `{ width, items, card?, tone? }`; items are `heading`, `text` (HTML, optional `cls` such as `d5-nav`), `button` (primary/secondary/outline/light), `accordion`, `image` (`kind`: photo/avatar/product/logo, `ratio`), `video` (thumbnail placeholder) and `shop` (Divi Shop module).
 
 Rules:
 - Only Divi's column structures: `4_4`, `1_2,1_2`, `1_3×3`, `1_4×4`, `2_3,1_3`, `1_3,2_3`, `1_4,3_4`, `3_4,1_4`, `1_4,1_2,1_4`, `1_5×5`, `2_5,3_5`, `3_5,2_5` (the test lists them; add to it only if Divi offers it).

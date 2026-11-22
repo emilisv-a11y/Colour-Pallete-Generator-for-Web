@@ -334,7 +334,7 @@ export const MORE_SECTIONS: SectionSpec[] = [
     label: 'Header: centred logo',
     kind: 'light',
     part: 'header',
-    rows: [{ cols: [col('1_3', [t('<p><a href="/about/">About</a> · <a href="/services/">Services</a></p>')]), col('1_3', [h(5, 'Your brand')]), col('1_3', [btn('Book a call')])] }],
+    rows: [{ cols: [col('1_3', [{ type: 'text', html: '<p><a href="/about/">About</a> · <a href="/services/">Services</a></p>', cls: 'd5-nav' }]), col('1_3', [h(5, 'Your brand')]), col('1_3', [btn('Book a call')])] }],
   },
   {
     id: 'footer-cta',
@@ -355,6 +355,216 @@ export const MORE_SECTIONS: SectionSpec[] = [
       { cols: [one([t('<p>© Your brand · Privacy policy · Cookies</p>')])] },
     ],
   },
+  /* ---------- shop: real products ---------- */
+  {
+    id: 'products-woo',
+    group: 'shop',
+    label: 'Product grid (WooCommerce)',
+    kind: 'light',
+    rows: [
+      { cols: [col('3_4', [h(2, 'Shop our favourites'), t('Real products from your WooCommerce shop, styled with your fonts and colours.', true)]), col('1_4', [btn('View all', 'outline')])] },
+      { cols: [one([{ type: 'shop' }])] },
+    ],
+  },
+
+  /* ---------- restaurant & booking ---------- */
+  {
+    id: 'menu',
+    group: 'restaurant',
+    label: 'Menu with prices',
+    kind: 'light',
+    rows: [
+      { align: 'center', cols: [one([h(2, 'Our menu'), t('Seasonal dishes made with local produce.', true)])] },
+      {
+        cols: [
+          col('1_2', [h(4, 'Starters'), t('<p><strong>Cold beetroot soup</strong> · €7<br>Dill, cucumber, egg</p><p><strong>Smoked trout</strong> · €11<br>Rye crisp, horseradish cream</p><p><strong>Garden salad</strong> · €8<br>Herbs, seeds, honey dressing</p>')]),
+          col('1_2', [h(4, 'Mains'), t('<p><strong>Potato dumplings</strong> · €14<br>Pork or mushroom filling, sour cream</p><p><strong>Roast chicken</strong> · €16<br>Barley, greens, pan juices</p><p><strong>Baked pike-perch</strong> · €19<br>Brown butter, potatoes</p>')]),
+        ],
+      },
+      { align: 'center', cols: [one([btn('Download the full menu', 'outline')])] },
+    ],
+  },
+  {
+    id: 'hours-map',
+    group: 'restaurant',
+    label: 'Opening hours & location',
+    kind: 'surface',
+    rows: [
+      {
+        cols: [
+          col('1_2', [h(3, 'Opening hours'), t('<p><strong>Mon–Thu</strong> · 11:00–22:00<br><strong>Fri–Sat</strong> · 11:00–23:00<br><strong>Sun</strong> · 12:00–21:00</p>'), h(5, 'Find us'), t('<p>Pilies g. 1, Vilnius<br>+370 600 00000</p>', true), btn('Get directions', 'outline')]),
+          col('1_2', [img('photo', 4 / 3, 'Map or photo of the place'), t('Replace the picture with Divi’s Map module if you prefer a live map.', true)]),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'booking',
+    group: 'restaurant',
+    label: 'Book a table',
+    kind: 'brand',
+    rows: [{ align: 'center', cols: [one([h(2, 'Book a table'), t('Lunch, dinner or a private event: we’ll keep a place for you.'), btn('Book online', 'light'), t('<p>or call <a href="tel:+37060000000">+370 600 00000</a></p>')])] }],
+  },
+  {
+    id: 'specials',
+    group: 'restaurant',
+    label: 'Events & specials',
+    kind: 'light',
+    rows: [
+      { align: 'center', cols: [one([h(2, 'This week')])] },
+      {
+        cols: [
+          ['Fri · 19:00', 'Live jazz evening'],
+          ['Sat · 12:00', 'Family brunch'],
+          ['Sun · all day', 'Chef’s tasting menu'],
+        ].map(([when, title], i) => card('1_3', [img('photo', 4 / 3, `Event ${i + 1}`), t(when, true), h(4, title), t('One or two lines about what to expect and how to book.', true)])),
+      },
+    ],
+  },
+
+  /* ---------- services & trust ---------- */
+  {
+    id: 'services-list',
+    group: 'trust',
+    label: 'Services list',
+    kind: 'light',
+    rows: [
+      { align: 'center', cols: [one([h(2, 'What we do'), t('Four services, one team.', true)])] },
+      { cols: [card('1_2', [h(4, 'Website design'), t('Custom Divi websites that are easy to update.', true), t('<p><a href="#">Learn more →</a></p>')]), card('1_2', [h(4, 'Branding'), t('Logo, colours and fonts that work everywhere.', true), t('<p><a href="#">Learn more →</a></p>')])] },
+      { cols: [card('1_2', [h(4, 'SEO & content'), t('Pages people find and actually read.', true), t('<p><a href="#">Learn more →</a></p>')]), card('1_2', [h(4, 'Care plans'), t('Updates, backups and small changes every month.', true), t('<p><a href="#">Learn more →</a></p>')])] },
+    ],
+  },
+  {
+    id: 'reviews',
+    group: 'trust',
+    label: 'Reviews summary',
+    kind: 'subtle',
+    rows: [
+      { align: 'center', cols: [one([h(2, '4.9 out of 5'), t('<p>★★★★★ from 120 Google reviews</p>')])] },
+      {
+        cols: [
+          ['“Quick, friendly and the result looks great on every phone.”', 'Gintarė, bakery owner'],
+          ['“They explained everything in plain words. No surprises.”', 'Darius, accountant'],
+          ['“Bookings went up the month after launch.”', 'Eglė, spa manager'],
+        ].map(([q, who]) => card('1_3', [t('<p>★★★★★</p>'), t(`<p>${q}</p>`), t(`<p><strong>${who}</strong></p>`, true)])),
+      },
+    ],
+  },
+  {
+    id: 'awards',
+    group: 'trust',
+    label: 'Awards & certificates',
+    kind: 'surface',
+    rows: [
+      { align: 'center', cols: [one([t('Certified, insured and recognised', true)])] },
+      { align: 'center', cols: [1, 2, 3, 4].map((n) => col('1_4', [img('logo', 3, `Certificate ${n}`)])) },
+    ],
+  },
+  {
+    id: 'guarantee',
+    group: 'trust',
+    label: 'Guarantee',
+    kind: 'light',
+    rows: [
+      {
+        cols: [
+          col('2_3', [h(3, 'Our promise'), t('If the site isn’t what we agreed, we fix it free of charge. You only pay when you’re happy with the result.'), btn('Read the terms', 'outline')]),
+          col('1_3', [h(2, '30 days'), t('free fixes after launch')], { tone: 'brand' }),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'faq-split',
+    group: 'trust',
+    label: 'FAQ with contact',
+    kind: 'surface',
+    rows: [
+      {
+        cols: [
+          col('1_2', [h(2, 'Questions?'), t('The answers to what most clients ask. Still unsure? Write to us.', true), btn('Contact us')]),
+          col('1_2', [{ type: 'accordion', items: [{ title: 'What does it cost?', html: '<p>Most small business sites cost between €1,500 and €4,000.</p>' }, { title: 'Who writes the text?', html: '<p>You, us, or together: we can help with every page.</p>' }, { title: 'Is hosting included?', html: '<p>We recommend and set up hosting; the first year can be included.</p>' }] }]),
+        ],
+      },
+    ],
+  },
+
+  /* ---------- media ---------- */
+  {
+    id: 'gallery',
+    group: 'media',
+    label: 'Image gallery',
+    kind: 'light',
+    rows: [
+      { align: 'center', cols: [one([h(2, 'Gallery')])] },
+      { cols: [1, 2, 3].map((n) => col('1_3', [img('photo', 1, `Gallery image ${n}`)])) },
+      { cols: [4, 5, 6].map((n) => col('1_3', [img('photo', 1, `Gallery image ${n}`)])) },
+    ],
+  },
+  {
+    id: 'video',
+    group: 'media',
+    label: 'Video',
+    kind: 'dark',
+    rows: [
+      { align: 'center', cols: [one([h(2, 'See how we work'), t('Two minutes, from first sketch to launch.')])] },
+      { cols: [one([{ type: 'video', label: 'Video thumbnail' }])] },
+    ],
+  },
+  {
+    id: 'cta-image',
+    group: 'media',
+    label: 'Call to action with image',
+    kind: 'subtle',
+    rows: [{ cols: [col('1_2', [img('photo', 4 / 3, 'CTA image')]), col('1_2', [h(2, 'Ready when you are'), t('Tell us about your project and get a clear plan and price within two days.'), btn('Start your project')])] }],
+  },
+  {
+    id: 'before-after',
+    group: 'media',
+    label: 'Before & after',
+    kind: 'light',
+    rows: [
+      { align: 'center', cols: [one([h(2, 'Before & after'), t('The same business, a new website.', true)])] },
+      { cols: [col('1_2', [img('photo', 4 / 3, 'Before'), h(5, 'Before'), t('Slow, hard to read on phones.', true)]), col('1_2', [img('photo', 4 / 3, 'After'), h(5, 'After'), t('Fast, clear, bookings up 60%.', true)])] },
+    ],
+  },
+
+  /* ---------- utility pages ---------- */
+  {
+    id: 'announcement',
+    group: 'utility',
+    label: 'Announcement bar',
+    kind: 'brand',
+    rows: [{ cols: [col('3_4', [t('<p><strong>New:</strong> online booking is now open.</p>')]), col('1_4', [t('<p><a href="#">Book now →</a></p>')])] }],
+  },
+  {
+    id: 'not-found',
+    group: 'utility',
+    label: '404 page',
+    kind: 'light',
+    rows: [{ align: 'center', cols: [one([h(1, '404'), h(3, 'This page has moved or no longer exists'), t('Try the home page, or tell us what you were looking for.', true), btn('Back to home'), btn('Contact us', 'outline')])] }],
+  },
+  {
+    id: 'coming-soon',
+    group: 'utility',
+    label: 'Coming soon',
+    kind: 'dark',
+    rows: [{ align: 'center', cols: [one([t('Launching spring 2027'), h(1, 'Something new is coming'), t('Leave your email and be the first to know.'), btn('Get notified', 'light')])] }],
+  },
+  {
+    id: 'thank-you',
+    group: 'utility',
+    label: 'Thank-you page',
+    kind: 'subtle',
+    rows: [{ align: 'center', cols: [one([h(2, 'Thank you!'), t('We’ve received your message and will reply within one working day.'), btn('Back to home', 'outline')])] }],
+  },
+  {
+    id: 'privacy-note',
+    group: 'utility',
+    label: 'Privacy & cookies note',
+    kind: 'surface',
+    rows: [{ cols: [col('3_4', [h(5, 'Your privacy'), t('We use only the cookies needed to run this site and, with your consent, anonymous statistics. <a href="/privacy-policy/">Privacy policy</a>', true)]), col('1_4', [btn('OK')])] }],
+  },
 ]
 
 /** Full pages made from sections, each one download. */
@@ -365,4 +575,11 @@ export const FULL_PAGES: { id: string; label: string; sections: string[] }[] = [
   { id: 'contact-page', label: 'Contact', sections: ['contact', 'faq', 'stats-band'] },
   { id: 'shop-home', label: 'Shop home', sections: ['sale-banner', 'hero-split', 'categories', 'products', 'benefits', 'newsletter'] },
   { id: 'blog-home', label: 'Blog & work', sections: ['hero', 'blog-cards', 'portfolio', 'case-study', 'newsletter'] },
+  { id: 'shop-woo', label: 'Shop home (WooCommerce)', sections: ['announcement', 'hero-split', 'categories', 'products-woo', 'benefits', 'reviews', 'newsletter'] },
+  { id: 'restaurant', label: 'Restaurant', sections: ['hero-split', 'menu', 'specials', 'gallery', 'reviews', 'hours-map', 'booking'] },
+  { id: 'services-page', label: 'Services & trust', sections: ['hero-stats', 'services-list', 'steps', 'guarantee', 'awards', 'reviews', 'faq-split', 'cta'] },
+  { id: 'landing', label: 'Landing page', sections: ['hero-split', 'logos', 'bento', 'video', 'stats-band', 'reviews', 'pricing', 'faq-split', 'cta-image'] },
+  { id: '404', label: '404 page', sections: ['not-found'] },
+  { id: 'coming-soon-page', label: 'Coming soon', sections: ['coming-soon'] },
+  { id: 'thank-you-page', label: 'Thank you', sections: ['thank-you'] },
 ]

@@ -25,6 +25,7 @@ A colour palette and design-system platform for web design, with extra tools for
 | C · Brand assets | Favicon/app icons + social images (`/brand-assets`), starter kits (`/starters`) | live |
 | D · Quality of life | Version history, command palette (Ctrl/⌘+K), installable app (PWA), colour-blindness view | live |
 | Layout library v2 | 27 sections in 5 groups, 6 full pages, placeholder pictures, 2 headers + 2 footers | live |
+| Layouts v3 | 46 sections in 9 groups, 13 full pages, Shop/Video modules, large iframe preview, hover/focus states, rem units | built (see PLAN) |
 | Projects | Client projects (header switcher, `/projects`) + handoff ZIP (EN/LT) | live |
 | Backend | PHP/MySQL API on Hostinger Business: sign-in, team, sync, client review links (`#/review/<token>`) | **live at https://webtools.emilisvastakas.co.uk** (setup done; files in `public_html/webtools`). The whole app is behind a sign-in screen there (`LoginGate`). |
 
@@ -37,6 +38,8 @@ The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.
 - D · quality of life: **done** (`lib/versions.ts` + `components/system/VersionHistory.tsx`, auto versions via `onBeforeSystemWrite` in storage.ts, key `d5wt:systemVersions` in WORKING_KEYS; `components/CommandPalette.tsx` + `lib/commands.ts`; `public/sw.js` + `manifest.webmanifest` + `public/icons/`, registered in main.tsx (prod only); `components/VisionSelect.tsx`).
 
 - Layout library v2: **done** (see the `divi-layout-library` skill). v0.app was given as design reference but is blocked from the sandbox (DNS), so the sections are original designs from common patterns.
+
+**Waiting on the owner:** a presets export containing a nested number variable and a field with a variable combination (calc etc.); the Divi dev docs (`@divi/global-data`) don't document that format.
 
 Ask the owner what's next. Ideas not built yet: dynamic Blog/Woo Products modules and real Contact Form / Email Optin modules (each needs a sample export with that module), verify Divi imports on staging (button sizes, layouts, Theme Builder, dark mode `--gcid-*`, gradients), proofread Lithuanian copy, more starter kits, layout variants (pricing table module, testimonial module).
 
@@ -67,6 +70,7 @@ Hosting: Hostinger via `.github/workflows/deploy-hostinger.yml` (FTP upload on e
 - `src/lib/divi.ts`: **Divi 5** parse/build/merge, section planner, CSS helpers. See the `divi5-export-format` skill.
 - `src/lib/diviRead.ts`: **round trip** reader: `evalLength` (px/rem/vw/calc/clamp/min/max), `readFluid` (samples 200–2560px to find min/max and where it starts/stops), `clampIssue`, `resolveHex` (Divi relative colours ≈ HSL shifts in percentage points), `readDiviSite` → roles with `how`/`source`, fonts, type fit (log-linear over text-* steps), radius, button, notes; `applyReview`. `src/lib/diviDiff.ts`: `diffSite(build, source)` (changed/new/same/site-only; unchanged site defaults hidden), `selectiveImport` (adds needed new colours/variables, keeps group defaults, `broken` must be []). UI: `components/divi/RoundTrip.tsx` (`ReadSiteModal`, `DiffTab`); new project opens on the diff tab via sessionStorage `d5wt:diviOpenTab`. Google Fonts catalogue must be loaded (`loadLibrary`) before reading, or fonts show as unknown.
 - `src/lib/diviLayouts.ts`: **layout library**: `LAYOUTS` = core specs + `MORE_SECTIONS` and `FULL_PAGES` from `src/data/diviSections.ts` (groups, image items, coloured `tone` tiles; `placeholdersFor` + `lib/placeholders.ts` draw brand-tinted pictures embedded as `images` in the file); section specs → both `sectionBlocks` markup and the `SectionPreview` in `components/divi/LayoutsDark.tsx`), `blockAttrs` (WordPress escaping), `buildLayoutFile`, `buildThemeBuilderFile`, `parseBlocks` (tests). `src/lib/diviDark.ts`: dark-mode CSS (`--gcid-<id>` overrides from `build.ids.colors`), head/body scripts (`d5-theme` localStorage). Gradients: `diviGradient`/`gradientPresetFile` in divi.ts. `src/lib/logo.ts` + `pages/LogoPage.tsx`: logo checker.
+- `src/lib/layoutHtml.ts` + `components/divi/LayoutPreview.tsx`: **large preview**: the same section specs rendered as a mini web page in an iframe (diviCss + preview CSS, `data-theme` for dark, stacks under 980px like Divi), scaled to fit; device widths 1280/820/390.
 - `src/lib/projects.ts`: **client projects**. Tools use per-project *working keys* in localStorage (`WORKING_KEYS`: system, generator state, Divi data…). `switchProject` saves them into the old project and loads the new one's copy; `ensureProjects()` runs in `main.tsx` before render (migrates old data). `<main>` is keyed by the active project id so pages remount after a switch. Palettes and sessions carry `projectId` (the old free-text `project` field is now shown as "Group").
 - `src/lib/handoff.ts` + `handoffText.ts` (EN/LT strings): handoff ZIP builder; text files are built synchronously (testable), binaries (PDF/ASE/PNG/fonts) are added in the browser. Lithuanian copy was written by Claude: ask the owner to proofread it.
 - **Backend** (`server/`, see `server/README.md`): `server/api/index.php` router + `src/core.php` (PDO, auth tokens in `d5wt_auth` HttpOnly cookie, rate limits, `X-Requested-With: d5wt` CSRF header) + `src/routes.php` (auth, users, sync, reviews, public `/r/<token>`). `setup.php` creates tables/config/owner once and locks. `config.php` is never committed or deployed (gitignored, excluded in the FTP action). Hostinger is the owner's; Claude cannot log in there.
@@ -91,7 +95,8 @@ Hosting: Hostinger via `.github/workflows/deploy-hostinger.yml` (FTP upload on e
 - `npm run build` runs `tsc -b`, which also type-checks the test files: a type error in a test fails the build (and the Hostinger deploy). Run the build before reporting success.
 - Multi-line `python3 - <<EOF` edits are sometimes refused by the shell safety check; write the script to the scratchpad and run it from there.
 - Cards on the Divi page use `useState` + derived values, not `setState` inside effects (oxlint flags it). Keep oxlint warnings at the existing baseline (30 old ones in untouched files).
-- The owner's real files (uploads `All_Presets.json`, `testpage.json`, `Divi-Theme-Builder-Templates.json`) may only be copied to `/tmp` for temporary tests that are deleted afterwards.
+- This session's cloud environment `Colour-Pallete-Generator-for-Web` allows `dev.elegantthemes.com` and `v0.app`. WebFetch may still fail with DNS errors right after a change; `curl` through the proxy works.
+- The owner's real files (uploads `testshoppage.json` too, `All_Presets.json`, `testpage.json`, `Divi-Theme-Builder-Templates.json`) may only be copied to `/tmp` for temporary tests that are deleted afterwards.
 
 ## Skills in this repo
 

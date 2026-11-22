@@ -18,19 +18,23 @@ import { MORE_SECTIONS } from '../data/diviSections'
 /* ---------- a small description of a section, used for both the file and the preview ---------- */
 
 export type HeadingItem = { type: 'heading'; level: 1 | 2 | 3 | 4 | 5 | 6; text: string; tone?: 'muted' }
-export type TextItem = { type: 'text'; html: string; tone?: 'muted' }
+export type TextItem = { type: 'text'; html: string; tone?: 'muted'; cls?: string }
 export type ButtonItem = { type: 'button'; text: string; variant: 'primary' | 'secondary' | 'outline' | 'light' }
 export type AccordionItem = { type: 'accordion'; items: { title: string; html: string }[] }
 /** A picture: the file carries a brand-tinted placeholder that Divi imports into the Media Library. */
 export type ImageItem = { type: 'image'; kind: PlaceholderKind; ratio: number; label?: string }
-export type Item = HeadingItem | TextItem | ButtonItem | AccordionItem | ImageItem
+/** Divi's Shop module: real WooCommerce products, styled with the design system. */
+export type ShopItem = { type: 'shop' }
+/** Divi's Video module (thumbnail is a placeholder picture; add the video link in Divi). */
+export type VideoItem = { type: 'video'; label?: string }
+export type Item = HeadingItem | TextItem | ButtonItem | AccordionItem | ImageItem | ShopItem | VideoItem
 
 export type PlaceholderKind = 'photo' | 'avatar' | 'product' | 'logo'
 /** tone = a coloured tile (bento grids); card = a raised surface card */
 export type Col = { width: string; card?: boolean; tone?: 'surface' | 'subtle' | 'brand' | 'dark'; items: Item[] }
 export type Row = { cols: Col[]; align?: 'center' }
 export type SectionKind = 'light' | 'surface' | 'subtle' | 'brand' | 'secondary' | 'dark'
-export type LayoutGroup = 'basics' | 'landing' | 'shop' | 'blog' | 'components'
+export type LayoutGroup = 'basics' | 'landing' | 'shop' | 'restaurant' | 'trust' | 'media' | 'blog' | 'utility' | 'components'
 export type SectionSpec = { id: string; label: string; kind: SectionKind; rows: Row[]; part?: 'header' | 'footer'; group?: LayoutGroup }
 
 const one = (items: Item[], card = false): Col => ({ width: '4_4', items, card })
@@ -159,7 +163,7 @@ const CORE: SectionSpec[] = [
       {
         cols: [
           { width: '1_4', items: [{ type: 'heading', level: 5, text: 'Your brand' }] },
-          { width: '1_2', items: [{ type: 'text', html: '<p><a href="/">Home</a> · <a href="/about/">About</a> · <a href="/services/">Services</a> · <a href="/contact/">Contact</a></p>' }] },
+          { width: '1_2', items: [{ type: 'text', html: '<p><a href="/">Home</a> · <a href="/about/">About</a> · <a href="/services/">Services</a> · <a href="/contact/">Contact</a></p>', cls: 'd5-nav' }] },
           { width: '1_4', items: [{ type: 'button', text: 'Contact us', variant: 'primary' }] },
         ],
       },
@@ -190,7 +194,11 @@ export const LAYOUT_GROUPS: { id: LayoutGroup; label: string }[] = [
   { id: 'basics', label: 'Basics' },
   { id: 'landing', label: 'Landing page' },
   { id: 'shop', label: 'Shop' },
+  { id: 'restaurant', label: 'Restaurant & booking' },
+  { id: 'trust', label: 'Services & trust' },
+  { id: 'media', label: 'Media' },
   { id: 'blog', label: 'Blog & portfolio' },
+  { id: 'utility', label: 'Utility pages' },
   { id: 'components', label: 'Components' },
 ]
 
@@ -216,9 +224,10 @@ export function placeholdersFor(ids: string[]): Placeholder[] {
     for (const row of spec.rows)
       for (const col of row.cols)
         for (const it of col.items)
-          if (it.type === 'image') {
+          if (it.type === 'image' || it.type === 'video') {
             const key = `${id}-${++n}`
-            out.push({ key, kind: it.kind, ...phSize(it.kind, it.ratio), url: placeholderUrl(key, it.kind), label: it.label ?? '' })
+            const kind = it.type === 'image' ? it.kind : 'photo'
+            out.push({ key, kind, ...phSize(kind, it.type === 'image' ? it.ratio : 16 / 9), url: placeholderUrl(key, kind), label: it.label ?? '' })
           }
   }
   return out
@@ -295,7 +304,12 @@ export function sectionBlocks(spec: SectionSpec, build: DiviBuild, prefix: strin
           modulePreset: preset('divi/heading', `H${it.level} Heading`),
         })
       case 'text':
-        return leaf('divi/text', { ...align, content: { innerContent: { desktop: { value: it.html } } }, ...base, modulePreset: textPreset(it.tone) })
+        return leaf('divi/text', {
+          ...(it.cls ? { module: { advanced: { htmlAttributes: { desktop: { value: { class: it.cls } } }, ...(center ? { text: { text: { desktop: { value: { orientation: 'center' } } } } } : {}) } } } : align),
+          content: { innerContent: { desktop: { value: it.html } } },
+          ...base,
+          modulePreset: textPreset(it.tone),
+        })
       case 'button':
         return leaf('divi/button', {
           module: { advanced: { alignment: { desktop: { value: center ? 'center' : 'left' } } } },
@@ -303,6 +317,32 @@ export function sectionBlocks(spec: SectionSpec, build: DiviBuild, prefix: strin
           ...base,
           modulePreset: preset('divi/button', BUTTON_PRESET[surface === 'brand' && it.variant === 'light' ? brandButtonVariant(sys) : it.variant]),
         })
+      case 'video': {
+        const key = `${spec.id}-${++imageN}`
+        return leaf('divi/video', {
+          module: { advanced: { htmlAttributes: { desktop: { value: { class: 'd5-video' } } } } },
+          video: { innerContent: { desktop: { value: { src: '', id: 0 } } } },
+          thumbnail: { innerContent: { desktop: { value: { src: placeholderUrl(key, 'photo'), width: '1200', height: '675' } } } },
+          ...base,
+          modulePreset: ['default'],
+        })
+      }
+      case 'shop': {
+        const C = (key: string, hex: string) => colour(key, hex)
+        const heading = { family: `$variable(${JSON.stringify({ type: 'content', value: { name: '--et_global_heading_font', settings: {} } })})$` }
+        return leaf('divi/shop', {
+          module: { advanced: { htmlAttributes: { desktop: { value: { class: 'd5-shop' } } } } },
+          title: { decoration: { font: { font: { desktop: { value: { ...heading, weight: '700', color: C('text', tokens.text.hex) }, hover: { color: C('primary-text', tokens['primary-text'].hex) } } } } } },
+          price: { decoration: { font: { font: { desktop: { value: { weight: '700', color: C('text-muted', tokens['text-muted'].hex) } } } } } },
+          rating: { decoration: { font: { font: { desktop: { value: { color: C('warning', tokens.warning.hex) } } } } } },
+          saleBadge: { decoration: { background: { desktop: { value: { color: C('primary', tokens.primary.hex) } } }, font: { font: { desktop: { value: { weight: '700', color: C('on-primary', tokens['on-primary'].hex) } } } } } },
+          overlayIcon: { decoration: { icon: { desktop: { value: { color: C('primary', tokens.primary.hex) } } } } },
+          image: { decoration: { border: { desktop: { value: { radius: { sync: 'on', topLeft: `${sys.radius / 16}rem`, topRight: `${sys.radius / 16}rem`, bottomRight: `${sys.radius / 16}rem`, bottomLeft: `${sys.radius / 16}rem` } } } } } },
+          elements: { advanced: { showPagination: { desktop: { value: 'off' } } } },
+          ...base,
+          modulePreset: ['default'],
+        })
+      }
       case 'image': {
         const key = `${spec.id}-${++imageN}`
         const size = phSize(it.kind, it.ratio)

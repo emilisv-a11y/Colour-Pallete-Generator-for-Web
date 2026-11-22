@@ -17,7 +17,7 @@ import { buildScales, buildTokens, ROLE_INFO, ROLE_KEYS, STEPS, typeOf, type Des
 import { spacePairs, spaceScale, typeScale } from './typography'
 import { contrastRatio } from './color'
 import { exportTokens } from './tokens'
-import { buttonSizes, effectHelpers, effectsOf } from './effects'
+import { buttonSizes, effectHelpers, effectsOf, rem } from './effects'
 
 export type DiviColor = { color: string; status: string; label: string }
 export type DiviVariable = { id: string; label: string; value: string; order: string; status: string; lastUpdated: string; variableType: string; type: string }
@@ -267,22 +267,22 @@ export function buildDiviImport(sys: DesignSystem, opts: DiviOptions, source?: D
   if (opts.spaceVars) [...spaceScale(ts), ...spacePairs(ts)].forEach((s) => addVar(`space-${s.name}`, `${P}space-${s.name}`, s.css))
   if (opts.radiusVars) {
     const r = sys.radius
-    addVar('radius-s', `${P}radius-s`, `${Math.round(r * 0.5)}px`)
-    addVar('radius-m', `${P}radius-m`, `${r}px`)
-    addVar('radius-l', `${P}radius-l`, `${Math.round(r * 1.6)}px`)
+    addVar('radius-s', `${P}radius-s`, rem(Math.round(r * 0.5)))
+    addVar('radius-m', `${P}radius-m`, rem(r))
+    addVar('radius-l', `${P}radius-l`, rem(Math.round(r * 1.6)))
     addVar('radius-full', `${P}radius-full`, '999px')
   }
   if (opts.effectVars) {
     const e = effectsOf(sys)
     ;(['thin', 'base', 'thick'] as const).forEach((n) => addVar(`border-${n}`, `${P}border-${n}`, `${e.borders[n]}px`))
     buttonSizes(sys).forEach((b) => {
-      addVar(`btn-${b.name}-pad-y`, `${P}btn-${b.name}-pad-y`, `${b.padY}px`)
-      addVar(`btn-${b.name}-pad-x`, `${P}btn-${b.name}-pad-x`, `${b.padX}px`)
+      addVar(`btn-${b.name}-pad-y`, `${P}btn-${b.name}-pad-y`, rem(b.padY))
+      addVar(`btn-${b.name}-pad-x`, `${P}btn-${b.name}-pad-x`, rem(b.padX))
       addVar(`btn-${b.name}-font`, `${P}btn-${b.name}-font`, `${Math.round((b.fontPx / 16) * 1000) / 1000}rem`)
     })
-    addVar('input-height', `${P}input-height`, `${e.input}px`)
+    addVar('input-height', `${P}input-height`, rem(e.input))
     ;(['fast', 'base', 'slow'] as const).forEach((n) => addVar(`duration-${n}`, `${P}duration-${n}`, `${e.motion[n]}ms`))
-    ;(['narrow', 'container', 'wide'] as const).forEach((n) => addVar(`width-${n}`, `${P}width-${n}`, `${e.widths[n]}px`))
+    ;(['narrow', 'container', 'wide'] as const).forEach((n) => addVar(`width-${n}`, `${P}width-${n}`, rem(e.widths[n])))
   }
   const V = (key: string, fallback: string) => (varIds[key] ? contentRef(varIds[key]) : fallback)
 
@@ -359,19 +359,23 @@ export function buildDiviImport(sys: DesignSystem, opts: DiviOptions, source?: D
   }
 
   if (opts.presetText) {
-    const textAttrs = (color: string, headingColor: string) => ({
+    // links: brand colour, underlined; on hover a deeper shade (on coloured backgrounds they keep the text colour)
+    const textAttrs = (color: string, headingColor: string, link = C('primary-text'), linkHover = C('on-primary-subtle')) => ({
       content: {
         decoration: {
-          bodyFont: { body: { font: { desktop: { value: fontValue(body, DIVI_BODY_FONT, color) } } } },
+          bodyFont: {
+            body: { font: { desktop: { value: fontValue(body, DIVI_BODY_FONT, color) } } },
+            link: { font: { desktop: { value: { color: link, style: ['underline'] }, hover: { color: linkHover } } } },
+          },
           headingFont: Object.fromEntries(headingSteps.map((s) => [s.el!, { font: { desktop: { value: fontValue(s, DIVI_HEADING_FONT, headingColor, '700') } } }])),
         },
       },
     })
     addModulePreset('divi/text', 'Body Text', textAttrs(C('text'), C('text')))
     addModulePreset('divi/text', 'Muted Text', textAttrs(C('text-muted'), C('text')))
-    addModulePreset('divi/text', 'Text on Brand', textAttrs(C('on-primary'), C('on-primary')))
+    addModulePreset('divi/text', 'Text on Brand', textAttrs(C('on-primary'), C('on-primary'), C('on-primary'), C('on-primary')))
     const light = colorIds['neutral.50'] ? colorRef(colorIds['neutral.50']) : scales.neutral[0]
-    addModulePreset('divi/text', 'Text on Dark', textAttrs(light, light))
+    addModulePreset('divi/text', 'Text on Dark', textAttrs(light, light, light, light))
   }
 
   if (opts.presetButtons) {
@@ -430,10 +434,13 @@ export function buildDiviImport(sys: DesignSystem, opts: DiviOptions, source?: D
     const sc = buildScales(sys)
     const pad = V('space-xl-3xl', '5rem')
     const grad = (g: DiviGradient, fallback: string) => ({ module: { decoration: { background: { desktop: { value: { color: fallback, gradient: g } } }, spacing: { desktop: { value: { padding: { top: pad, bottom: pad, syncVertical: 'on' } } } } } } })
-    addModulePreset('divi/section', 'Section Gradient Brand', grad(diviGradient([{ color: tokens.primary.hex, pos: 0 }, { color: tokens.secondary.hex, pos: 100 }], 'linear', '135deg'), tokens.primary.hex))
-    addModulePreset('divi/section', 'Section Gradient Soft', grad(diviGradient([{ color: tokens['primary-subtle'].hex, pos: 0 }, { color: tokens.bg.hex, pos: 100 }], 'linear', '180deg'), tokens.bg.hex))
-    addModulePreset('divi/section', 'Section Gradient Dark', grad(diviGradient([{ color: sc.neutral[9], pos: 0 }, { color: sc.primary[9], pos: 100 }], 'linear', '160deg'), sc.neutral[9]))
-    addModulePreset('divi/section', 'Section Gradient Glow', grad(diviGradient([{ color: sc.primary[3], pos: 0 }, { color: tokens.bg.hex, pos: 70 }], 'circular', 'top left'), tokens.bg.hex))
+    // stops point at global colours where the file has them (Divi 5 resolves colour variables in gradient stops),
+    // so the gradients follow colour changes in Divi and the dark-mode switch
+    const S = (key: string, hex: string) => (colorIds[key] ? colorRef(colorIds[key]) : hex)
+    addModulePreset('divi/section', 'Section Gradient Brand', grad(diviGradient([{ color: S('primary', tokens.primary.hex), pos: 0 }, { color: S('secondary', tokens.secondary.hex), pos: 100 }], 'linear', '135deg'), C('primary')))
+    addModulePreset('divi/section', 'Section Gradient Soft', grad(diviGradient([{ color: S('primary-subtle', tokens['primary-subtle'].hex), pos: 0 }, { color: S('bg', tokens.bg.hex), pos: 100 }], 'linear', '180deg'), C('bg')))
+    addModulePreset('divi/section', 'Section Gradient Dark', grad(diviGradient([{ color: S('neutral.900', sc.neutral[9]), pos: 0 }, { color: S('primary.900', sc.primary[9]), pos: 100 }], 'linear', '160deg'), S('neutral.900', sc.neutral[9])))
+    addModulePreset('divi/section', 'Section Gradient Glow', grad(diviGradient([{ color: S('primary.300', sc.primary[3]), pos: 0 }, { color: S('bg', tokens.bg.hex), pos: 70 }], 'circular', 'top left'), C('bg')))
   }
 
   if (opts.presetGroups) {
@@ -577,6 +584,19 @@ ${SECTION_KINDS.map(block).join('\n\n')}
 .d5-focus-ring :focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
 .d5-card { box-shadow: var(--shadow-sm); }
 
+/* hover & focus states (durations come from the motion tokens; 0 for visitors who ask for less motion) */
+.et_pb_button { transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard) !important; }
+.et_pb_button:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.et_pb_button:active { transform: translateY(0); box-shadow: var(--shadow-sm); }
+.et_pb_button:focus-visible, .et_pb_module a:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.et_pb_text a { text-underline-offset: 0.18em; text-decoration-thickness: 1px; transition: color var(--duration-fast) var(--ease-standard), text-decoration-thickness var(--duration-fast) var(--ease-standard); }
+.et_pb_text a:hover { text-decoration-thickness: 2px; }
+.d5-nav a { text-decoration: none; font-weight: 600; transition: color var(--duration-fast) var(--ease-standard); }
+.d5-nav a:hover { color: var(--primary-text); text-decoration: underline; text-underline-offset: 0.3em; }
+.d5-img { overflow: hidden; border-radius: var(--radius); }
+.d5-img img { transition: transform var(--duration-slow) var(--ease-standard); }
+.d5-card:hover .d5-img img, .d5-img:hover img { transform: scale(1.04); }
+
 /* layout library: coloured tiles, images, comparison table, style-guide swatches */
 .d5-tile { padding: var(--space-l); border: 0; }
 .d5-tile-surface { background-color: var(--surface); color: var(--text); }
@@ -591,6 +611,12 @@ ${SECTION_KINDS.map(block).join('\n\n')}
 .d5-table th, .d5-table td { padding: 12px 14px; border-bottom: var(--border-thin) solid var(--border); text-align: center; }
 .d5-table th:first-child, .d5-table td:first-child { text-align: left; }
 .d5-table th:nth-child(2), .d5-table td:nth-child(2) { background-color: var(--primary-subtle); color: var(--on-primary-subtle); font-weight: 700; }
+.d5-tile-brand :is(h1, h2, h3, h4, h5, h6, p, a) { color: var(--on-primary); }
+.d5-tile-dark :is(h1, h2, h3, h4, h5, h6, p, a) { color: var(--neutral-50); }
+.d5-tile-subtle :is(h1, h2, h3, h4, h5, h6, p, a) { color: var(--on-primary-subtle); }
+.d5-video { border-radius: var(--radius); overflow: hidden; }
+.d5-shop .woocommerce ul.products li.product { transition: transform var(--duration-base) var(--ease-standard); }
+.d5-shop .woocommerce ul.products li.product:hover { transform: translateY(-3px); }
 .d5-swatch { height: 72px; border-radius: var(--radius); border: var(--border-thin) solid var(--border); margin-bottom: 8px; }
 
 ${effectHelpers(sys)}

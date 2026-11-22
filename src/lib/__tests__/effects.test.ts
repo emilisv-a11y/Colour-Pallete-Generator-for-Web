@@ -34,7 +34,7 @@ describe('shape & motion tokens', () => {
   it('writes CSS variables with dark shadows and reduced motion', () => {
     const css = effectsCss(sys)
     expect(css).toContain('--shadow-lg:')
-    expect(css).toContain('--width-container: 1200px;')
+    expect(css).toContain('--width-container: 75rem;')
     expect(css).toContain('--ease-standard: cubic-bezier(0.2, 0, 0, 1);')
     expect(css).toMatch(/prefers-reduced-motion: reduce[\s\S]*--duration-base: 0ms/)
     expect(css).toMatch(/data-theme='dark'[\s\S]*--shadow-sm: 0 1px 2px rgb\(0 0 0/)
@@ -53,7 +53,7 @@ describe('in every export', () => {
     expect(dtcg.shadow.light.md.$value[1].offsetY).toEqual({ value: 6, unit: 'px' })
     expect(dtcg.easing.standard.$value).toEqual([0.2, 0, 0, 1])
     expect(dtcg.duration.base.$value).toEqual({ value: 200, unit: 'ms' })
-    expect(JSON.parse(exportTokens(sys, 'json')).effects['width-wide']).toBe('1440px')
+    expect(JSON.parse(exportTokens(sys, 'json')).effects['width-wide']).toBe('90rem')
   })
   it('Divi import: variables and button size presets', () => {
     const b = buildDiviImport(sys, DEFAULT_DIVI_OPTIONS)
