@@ -4,11 +4,11 @@ A colour palette and design-system platform for web design, with extra tools for
 
 ## The owner and how they like to work
 
-- Single user for now: a web designer who builds client sites with **Divi 5**, based in the EU (Lithuanian, so Latin Extended matters for fonts, and EU privacy rules matter).
+- The owner (plus a few teammates with accounts): a web designer who builds client sites with **Divi 5**, based in the EU (Lithuanian, so Latin Extended matters for fonts, and EU privacy rules matter).
 - Wants a **plan and feature list before building**, with questions asked up front. **Review after each phase.**
 - Not a developer-first user: explain results in plain language, give clear next steps, and include screenshots of new UI.
-- **No AI features** in the product (declined). **No accounts yet**; a backend is planned later (Hostinger Business PHP/MySQL, or Supabase/Cloudflare).
-- Deploy flow: work on the session's branch, then **ask before merging to `main`**; merging deploys automatically. Every deploy so far was approved with "Merge and deploy", but always ask again.
+- **No AI features** in the product (declined). Accounts exist on the own domain (owner + teammates, PHP/MySQL on Hostinger Business); there is no public sign-up.
+- Deploy flow: work on the session's branch, then **ask before merging to `main`**; merging deploys automatically to Hostinger (FTP action). Every deploy so far was approved with "Merge and deploy", but always ask again.
 
 ## Status
 
@@ -19,14 +19,14 @@ A colour palette and design-system platform for web design, with extra tools for
 | 3 | Design system: roles, 50–950 scales, light/dark tokens, accessibility (WCAG + APCA), live preview, token exports, brand kit, fluid type (clamp), Google Fonts library (1,908 families) | live |
 | 4 | Divi 5: import file builder (colours, variables, presets), section planner, CSS helpers, checklist | live |
 | Extras | Text-on-image checker (`/text-on-image`) + self-hosted fonts (Design system → Type) | live |
+| Round trip | Divi export → design system (new project) + Site differences tab with tick-to-apply update file | live after merge |
 | Projects | Client projects (header switcher, `/projects`) + handoff ZIP (EN/LT) | live |
 | Backend | PHP/MySQL API on Hostinger Business: sign-in, team, sync, client review links (`#/review/<token>`) | **live at https://webtools.emilisvastakas.co.uk** (setup done; files in `public_html/webtools`). The whole app is behind a sign-in screen there (`LoginGate`). |
 
 The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.md`.
 
-**Recommended next** (text-on-image, self-hosted fonts, projects + handoff and the backend are done):
-1. Read a Divi site back into a design system (round trip), with a diff.
-2. More tokens: shadows, borders, motion, button sizes, content widths → Divi variables.
+**Recommended next** (text-on-image, self-hosted fonts, projects + handoff, the backend, the sign-in gate and the Divi round trip are done):
+1. More tokens: shadows, borders, motion, button sizes, content widths → Divi variables.
 3. Divi layouts library (needs a sample Divi Library layout export), dark-mode toggle for Divi, gradient background presets (needs a sample preset with a gradient), logo checker, favicon/OG image generator, industry starter kits, version history, command palette, PWA.
 
 ## Stack and commands
@@ -53,6 +53,7 @@ Hosting: Hostinger via `.github/workflows/deploy-hostinger.yml` (FTP upload on e
 - `src/lib/apca.ts` (APCA 0.0.98G-4g), `typography.ts` (fluid clamp scale + spacing), `tokens.ts` (CSS/SCSS/Tailwind v3/v4/DTCG/Tokens Studio/Bootstrap/JSON exports).
 - `src/lib/googleFonts.ts` (catalogue, popularity, API-key refresh, preview fonts under the private name `d5p-<family>`), `fonts.ts` (`metaFor`, `fontStack`, `googleFontsUrl`: only request weights a family has), `selfHost.ts` (WOFF2 ZIP).
 - `src/lib/divi.ts`: **Divi 5** parse/build/merge, section planner, CSS helpers. See the `divi5-export-format` skill.
+- `src/lib/diviRead.ts`: **round trip** reader: `evalLength` (px/rem/vw/calc/clamp/min/max), `readFluid` (samples 200–2560px to find min/max and where it starts/stops), `clampIssue`, `resolveHex` (Divi relative colours ≈ HSL shifts in percentage points), `readDiviSite` → roles with `how`/`source`, fonts, type fit (log-linear over text-* steps), radius, button, notes; `applyReview`. `src/lib/diviDiff.ts`: `diffSite(build, source)` (changed/new/same/site-only; unchanged site defaults hidden), `selectiveImport` (adds needed new colours/variables, keeps group defaults, `broken` must be []). UI: `components/divi/RoundTrip.tsx` (`ReadSiteModal`, `DiffTab`); new project opens on the diff tab via sessionStorage `d5wt:diviOpenTab`. Google Fonts catalogue must be loaded (`loadLibrary`) before reading, or fonts show as unknown.
 - `src/lib/projects.ts`: **client projects**. Tools use per-project *working keys* in localStorage (`WORKING_KEYS`: system, generator state, Divi data…). `switchProject` saves them into the old project and loads the new one's copy; `ensureProjects()` runs in `main.tsx` before render (migrates old data). `<main>` is keyed by the active project id so pages remount after a switch. Palettes and sessions carry `projectId` (the old free-text `project` field is now shown as "Group").
 - `src/lib/handoff.ts` + `handoffText.ts` (EN/LT strings): handoff ZIP builder; text files are built synchronously (testable), binaries (PDF/ASE/PNG/fonts) are added in the browser. Lithuanian copy was written by Claude: ask the owner to proofread it.
 - **Backend** (`server/`, see `server/README.md`): `server/api/index.php` router + `src/core.php` (PDO, auth tokens in `d5wt_auth` HttpOnly cookie, rate limits, `X-Requested-With: d5wt` CSRF header) + `src/routes.php` (auth, users, sync, reviews, public `/r/<token>`). `setup.php` creates tables/config/owner once and locks. `config.php` is never committed or deployed (gitignored, excluded in the FTP action). Hostinger is the owner's; Claude cannot log in there.
@@ -78,5 +79,6 @@ Hosting: Hostinger via `.github/workflows/deploy-hostinger.yml` (FTP upload on e
 ## Skills in this repo
 
 - `.claude/skills/divi5-export-format`: Divi 5 presets/global colours/variables JSON format and how this app builds and merges it.
-- `.claude/skills/ship-to-live-site`: branch, PR, merge and deploy routine for this repo, and verifying the GitHub Pages run.
+- `.claude/skills/ship-to-live-site`: branch, PR, merge and deploy routine for this repo, and verifying the Hostinger deploy run.
+- `.claude/skills/hostinger-backend`: the PHP API, local full stack, setup and the troubleshooting learned while going live on Hostinger.
 - `.claude/skills/verify-in-browser`: Playwright checks used here (screenshots, phone overflow, console errors, pixel/rendering verification, selector pitfalls).

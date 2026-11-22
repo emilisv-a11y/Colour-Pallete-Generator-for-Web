@@ -1,0 +1,435 @@
+{
+ "context": "et_builder",
+ "data": [],
+ "presets": {
+  "module": {
+   "divi/heading": {
+    "default": "hdef000001",
+    "items": {
+     "hdef000001": {
+      "id": "hdef000001",
+      "name": "Heading Preset 1",
+      "moduleName": "divi/heading",
+      "version": "5.19.0",
+      "type": "module",
+      "created": 1,
+      "updated": 1
+     },
+     "hsite00001": {
+      "id": "hsite00001",
+      "name": "Hero Title",
+      "moduleName": "divi/heading",
+      "version": "5.19.0",
+      "type": "module",
+      "created": 1,
+      "updated": 1,
+      "attrs": {
+       "title": {
+        "decoration": {
+         "font": {
+          "font": {
+           "desktop": {
+            "value": {
+             "headingLevel": "h1",
+             "family": "Playfair Display",
+             "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-body-color\",\"settings\":{}}})$"
+            }
+           }
+          }
+         }
+        }
+       }
+      },
+      "styleAttrs": {
+       "title": {
+        "decoration": {
+         "font": {
+          "font": {
+           "desktop": {
+            "value": {
+             "headingLevel": "h1",
+             "family": "Playfair Display",
+             "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-body-color\",\"settings\":{}}})$"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "divi/text": {
+    "default": "tdef000001",
+    "items": {
+     "tdef000001": {
+      "id": "tdef000001",
+      "name": "Text Preset 1",
+      "moduleName": "divi/text",
+      "version": "5.19.0",
+      "type": "module",
+      "created": 1,
+      "updated": 1
+     },
+     "tsite00001": {
+      "id": "tsite00001",
+      "name": "Intro Text",
+      "moduleName": "divi/text",
+      "version": "5.19.0",
+      "type": "module",
+      "created": 1,
+      "updated": 1,
+      "attrs": {
+       "content": {
+        "decoration": {
+         "bodyFont": {
+          "body": {
+           "font": {
+            "desktop": {
+             "value": {
+              "family": "Lato",
+              "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-greyneut01\",\"settings\":{}}})$"
+             }
+            }
+           }
+          }
+         },
+         "headingFont": {
+          "h2": {
+           "font": {
+            "desktop": {
+             "value": {
+              "family": "Playfair Display"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      },
+      "styleAttrs": {
+       "content": {
+        "decoration": {
+         "bodyFont": {
+          "body": {
+           "font": {
+            "desktop": {
+             "value": {
+              "family": "Lato",
+              "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-greyneut01\",\"settings\":{}}})$"
+             }
+            }
+           }
+          }
+         },
+         "headingFont": {
+          "h2": {
+           "font": {
+            "desktop": {
+             "value": {
+              "family": "Playfair Display"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "divi/section": {
+    "default": "sdef000001",
+    "items": {
+     "sdef000001": {
+      "id": "sdef000001",
+      "name": "Section Preset 1",
+      "moduleName": "divi/section",
+      "version": "5.19.0",
+      "type": "module",
+      "created": 1,
+      "updated": 1
+     },
+     "ssite00001": {
+      "id": "ssite00001",
+      "name": "Dark Band",
+      "moduleName": "divi/section",
+      "version": "5.19.0",
+      "type": "module",
+      "created": 1,
+      "updated": 1,
+      "attrs": {
+       "module": {
+        "decoration": {
+         "background": {
+          "desktop": {
+           "value": {
+            "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-brandblue1\",\"settings\":{}}})$"
+           }
+          }
+         }
+        }
+       }
+      },
+      "styleAttrs": {
+       "module": {
+        "decoration": {
+         "background": {
+          "desktop": {
+           "value": {
+            "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-brandblue1\",\"settings\":{}}})$"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "group": {
+   "divi/button": {
+    "default": "bdef000001",
+    "items": {
+     "bdef000001": {
+      "id": "bdef000001",
+      "name": "Button 1",
+      "moduleName": "divi/group",
+      "version": "5.19.0",
+      "type": "group",
+      "created": 1,
+      "updated": 1,
+      "groupName": "divi/button",
+      "groupId": "designButton"
+     },
+     "bsite00001": {
+      "id": "bsite00001",
+      "name": "Main Button",
+      "moduleName": "divi/group",
+      "version": "5.19.0",
+      "type": "group",
+      "created": 1,
+      "updated": 1,
+      "attrs": {
+       "button": {
+        "decoration": {
+         "background": {
+          "desktop": {
+           "value": {
+            "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-brandblue1\",\"settings\":{}}})$"
+           }
+          }
+         },
+         "font": {
+          "font": {
+           "desktop": {
+            "value": {
+             "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-whitebg001\",\"settings\":{}}})$"
+            }
+           }
+          }
+         },
+         "border": {
+          "desktop": {
+           "value": {
+            "radius": {
+             "sync": "on",
+             "topLeft": "$variable({\"type\":\"content\",\"value\":{\"name\":\"gvid-radiusm001\",\"settings\":{}}})$",
+             "topRight": "$variable({\"type\":\"content\",\"value\":{\"name\":\"gvid-radiusm001\",\"settings\":{}}})$",
+             "bottomLeft": "$variable({\"type\":\"content\",\"value\":{\"name\":\"gvid-radiusm001\",\"settings\":{}}})$",
+             "bottomRight": "$variable({\"type\":\"content\",\"value\":{\"name\":\"gvid-radiusm001\",\"settings\":{}}})$"
+            }
+           }
+          }
+         }
+        }
+       }
+      },
+      "styleAttrs": {
+       "button": {
+        "decoration": {
+         "background": {
+          "desktop": {
+           "value": {
+            "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-brandblue1\",\"settings\":{}}})$"
+           }
+          }
+         },
+         "font": {
+          "font": {
+           "desktop": {
+            "value": {
+             "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-whitebg001\",\"settings\":{}}})$"
+            }
+           }
+          }
+         },
+         "border": {
+          "desktop": {
+           "value": {
+            "radius": {
+             "sync": "on",
+             "topLeft": "$variable({\"type\":\"content\",\"value\":{\"name\":\"gvid-radiusm001\",\"settings\":{}}})$",
+             "topRight": "$variable({\"type\":\"content\",\"value\":{\"name\":\"gvid-radiusm001\",\"settings\":{}}})$",
+             "bottomLeft": "$variable({\"type\":\"content\",\"value\":{\"name\":\"gvid-radiusm001\",\"settings\":{}}})$",
+             "bottomRight": "$variable({\"type\":\"content\",\"value\":{\"name\":\"gvid-radiusm001\",\"settings\":{}}})$"
+            }
+           }
+          }
+         }
+        }
+       }
+      },
+      "groupName": "divi/button",
+      "groupId": "designButton"
+     }
+    }
+   }
+  }
+ },
+ "global_colors": [
+  [
+   "gcid-primary-color",
+   {
+    "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-brandblue1\",\"settings\":{}}})$",
+    "status": "active",
+    "label": "Primary Color"
+   }
+  ],
+  [
+   "gcid-heading-color",
+   {
+    "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-greyneut01\",\"settings\":{\"lightness\":-30}}})$",
+    "status": "active",
+    "label": "Heading Text Color"
+   }
+  ],
+  [
+   "gcid-body-color",
+   {
+    "color": "$variable({\"type\":\"color\",\"value\":{\"name\":\"gcid-greyneut01\",\"settings\":{\"lightness\":-30}}})$",
+    "status": "active",
+    "label": "Body Text Color"
+   }
+  ],
+  [
+   "gcid-brandblue1",
+   {
+    "color": "#2459e0",
+    "status": "active",
+    "label": "Brand Blue"
+   }
+  ],
+  [
+   "gcid-brandblu2x",
+   {
+    "color": "#2459e1",
+    "status": "active",
+    "label": "Brand Blue (copy)"
+   }
+  ],
+  [
+   "gcid-secondary1",
+   {
+    "color": "#f5a524",
+    "status": "active",
+    "label": "Secondary Orange"
+   }
+  ],
+  [
+   "gcid-greyneut01",
+   {
+    "color": "#6b7280",
+    "status": "active",
+    "label": "Neutral Grey"
+   }
+  ],
+  [
+   "gcid-successg01",
+   {
+    "color": "#16a34a",
+    "status": "active",
+    "label": "Success Green"
+   }
+  ],
+  [
+   "gcid-whitebg001",
+   {
+    "color": "#ffffff",
+    "status": "active",
+    "label": "White"
+   }
+  ]
+ ],
+ "global_variables": [
+  {
+   "id": "gvid-textbase01",
+   "label": "text-base",
+   "value": "clamp(1rem, 0.9583rem + 0.1852vw, 1.125rem)",
+   "order": "1",
+   "status": "active",
+   "lastUpdated": "2026-01-01T00:00:00.000Z",
+   "variableType": "numbers",
+   "type": "numbers"
+  },
+  {
+   "id": "gvid-textlg0001",
+   "label": "text-lg",
+   "value": "clamp(1.2rem, 1.1313rem + 0.3056vw, 1.4063rem)",
+   "order": "2",
+   "status": "active",
+   "lastUpdated": "2026-01-01T00:00:00.000Z",
+   "variableType": "numbers",
+   "type": "numbers"
+  },
+  {
+   "id": "gvid-textxl0001",
+   "label": "text-xl",
+   "value": "clamp(1.44rem, calc(0.0047083 * (100vw - 360px) + 23.04px), 1.7578rem)",
+   "order": "3",
+   "status": "active",
+   "lastUpdated": "2026-01-01T00:00:00.000Z",
+   "variableType": "numbers",
+   "type": "numbers"
+  },
+  {
+   "id": "gvid-spacem0001",
+   "label": "space-m",
+   "value": "1.5rem",
+   "order": "4",
+   "status": "active",
+   "lastUpdated": "2026-01-01T00:00:00.000Z",
+   "variableType": "numbers",
+   "type": "numbers"
+  },
+  {
+   "id": "gvid-spacexs001",
+   "label": "space-xs",
+   "value": "clamp(0.56rem, calc(8.96px - 0.002297 * (100vw - 360px)), 0.382rem)",
+   "order": "5",
+   "status": "active",
+   "lastUpdated": "2026-01-01T00:00:00.000Z",
+   "variableType": "numbers",
+   "type": "numbers"
+  },
+  {
+   "id": "gvid-radiusm001",
+   "label": "radius-m",
+   "value": "12px",
+   "order": "6",
+   "status": "active",
+   "lastUpdated": "2026-01-01T00:00:00.000Z",
+   "variableType": "numbers",
+   "type": "numbers"
+  }
+ ],
+ "page_settings_meta": null,
+ "canvases": [],
+ "components": [],
+ "images": [],
+ "thumbnails": []
+}

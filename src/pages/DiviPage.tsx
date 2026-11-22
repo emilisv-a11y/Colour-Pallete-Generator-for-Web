@@ -20,6 +20,7 @@ import {
 } from '../lib/divi'
 import { downloadText, paletteSlug } from '../lib/exports'
 import { fontStack, loadFonts } from '../lib/fonts'
+import { DiffTab, OPEN_TAB_KEY, ReadSiteModal } from '../components/divi/RoundTrip'
 
 const SRC_KEY = 'd5wt:diviSource'
 const OPT_KEY = 'd5wt:diviOpts'
@@ -43,12 +44,14 @@ function save(key: string, v: unknown) {
   }
 }
 
-type Tab = 'import' | 'planner' | 'css' | 'checklist'
+type Tab = 'import' | 'diff' | 'planner' | 'css' | 'checklist'
 
 /* ---------- Current Divi site ---------- */
 
 function SiteCard({ source, setSource }: { source: DiviExport | null; setSource: (s: DiviExport | null) => void }) {
   const fileRef = useRef<HTMLInputElement>(null)
+  const [fileName, setFileName] = useState('')
+  const [reading, setReading] = useState(false)
   const summary = source ? summarizeExport(source) : null
   const hexes = summary ? [...new Set(summary.colors.map((c) => c.hex).filter((h): h is string => !!h))].slice(0, 10) : []
   return (
@@ -63,6 +66,11 @@ function SiteCard({ source, setSource }: { source: DiviExport | null; setSource:
           </p>
         </div>
         <div className="row wrap">
+          {source && (
+            <button className="btn btn-primary" type="button" onClick={() => setReading(true)}>
+              <Icon name="wand" size={16} /> Build design system from this site
+            </button>
+          )}
           <button className="btn" onClick={() => fileRef.current?.click()}>
             <Icon name="upload" size={16} /> {source ? 'Replace export' : 'Upload Divi export (.json)'}
           </button>
@@ -84,11 +92,13 @@ function SiteCard({ source, setSource }: { source: DiviExport | null; setSource:
           if (!f) return
           try {
             setSource(parseDiviExport(await f.text()))
+            setFileName(f.name)
           } catch (err) {
             alert((err as Error).message)
           }
         }}
       />
+      {reading && source && <ReadSiteModal source={source} fileName={fileName} onClose={() => setReading(false)} />}
       {summary && (
         <div className="divi-site-body">
           <div>
@@ -482,7 +492,17 @@ export default function DiviPage() {
       /* ignore */
     }
   }
-  const [tab, setTab] = useState<Tab>('import')
+  const [tab, setTab] = useState<Tab>(() => {
+    try {
+      const t = sessionStorage.getItem(OPEN_TAB_KEY)
+      sessionStorage.removeItem(OPEN_TAB_KEY)
+      if (t === 'diff') return 'diff'
+    } catch {
+      /* ignore */
+    }
+    return 'import'
+  })
+  const shownTab: Tab = tab === 'diff' && !source ? 'import' : tab
   useEffect(() => {
     if (sys) loadFonts([sys.fonts.heading, sys.fonts.body], sys.fonts.meta)
   }, [sys?.fonts.heading, sys?.fonts.body]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -491,14 +511,14 @@ export default function DiviPage() {
     <div className="page divi-page">
       <header className="page-head">
         <h1>Divi 5</h1>
-        <p className="muted">Turn your design system into Divi 5 global colours, variables and presets, plan section colours, and get CSS for Theme Options.</p>
+        <p className="muted">Turn your design system into Divi 5 global colours, variables and presets, plan section colours, and get CSS for Theme Options. Taking over an existing site? Upload its export and build a design system from it.</p>
       </header>
 
       <SiteCard source={source} setSource={setSource} />
 
       {!sys ? (
         <div className="system-empty">
-          <p>Create a design system first. Everything on this page is built from it.</p>
+          <p>Create a design system first. Everything on this page is built from it.{source ? ' Or build one from the uploaded site above.' : ''}</p>
           <Link className="btn btn-primary" to="/system">
             Go to Design system
           </Link>
@@ -507,19 +527,21 @@ export default function DiviPage() {
         <>
           <Segmented
             label="Divi section"
-            value={tab}
+            value={shownTab}
             onChange={setTab}
             options={[
               { id: 'import', label: 'Import file' },
+              ...(source ? [{ id: 'diff' as Tab, label: 'Site differences' }] : []),
               { id: 'planner', label: 'Section planner' },
               { id: 'css', label: 'CSS & classes' },
               { id: 'checklist', label: 'Checklist' },
             ]}
           />
-          {tab === 'import' && <ImportTab sys={sys} source={source} />}
-          {tab === 'planner' && <PlannerTab sys={sys} />}
-          {tab === 'css' && <CssTab sys={sys} />}
-          {tab === 'checklist' && <ChecklistTab sys={sys} />}
+          {shownTab === 'import' && <ImportTab sys={sys} source={source} />}
+          {shownTab === 'diff' && source && <DiffTab sys={sys} source={source} />}
+          {shownTab === 'planner' && <PlannerTab sys={sys} />}
+          {shownTab === 'css' && <CssTab sys={sys} />}
+          {shownTab === 'checklist' && <ChecklistTab sys={sys} />}
         </>
       )}
     </div>
