@@ -25,9 +25,11 @@ A colour palette and design-system platform for web design, with extra tools for
 
 The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.md`.
 
-**Recommended next** (text-on-image, self-hosted fonts, projects + handoff, the backend, the sign-in gate and the Divi round trip are done):
-1. More tokens: shadows, borders, motion, button sizes, content widths → Divi variables.
-3. Divi layouts library (needs a sample Divi Library layout export), dark-mode toggle for Divi, gradient background presets (needs a sample preset with a gradient), logo checker, favicon/OG image generator, industry starter kits, version history, command palette, PWA.
+**Current plan** (agreed with the owner, phases A → D, review + deploy after each; details at the end of `PLAN.md`):
+- A · shape & motion tokens: **done** (`src/lib/effects.ts`, Design system → "Shape & motion").
+- B · Divi extras: dark-mode toggle (system + remembered toggle), logo checker; layout library + gradient presets from the owner's samples (uploads `testpage.json` and `Divi-Theme-Builder-Templates.json`; never commit them).
+- C · brand assets: favicon/app icons, social image, starter kits (food & hospitality, professional services, health & beauty, shops & creative; ~2 each).
+- D · version history with diff, command palette (Ctrl/⌘+K), PWA, colour-blindness view in preview + section planner.
 
 ## Stack and commands
 
@@ -50,6 +52,7 @@ Hosting: Hostinger via `.github/workflows/deploy-hostinger.yml` (FTP upload on e
 - `src/lib/generate.ts`: OKLCH palette generation with locks. `src/state/palette.ts` + `GeneratorContext.tsx`: undo/redo reducer, autosave.
 - `src/lib/storage.ts`: all localStorage (`d5wt:*` keys); palettes, sessions (`extra.system` holds the design system), saved colours, backup/import.
 - `src/lib/system.ts`: **design system engine**: `buildScale` (11 steps, exact colour at the anchor), `buildTokens(sys, mode)` (67 tokens per mode, contrast-safe), `checkPairs`/`suggestFix`, `systemFromPalette`. `typeOf(sys)` defaults typography for old saves.
+- `src/lib/effects.ts`: **shape & motion** (`sys.effects`, `effectsOf` defaults): brand-tinted shadows (`shadowCss`, dark = black ×2.4), `buttonSizes` (font from type steps −1/0/1, padding to reach height), `EASINGS`, `effectVars`/`effectsCss` (with reduced motion) and `effectHelpers` (Divi classes). Used by tokens.ts, divi.ts (`effectVars`, `presetButtonSizes` options), handoff brand kit, BrandKitPage and `tokenVars(t, sys, mode)`.
 - `src/lib/apca.ts` (APCA 0.0.98G-4g), `typography.ts` (fluid clamp scale + spacing), `tokens.ts` (CSS/SCSS/Tailwind v3/v4/DTCG/Tokens Studio/Bootstrap/JSON exports).
 - `src/lib/googleFonts.ts` (catalogue, popularity, API-key refresh, preview fonts under the private name `d5p-<family>`), `fonts.ts` (`metaFor`, `fontStack`, `googleFontsUrl`: only request weights a family has), `selfHost.ts` (WOFF2 ZIP).
 - `src/lib/divi.ts`: **Divi 5** parse/build/merge, section planner, CSS helpers. See the `divi5-export-format` skill.

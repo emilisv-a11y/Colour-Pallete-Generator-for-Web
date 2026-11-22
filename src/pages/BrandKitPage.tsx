@@ -7,6 +7,7 @@ import { fontStack, googleFontsUrl, loadFonts } from '../lib/fonts'
 import { useColorNames } from '../lib/names'
 import { autoAnchor, BRAND_ROLES, buildScales, buildTokens, checkPairs, ROLE_INFO, ROLE_KEYS, STATUS_ROLES, STEPS, typeOf, type RoleKey } from '../lib/system'
 import { typeScale } from '../lib/typography'
+import { buttonSizes, EASINGS, effectsOf, SHADOW_NAMES, shadowCss } from '../lib/effects'
 
 function ColorSpec({ role, hex, big }: { role: RoleKey; hex: string; big?: boolean }) {
   const { name } = useColorNames()
@@ -204,6 +205,37 @@ export default function BrandKitPage() {
         <h2>Gradient</h2>
         <div className="bk-gradient" style={{ background: `linear-gradient(90deg in oklab, ${sys.roles.primary.hex}, ${sys.roles.secondary.hex}, ${sys.roles.accent.hex})`, borderRadius: sys.radius }} />
         <code className="small">linear-gradient(90deg in oklab, {sys.roles.primary.hex}, {sys.roles.secondary.hex}, {sys.roles.accent.hex})</code>
+      </section>
+
+      <section className="bk-break">
+        <h2>Shape &amp; motion</h2>
+        <h3>Shadows</h3>
+        <div className="bk-shadows">
+          {SHADOW_NAMES.map((n) => (
+            <div key={n} style={{ background: buildTokens(sys, 'light').surface.hex, borderRadius: sys.radius, boxShadow: shadowCss(sys, n) }}>
+              <strong>shadow-{n}</strong>
+            </div>
+          ))}
+        </div>
+        <h3>Buttons &amp; inputs</h3>
+        <div className="row wrap" style={{ alignItems: 'center' }}>
+          {buttonSizes(sys).map((b) => (
+            <span key={b.name} className="bk-btn" style={{ minHeight: b.height, padding: `${b.padY}px ${b.padX}px`, fontSize: b.fontPx, borderRadius: sys.radius, background: buildTokens(sys, 'light').primary.hex, color: buildTokens(sys, 'light')['on-primary'].hex, fontFamily: body }}>
+              {b.name.toUpperCase()} · {b.height}px
+            </span>
+          ))}
+          <span className="muted small">
+            Input height {effectsOf(sys).input}px · borders {effectsOf(sys).borders.thin}/{effectsOf(sys).borders.base}/{effectsOf(sys).borders.thick}px
+          </span>
+        </div>
+        <h3>Motion</h3>
+        <p className="small">
+          {(['fast', 'base', 'slow'] as const).map((n) => `duration-${n} ${effectsOf(sys).motion[n]}ms`).join(' · ')}
+          <br />
+          {EASINGS.map((x) => `ease-${x.name}: ${x.css}`).join(' · ')}
+        </p>
+        <h3>Content widths</h3>
+        <p className="small">{(['narrow', 'container', 'wide'] as const).map((n) => `width-${n} ${effectsOf(sys).widths[n]}px`).join(' · ')}</p>
       </section>
 
       <section>

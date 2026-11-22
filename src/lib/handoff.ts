@@ -12,6 +12,7 @@ import { downloadBlob, exportCode, palettePngBlob, paletteSvg } from './exports'
 import { paletteAse, palettePdf } from './files'
 import { fontStack, googleFontsUrl } from './fonts'
 import { fill, T, type Lang } from './handoffText'
+import { buttonSizes, EASINGS, effectsOf, SHADOW_NAMES, shadowCss } from './effects'
 import { colorName } from './names'
 import { fontFaceCss, type FontFile } from './selfHost'
 import { autoAnchor, BRAND_ROLES, buildScales, buildTokens, checkPairs, ROLE_KEYS, STATUS_ROLES, STEPS, typeOf, type DesignSystem, type RoleKey } from './system'
@@ -155,6 +156,7 @@ ${typeScale(ts)
   )
   .join('\n')}
 <h3>${t.gradient}</h3><div style="height:80px;border-radius:var(--radius);background:linear-gradient(90deg in oklab, ${sys.roles.primary.hex}, ${sys.roles.secondary.hex}, ${sys.roles.accent.hex})"></div></section>
+${shapeSection(sys, t, light)}
 ${sys.notes ? `<section><h2>${t.usageNotes}</h2><p style="white-space:pre-wrap">${esc(sys.notes)}</p></section>` : ''}
 <p class="muted small">${t.footer}</p>
 </main>
@@ -323,4 +325,16 @@ export async function buildHandoffZip(input: HandoffInput, lang: Lang, parts: Ha
 export async function downloadHandoff(...args: Parameters<typeof buildHandoffZip>) {
   const { blob, name } = await buildHandoffZip(...args)
   downloadBlob(blob, name)
+}
+
+/** Brand-kit section: shadows, button sizes, motion and content widths. */
+function shapeSection(sys: DesignSystem, t: (typeof T)['en'], light: ReturnType<typeof buildTokens>): string {
+  const e = effectsOf(sys)
+  return `<section class="break"><h2>${t.shapeMotion}</h2>
+<h3>${t.shadows}</h3><div class="grid g3" style="gap:24px;padding:8px 0 16px">${SHADOW_NAMES.map((n) => `<div style="background:${light.surface.hex};border-radius:var(--radius);padding:18px;box-shadow:${shadowCss(sys, n)}"><strong>shadow-${n}</strong></div>`).join('')}</div>
+<h3>${t.buttonsInputs}</h3><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">${buttonSizes(sys)
+    .map((b) => `<span style="display:inline-flex;align-items:center;min-height:${b.height}px;padding:${b.padY}px ${b.padX}px;font-size:${b.fontPx}px;font-weight:700;border-radius:var(--radius);background:${light.primary.hex};color:${light['on-primary'].hex};box-sizing:border-box">${b.name.toUpperCase()} · ${b.height}px</span>`)
+    .join('')}<span class="muted small">input ${t.height} ${e.input}px · border ${e.borders.thin}/${e.borders.base}/${e.borders.thick}px</span></div>
+<h3>${t.motion}</h3><p class="small">${(['fast', 'base', 'slow'] as const).map((n) => `<code>duration-${n}</code> ${e.motion[n]}ms`).join(' · ')}<br>${EASINGS.map((x) => `<code>ease-${x.name}</code> ${x.css}`).join('<br>')}</p>
+<h3>${t.widths}</h3><p class="small">${(['narrow', 'container', 'wide'] as const).map((n) => `<code>width-${n}</code> ${e.widths[n]}px`).join(' · ')}</p></section>`
 }

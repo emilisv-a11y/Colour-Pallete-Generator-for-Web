@@ -219,7 +219,7 @@ export default function ReviewPage() {
             />
           </div>
           <p className="muted small">{t.previewNote}</p>
-          <div className="pv-frame" style={tokenVars(buildTokens(s.system, mode), s.system)}>
+          <div className="pv-frame" style={tokenVars(buildTokens(s.system, mode), s.system, mode)}>
             <Site />
           </div>
           <h3>{t.comments}</h3>

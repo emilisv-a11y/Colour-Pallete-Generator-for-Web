@@ -7,6 +7,7 @@ import { PreviewTab } from '../components/system/PreviewTab'
 import { RolesTab } from '../components/system/RolesTab'
 import { ScalesTab, TokensTab } from '../components/system/ScalesTokensTabs'
 import { TypeTab } from '../components/system/TypeTab'
+import { EffectsTab } from '../components/system/EffectsTab'
 import { useDesignSystem } from '../components/system/useDesignSystem'
 import { CodeBlock, Segmented, useToast } from '../components/ui'
 import { downloadText } from '../lib/exports'
@@ -16,7 +17,7 @@ import { buildTokens, checkPairs, systemFromPalette, type DesignSystem, type Mod
 import { exportTokens, TOKEN_FORMATS, type TokenFormat } from '../lib/tokens'
 import { useGenerator } from '../state/GeneratorContext'
 
-type Tab = 'roles' | 'scales' | 'tokens' | 'type' | 'a11y' | 'preview' | 'export'
+type Tab = 'roles' | 'scales' | 'tokens' | 'type' | 'effects' | 'a11y' | 'preview' | 'export'
 const TAB_KEY = 'd5wt:systemTab'
 
 function ExportTab({ sys }: { sys: DesignSystem }) {
@@ -102,7 +103,7 @@ export default function SystemPage() {
   }
 
   const fails = (['light', 'dark'] as Mode[]).reduce((n, m) => n + checkPairs(buildTokens(sys, m)).filter((r) => !r.pass).length, 0)
-  const showMode = tab === 'a11y' || tab === 'preview'
+  const showMode = tab === 'a11y' || tab === 'preview' || tab === 'effects'
 
   return (
     <div className="page system-page">
@@ -141,6 +142,7 @@ export default function SystemPage() {
             { id: 'scales', label: 'Scales' },
             { id: 'tokens', label: 'Tokens' },
             { id: 'type', label: 'Type' },
+            { id: 'effects', label: 'Shape & motion' },
             { id: 'a11y', label: fails ? `Accessibility (${fails})` : 'Accessibility ✓' },
             { id: 'preview', label: 'Preview' },
             { id: 'export', label: 'Export' },
@@ -163,6 +165,7 @@ export default function SystemPage() {
       {tab === 'scales' && <ScalesTab sys={sys} />}
       {tab === 'tokens' && <TokensTab sys={sys} update={update} />}
       {tab === 'type' && <TypeTab sys={sys} update={update} />}
+      {tab === 'effects' && <EffectsTab sys={sys} mode={mode} update={update} />}
       {tab === 'a11y' && <AccessibilityTab sys={sys} mode={mode} update={update} />}
       {tab === 'preview' && <PreviewTab sys={sys} mode={mode} />}
       {tab === 'export' && <ExportTab sys={sys} />}

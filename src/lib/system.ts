@@ -2,6 +2,7 @@ import { contrastRatio, fixContrast, hexToOklch, oklchToHex } from './color'
 import { apcaContrast } from './apca'
 import { DEFAULT_TYPE, type TypeSettings } from './typography'
 import type { FontMeta } from './googleFonts'
+import type { EffectSettings } from './effects'
 
 /* ============================================================================
    Design system model
@@ -43,6 +44,8 @@ export type DesignSystem = {
   notes: string
   /** fluid typography settings (absent in systems saved before this feature) */
   type?: TypeSettings
+  /** shadows, borders, button/input sizes, motion and content widths (absent in older saves) */
+  effects?: EffectSettings
 }
 
 export const typeOf = (sys: DesignSystem): TypeSettings => ({ ...DEFAULT_TYPE, ...(sys.type ?? {}) })

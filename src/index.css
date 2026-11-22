@@ -4040,15 +4040,18 @@ select {
 .pv-btn {
   font: inherit;
   font-weight: 700;
-  font-size: 0.92rem;
-  padding: 11px 20px;
+  font-size: var(--btn-m-font, 0.92rem);
+  min-height: var(--btn-m-height, 44px);
+  padding: var(--btn-m-pad-y, 11px) var(--btn-m-pad-x, 20px);
   border-radius: var(--radius);
-  border: 2px solid transparent;
+  border: var(--border-base, 2px) solid transparent;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  transition: background var(--duration-fast, 0.12s) var(--ease-standard, ease), color var(--duration-fast, 0.12s) var(--ease-standard, ease), border-color var(--duration-fast, 0.12s) var(--ease-standard, ease);
 }
 .pv-btn.small {
-  padding: 7px 14px;
+  font-size: var(--btn-s-font, 0.85rem);
+  min-height: var(--btn-s-height, 36px);
+  padding: var(--btn-s-pad-y, 7px) var(--btn-s-pad-x, 14px);
 }
 .pv-btn:focus-visible,
 .pv-form input:focus-visible {
@@ -4155,9 +4158,15 @@ select {
 }
 .pv-card {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--border-thin, 1px) solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
+  box-shadow: var(--shadow-sm, none);
+  transition: box-shadow var(--duration-base, 0.2s) var(--ease-standard, ease), transform var(--duration-base, 0.2s) var(--ease-standard, ease);
+}
+.pv-card:hover {
+  box-shadow: var(--shadow-lg, none);
+  transform: translateY(-2px);
 }
 .pv-card h3 {
   margin: 0;
@@ -4188,8 +4197,9 @@ select {
   gap: 12px;
   padding: 20px;
   background: var(--bg);
-  border: 1px solid var(--border);
+  border: var(--border-thin, 1px) solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-md, none);
 }
 .pv-form h3 {
   margin: 0;
@@ -4204,6 +4214,7 @@ select {
 .pv-form input:not([type='checkbox']) {
   font: inherit;
   font-weight: 400;
+  min-height: var(--input-height, 40px);
   padding: 9px 12px;
   border-radius: calc(var(--radius) * 0.7);
   border: 1px solid var(--border-strong);
@@ -4836,4 +4847,167 @@ select {
     grid-template-columns: auto minmax(0, 16rem) minmax(0, 1fr) auto;
     grid-template-areas: 'check name values tag';
   }
+}
+
+/* Shape & motion tab */
+.fx-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.fx-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+}
+.fx-head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+.fx-range {
+  min-width: 160px;
+}
+.fx-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.fx-stage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 22px;
+  padding: 28px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.fx-shadow-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 22px 16px;
+  min-height: 96px;
+  font-size: 0.85rem;
+}
+.fx-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+.fx-btn {
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.fx-input {
+  font: inherit;
+  padding: 0 12px;
+  width: 180px;
+  max-width: 100%;
+}
+.fx-borders {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 80px;
+}
+.fx-borders span {
+  display: block;
+}
+.fx-ease {
+  list-style: none;
+  margin: 0;
+  padding: 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.fx-ease li {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  font-size: 0.85rem;
+}
+.fx-ease-name {
+  display: flex;
+  flex-direction: column;
+}
+.fx-track {
+  position: relative;
+  height: 24px;
+  border-radius: 99px;
+  margin-right: 24px;
+}
+.fx-dot {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+.fx-dot.go {
+  animation-name: fx-move;
+  animation-fill-mode: forwards;
+}
+@keyframes fx-move {
+  to {
+    left: calc(100% - 21px);
+  }
+}
+.fx-widths {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.fx-widths > div {
+  padding: 8px 10px;
+  border: 1px dashed;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+@media (max-width: 560px) {
+  .fx-ease li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fx-stage {
+    padding: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fx-dot.go {
+    animation-duration: 1ms !important;
+  }
+}
+
+.bk-shadows {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 24px;
+  padding: 8px 0 16px;
+}
+.bk-shadows > div {
+  padding: 20px 16px;
+}
+.bk-btn {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  box-sizing: border-box;
 }

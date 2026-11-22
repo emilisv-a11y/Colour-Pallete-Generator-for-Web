@@ -17,6 +17,7 @@ import { buildScales, buildTokens, ROLE_INFO, ROLE_KEYS, STEPS, typeOf, type Des
 import { spacePairs, spaceScale, typeScale } from './typography'
 import { contrastRatio } from './color'
 import { exportTokens } from './tokens'
+import { buttonSizes, effectHelpers, effectsOf } from './effects'
 
 export type DiviColor = { color: string; status: string; label: string }
 export type DiviVariable = { id: string; label: string; value: string; order: string; status: string; lastUpdated: string; variableType: string; type: string }
@@ -148,9 +149,12 @@ export type DiviOptions = {
   typeVars: boolean
   spaceVars: boolean
   radiusVars: boolean
+  /** borders, button sizes, input height, motion durations and content widths */
+  effectVars: boolean
   presetHeadings: boolean
   presetText: boolean
   presetButtons: boolean
+  presetButtonSizes: boolean
   presetSections: boolean
   presetGroups: boolean
   prefix: string
@@ -166,9 +170,11 @@ export const DEFAULT_DIVI_OPTIONS: DiviOptions = {
   typeVars: true,
   spaceVars: true,
   radiusVars: true,
+  effectVars: true,
   presetHeadings: true,
   presetText: true,
   presetButtons: true,
+  presetButtonSizes: true,
   presetSections: true,
   presetGroups: true,
   prefix: '',
@@ -263,6 +269,18 @@ export function buildDiviImport(sys: DesignSystem, opts: DiviOptions, source?: D
     addVar('radius-l', `${P}radius-l`, `${Math.round(r * 1.6)}px`)
     addVar('radius-full', `${P}radius-full`, '999px')
   }
+  if (opts.effectVars) {
+    const e = effectsOf(sys)
+    ;(['thin', 'base', 'thick'] as const).forEach((n) => addVar(`border-${n}`, `${P}border-${n}`, `${e.borders[n]}px`))
+    buttonSizes(sys).forEach((b) => {
+      addVar(`btn-${b.name}-pad-y`, `${P}btn-${b.name}-pad-y`, `${b.padY}px`)
+      addVar(`btn-${b.name}-pad-x`, `${P}btn-${b.name}-pad-x`, `${b.padX}px`)
+      addVar(`btn-${b.name}-font`, `${P}btn-${b.name}-font`, `${Math.round((b.fontPx / 16) * 1000) / 1000}rem`)
+    })
+    addVar('input-height', `${P}input-height`, `${e.input}px`)
+    ;(['fast', 'base', 'slow'] as const).forEach((n) => addVar(`duration-${n}`, `${P}duration-${n}`, `${e.motion[n]}ms`))
+    ;(['narrow', 'container', 'wide'] as const).forEach((n) => addVar(`width-${n}`, `${P}width-${n}`, `${e.widths[n]}px`))
+  }
   const V = (key: string, fallback: string) => (varIds[key] ? contentRef(varIds[key]) : fallback)
 
   /* presets */
@@ -356,7 +374,10 @@ export function buildDiviImport(sys: DesignSystem, opts: DiviOptions, source?: D
   if (opts.presetButtons) {
     const radius = V('radius-m', `${sys.radius}px`)
     const radiusObj = { sync: 'on', topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius }
-    const padding = { top: V('space-xs', '0.75rem'), bottom: V('space-xs', '0.75rem'), left: V('space-m', '1.5rem'), right: V('space-m', '1.5rem'), syncVertical: 'on', syncHorizontal: 'on' }
+    const m = buttonSizes(sys)[1]
+    const padY = V('btn-m-pad-y', V('space-xs', `${m.padY}px`)),
+      padX = V('btn-m-pad-x', V('space-m', `${m.padX}px`))
+    const padding = { top: padY, bottom: padY, left: padX, right: padX, syncVertical: 'on', syncHorizontal: 'on' }
     const button = (bg: string | null, bgHover: string | null, text: string, textHover: string, border: string, borderHover: string) => ({
       button: {
         decoration: {
@@ -373,6 +394,21 @@ export function buildDiviImport(sys: DesignSystem, opts: DiviOptions, source?: D
     addModulePreset('divi/button', 'Outline Button', button(null, C('primary-subtle'), C('primary-text'), C('on-primary-subtle'), C('primary-text'), C('primary-text')))
     const light = colorIds['neutral.50'] ? colorRef(colorIds['neutral.50']) : scales.neutral[0]
     addModulePreset('divi/button', 'Light Button (on dark or brand)', button(light, C('surface-raised'), C('primary-text'), C('primary-text'), light, C('surface-raised')))
+  }
+
+  if (opts.presetButtonSizes) {
+    buttonSizes(sys).forEach((b) => {
+      const y = V(`btn-${b.name}-pad-y`, `${b.padY}px`),
+        x = V(`btn-${b.name}-pad-x`, `${b.padX}px`)
+      addGroupPreset('divi/button', 'divi/button', 'designButton', `Button Size ${b.name.toUpperCase()}`, {
+        button: {
+          decoration: {
+            font: { font: { desktop: { value: { size: V(`btn-${b.name}-font`, `${b.fontPx}px`) } } } },
+            spacing: { desktop: { value: { padding: { top: y, bottom: y, left: x, right: x, syncVertical: 'on', syncHorizontal: 'on' } } } },
+          },
+        },
+      })
+    })
   }
 
   if (opts.presetSections) {
@@ -526,5 +562,8 @@ ${SECTION_KINDS.map(block).join('\n\n')}
 .d5-bg-surface { background-color: var(--surface); }
 .d5-bg-primary { background-color: var(--primary); color: var(--on-primary); }
 .d5-focus-ring :focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.d5-card { box-shadow: var(--shadow-sm); }
+
+${effectHelpers(sys)}
 `
 }

@@ -38,7 +38,7 @@ const SAMPLE: Record<string, string> = {
   small: 'Small print and captions use the step below body.',
 }
 
-function NumberField({ label, value, onChange, min, max, step = 1, suffix = 'px' }: { label: string; value: number; onChange: (n: number) => void; min: number; max: number; step?: number; suffix?: string }) {
+export function NumberField({ label, value, onChange, min, max, step = 1, suffix = 'px' }: { label: string; value: number; onChange: (n: number) => void; min: number; max: number; step?: number; suffix?: string }) {
   return (
     <label className="field num-field">
       <span className="field-label">{label}</span>

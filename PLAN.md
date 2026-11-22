@@ -44,6 +44,15 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [x] Google Fonts library: all 1,908 families built in (search, category, language, variable, sort, live previews), pairing ideas, optional live refresh with a Google Fonts API key; `npm run fonts:update` rebuilds the catalogue
 - [x] Responsive typography: fluid type and spacing scales with clamp() (rem + vw, zoom-safe), viewport preview and chart, WCAG 1.4.4 zoom check, CSS/Tailwind v4/SCSS/JSON export; used in the live preview, token exports and brand kit
 
+## More tokens (Phase A) ✅
+- [x] Shadows sm/md/lg/xl tinted with brand or neutral (black + stronger in dark mode), strength
+- [x] Border widths, button sizes S/M/L (padding from the type scale), input height
+- [x] Motion: durations + 4 easing curves, reduced-motion handling, demo
+- [x] Content widths: narrow / container / wide
+- [x] In CSS, SCSS, Tailwind v3/v4, DTCG, JSON exports, brand kit (app + handoff), live preview
+- [x] Divi: number variables, Button Size S/M/L group presets (groupId designButton), helper classes
+- [ ] Verify the Button Size presets on a real Divi 5 import
+
 ## Phase 4: Divi 5 ✅
 Built from a real Divi 5 presets export (same file structure, `$variable(...)$` references, option-group presets).
 - [x] Upload the site's current Divi export: summary of global colours (resolving linked/relative colours), variables and presets; open its colours in the generator
@@ -74,3 +83,8 @@ Built from a real Divi 5 presets export (same file structure, `$variable(...)$` 
 - [x] Client review links (EN/LT): brand guidelines, website preview light/dark, pick between options, comments, approval; PIN, expiry, switch off, "send latest version", owner replies
 - [x] GitHub Action FTP deploy to Hostinger (skips until secrets are added); step-by-step guide
 - [x] Tests: 45 API integration tests on MariaDB, sync unit tests, three-browser end-to-end test
+
+## Next phases (planned with the owner)
+- **B · Divi extras:** dark-mode toggle (follows device + remembered switch), logo checker + recoloured variants; layout library and gradient presets from the owner's sample files (testpage.json, Divi Theme Builder templates)
+- **C · Brand assets:** favicon/app icons, social image, starter kits (food & hospitality, professional services, health & beauty, shops & creative)
+- **D · Quality of life:** version history with diff, command palette, PWA, colour-blindness view in preview and planner

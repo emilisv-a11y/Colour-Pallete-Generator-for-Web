@@ -3,8 +3,9 @@ import { normalizeHex } from '../../lib/color'
 import { fontStack } from '../../lib/fonts'
 import { allTokenNames, bucketOf, buildTokens, typeOf, type Bucket, type DesignSystem, type Mode, type Tokens } from '../../lib/system'
 import { spaceScale, typeScale } from '../../lib/typography'
+import { effectVars } from '../../lib/effects'
 
-export function tokenVars(t: Tokens, sys: DesignSystem): React.CSSProperties {
+export function tokenVars(t: Tokens, sys: DesignSystem, mode: Mode = 'light'): React.CSSProperties {
   const v: Record<string, string> = {}
   allTokenNames().forEach((n) => (v[`--${n}`] = t[n].hex))
   v['--font-heading'] = fontStack(sys.fonts.heading, sys.fonts.meta)
@@ -17,6 +18,8 @@ export function tokenVars(t: Tokens, sys: DesignSystem): React.CSSProperties {
     v[`--step-${st.step}`] = st.css
   })
   spaceScale(ts).forEach((sp) => (v[`--space-${sp.name}`] = sp.css))
+  // shadows, borders, sizes, motion
+  effectVars(sys).forEach((x) => (v[`--${x.name}`] = mode === 'dark' && x.dark ? x.dark : x.value))
   return v as React.CSSProperties
 }
 
@@ -214,7 +217,7 @@ export function PreviewTab({ sys, mode }: { sys: DesignSystem; mode: Mode }) {
           </p>
         </div>
       )}
-      <div className="pv-frame" ref={ref} style={tokenVars(tokens, sys)} data-mode={mode}>
+      <div className="pv-frame" ref={ref} style={tokenVars(tokens, sys, mode)} data-mode={mode}>
         <Site />
       </div>
     </div>
