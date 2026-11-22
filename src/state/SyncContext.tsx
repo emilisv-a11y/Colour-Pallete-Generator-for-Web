@@ -9,6 +9,8 @@ type Ctx = {
   /** null while checking; false when this host has no backend (e.g. GitHub Pages) */
   available: boolean | null
   ready: boolean
+  /** true once the backend check and the signed-in user check have finished */
+  checked: boolean
   user: User | null
   status: Status
   lastSync: number | null
@@ -21,6 +23,20 @@ type Ctx = {
 
 const SyncCtx = createContext<Ctx | null>(null)
 const USER_KEY = 'd5wt:syncUser'
+/** Last signed-in user, so the app still opens offline on a browser that was signed in. */
+const CACHED_KEY = 'd5wt:syncUserCache'
+
+function cachedUser(): User | null {
+  try {
+    return JSON.parse(localStorage.getItem(CACHED_KEY) ?? 'null')
+  } catch {
+    return null
+  }
+}
+function cacheUser(u: User | null) {
+  if (u) localStorage.setItem(CACHED_KEY, JSON.stringify(u))
+  else localStorage.removeItem(CACHED_KEY)
+}
 const INTERVAL = 45_000
 
 export function SyncProvider({ children }: { children: ReactNode }) {
@@ -29,7 +45,12 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   genRef.current = gen
   const [available, setAvailable] = useState<boolean | null>(null)
   const [ready, setReady] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
+  const [checked, setChecked] = useState(false)
+  const [user, setUserState] = useState<User | null>(null)
+  const setUser = useCallback((u: User | null) => {
+    setUserState(u)
+    cacheUser(u)
+  }, [])
   const [status, setStatus] = useState<Status>('idle')
   const [lastSync, setLastSync] = useState<number | null>(null)
   const [error, setError] = useState('')
@@ -53,12 +74,12 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     } finally {
       busy.current = false
     }
-  }, [])
+  }, [setUser])
 
   const refreshUser = useCallback(async () => {
     const { user: u } = await authMe()
     setUser(u)
-  }, [])
+  }, [setUser])
 
   // Detect the backend and the signed-in user once.
   useEffect(() => {
@@ -70,12 +91,18 @@ export function SyncProvider({ children }: { children: ReactNode }) {
         try {
           const { user: u } = await authMe()
           setUser(u)
-        } catch {
-          /* offline */
+        } catch (e) {
+          // offline: keep working as the last signed-in user; a real "signed out" answer clears it
+          if ((e as ApiError).status === 401) setUser(null)
+          else setUserState(cachedUser())
         }
+      } else if (!h) {
+        // no server reachable: on the own domain while offline, keep the cached user
+        setUserState(cachedUser())
       }
+      setChecked(true)
     })()
-  }, [])
+  }, [setUser])
 
   // Sync on sign-in, every 45 s while visible, and when the tab regains focus.
   useEffect(() => {
@@ -109,7 +136,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <SyncCtx.Provider value={{ available, ready, user, status, lastSync, error, syncNow, login, logout, refreshUser }}>{children}</SyncCtx.Provider>
+    <SyncCtx.Provider value={{ available, ready, checked, user, status, lastSync, error, syncNow, login, logout, refreshUser }}>{children}</SyncCtx.Provider>
   )
 }
 

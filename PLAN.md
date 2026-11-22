@@ -66,6 +66,7 @@ Built from a real Divi 5 presets export (same file structure, `$variable(...)$` 
 
 ## Backend on Hostinger ✅ (built; goes live after the one-time setup in docs/HOSTINGER.md)
 - [x] PHP 8.1+ API + MySQL/MariaDB (`server/api`), one-time `setup.php`, `.htaccess` hardening
+- [x] Sign-in screen: on the own domain the whole app needs a sign-in (review links stay public; GitHub Pages copy stays open)
 - [x] Accounts: owner + teammates (temporary password → forced change), sign out everywhere, rate-limited sign-in
 - [x] Local-first sync of projects, palettes, sessions and saved colours (newest edit wins per item, deletions sync, untouched placeholder project replaced on a new browser)
 - [x] Client review links (EN/LT): brand guidelines, website preview light/dark, pick between options, comments, approval; PIN, expiry, switch off, "send latest version", owner replies
