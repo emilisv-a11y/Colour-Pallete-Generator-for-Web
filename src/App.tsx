@@ -13,6 +13,8 @@ const GradientPage = lazy(() => import('./pages/GradientPage'))
 const MeshPage = lazy(() => import('./pages/MeshPage'))
 const ImageTextPage = lazy(() => import('./pages/ImageTextPage'))
 const LogoPage = lazy(() => import('./pages/LogoPage'))
+const BrandAssetsPage = lazy(() => import('./pages/BrandAssetsPage'))
+const StarterKitsPage = lazy(() => import('./pages/StarterKitsPage'))
 const VisualizerPage = lazy(() => import('./pages/VisualizerPage'))
 const TailwindPage = lazy(() => import('./pages/TailwindPage'))
 const CollagePage = lazy(() => import('./pages/CollagePage'))
@@ -34,6 +36,8 @@ const MORE = [
   { to: '/mesh', label: 'Mesh gradient' },
   { to: '/text-on-image', label: 'Text on image checker' },
   { to: '/logo', label: 'Logo checker' },
+  { to: '/brand-assets', label: 'Favicon & social images' },
+  { to: '/starters', label: 'Starter kits' },
   { to: '/collage', label: 'Collage & moodboard' },
   { to: '/tailwind', label: 'Tailwind colours' },
   { to: '/color', label: 'Colour details' },
@@ -156,6 +160,8 @@ export default function App() {
                 <Route path="/mesh" element={<MeshPage />} />
                 <Route path="/text-on-image" element={<ImageTextPage />} />
                 <Route path="/logo" element={<LogoPage />} />
+                <Route path="/brand-assets" element={<BrandAssetsPage />} />
+                <Route path="/starters" element={<StarterKitsPage />} />
                 <Route path="/visualize" element={<VisualizerPage />} />
                 <Route path="/tailwind" element={<TailwindPage />} />
                 <Route path="/collage" element={<CollagePage />} />

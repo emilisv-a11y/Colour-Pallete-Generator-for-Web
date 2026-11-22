@@ -60,6 +60,11 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [x] Logo checker: SVG colours (incl. implicit black), backgrounds with "part fades" warning, recolour, one-colour versions with white details kept, SVG/PNG downloads, file checks, PNG support
 - [ ] Verify layouts, Theme Builder template, gradient presets and dark mode on a real Divi 5 site
 
+## Brand assets (Phase C) ✅
+- [x] Favicon/app icons from logo or initials: ICO (16/32/48 PNG), SVG, apple-touch 180, 192/512 + maskable, manifest, HTML tags, README, ZIP
+- [x] Social share images: 4 styles × 1200×630 and 1080×1080, auto-fit text (Lithuanian letters), logo, PNG/JPG
+- [x] Starter kits: 8 kits in 4 groups (Latin Extended fonts, all contrast checks pass) → new project with system, palette and section plan
+
 ## Phase 4: Divi 5 ✅
 Built from a real Divi 5 presets export (same file structure, `$variable(...)$` references, option-group presets).
 - [x] Upload the site's current Divi export: summary of global colours (resolving linked/relative colours), variables and presets; open its colours in the generator
@@ -92,5 +97,4 @@ Built from a real Divi 5 presets export (same file structure, `$variable(...)$` 
 - [x] Tests: 45 API integration tests on MariaDB, sync unit tests, three-browser end-to-end test
 
 ## Next phases (planned with the owner)
-- **C · Brand assets:** favicon/app icons, social image, starter kits (food & hospitality, professional services, health & beauty, shops & creative)
 - **D · Quality of life:** version history with diff, command palette, PWA, colour-blindness view in preview and planner
