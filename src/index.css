@@ -5228,7 +5228,8 @@ img.logo-mark {
 .lp-h {
   font-weight: 750;
   line-height: 1.15;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 .lp-t p,
 .lp-t ul {
@@ -5595,4 +5596,73 @@ img.logo-mark {
 .vision-select {
   min-width: 0;
   max-width: 100%;
+}
+
+/* layout library: pictures, tiles, full pages */
+.lp-img {
+  width: 100%;
+  min-height: 0;
+}
+.lp-img-avatar {
+  width: 44px;
+  align-self: center;
+}
+.lp-row:not(.center) .lp-img-avatar {
+  align-self: flex-start;
+}
+.lp-img-logo {
+  border: 1.5px dashed currentColor;
+  opacity: 0.5;
+  max-height: 22px;
+}
+.lp-section .d5-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9px;
+}
+.lp-section .d5-table th,
+.lp-section .d5-table td {
+  padding: 3px 4px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+.lp-section .d5-table th:nth-child(2),
+.lp-section .d5-table td:nth-child(2) {
+  background: var(--primary-subtle);
+}
+.lp-section .d5-swatch {
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  margin-bottom: 3px;
+}
+.lp-card.picked {
+  border-color: var(--text);
+  box-shadow: 0 0 0 1px var(--text);
+}
+.lp-page-stage {
+  display: flex;
+  flex-direction: column;
+}
+.lp-page-part {
+  flex: none;
+  height: 70px;
+  overflow: hidden;
+  border-bottom: 1px solid rgb(0 0 0 / 0.06);
+}
+.lp-page-part .lp-section {
+  transform: scale(0.6);
+  transform-origin: top left;
+  width: 166.67%;
+}
+.lp-pick {
+  display: block;
+  cursor: pointer;
+  opacity: 1;
+}
+.lp-stage-short {
+  height: 150px;
+}
+.lp-body .stack {
+  flex: 1;
 }

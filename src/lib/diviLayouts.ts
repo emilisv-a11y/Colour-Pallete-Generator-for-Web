@@ -13,6 +13,7 @@
 
 import { buildDiviImport, colorRef, sectionStyles, latestVersion, stableId, type DiviBuild, type DiviExport, type DiviOptions, type DiviPreset } from './divi'
 import { buildScales, buildTokens, type DesignSystem } from './system'
+import { MORE_SECTIONS } from '../data/diviSections'
 
 /* ---------- a small description of a section, used for both the file and the preview ---------- */
 
@@ -20,17 +21,22 @@ export type HeadingItem = { type: 'heading'; level: 1 | 2 | 3 | 4 | 5 | 6; text:
 export type TextItem = { type: 'text'; html: string; tone?: 'muted' }
 export type ButtonItem = { type: 'button'; text: string; variant: 'primary' | 'secondary' | 'outline' | 'light' }
 export type AccordionItem = { type: 'accordion'; items: { title: string; html: string }[] }
-export type Item = HeadingItem | TextItem | ButtonItem | AccordionItem
+/** A picture: the file carries a brand-tinted placeholder that Divi imports into the Media Library. */
+export type ImageItem = { type: 'image'; kind: PlaceholderKind; ratio: number; label?: string }
+export type Item = HeadingItem | TextItem | ButtonItem | AccordionItem | ImageItem
 
-export type Col = { width: string; card?: boolean; items: Item[] }
+export type PlaceholderKind = 'photo' | 'avatar' | 'product' | 'logo'
+/** tone = a coloured tile (bento grids); card = a raised surface card */
+export type Col = { width: string; card?: boolean; tone?: 'surface' | 'subtle' | 'brand' | 'dark'; items: Item[] }
 export type Row = { cols: Col[]; align?: 'center' }
 export type SectionKind = 'light' | 'surface' | 'subtle' | 'brand' | 'secondary' | 'dark'
-export type SectionSpec = { id: string; label: string; kind: SectionKind; rows: Row[]; part?: 'header' | 'footer' }
+export type LayoutGroup = 'basics' | 'landing' | 'shop' | 'blog' | 'components'
+export type SectionSpec = { id: string; label: string; kind: SectionKind; rows: Row[]; part?: 'header' | 'footer'; group?: LayoutGroup }
 
 const one = (items: Item[], card = false): Col => ({ width: '4_4', items, card })
 const third = (items: Item[]): Col => ({ width: '1_3', items, card: true })
 
-export const LAYOUTS: SectionSpec[] = [
+const CORE: SectionSpec[] = [
   {
     id: 'hero',
     label: 'Hero',
@@ -177,6 +183,50 @@ export const LAYOUTS: SectionSpec[] = [
   },
 ]
 
+/** Every section: the originals plus the extra library (src/data/diviSections.ts). */
+export const LAYOUTS: SectionSpec[] = [...CORE.map((l) => ({ ...l, group: l.group ?? ('basics' as const) })), ...MORE_SECTIONS]
+
+export const LAYOUT_GROUPS: { id: LayoutGroup; label: string }[] = [
+  { id: 'basics', label: 'Basics' },
+  { id: 'landing', label: 'Landing page' },
+  { id: 'shop', label: 'Shop' },
+  { id: 'blog', label: 'Blog & portfolio' },
+  { id: 'components', label: 'Components' },
+]
+
+/* ---------- placeholder pictures ---------- */
+
+export type Placeholder = { key: string; kind: PlaceholderKind; w: number; h: number; url: string; label: string }
+
+/** Size of the placeholder file for an image (long side 1200px, logos smaller). */
+function phSize(kind: PlaceholderKind, ratio: number) {
+  const long = kind === 'logo' ? 360 : kind === 'avatar' ? 480 : 1200
+  return ratio >= 1 ? { w: long, h: Math.round(long / ratio) } : { w: Math.round(long * ratio), h: long }
+}
+
+export const placeholderUrl = (key: string, kind: PlaceholderKind) => `https://example.com/d5-placeholders/${key}.${kind === 'logo' ? 'png' : 'jpg'}`
+
+/** Placeholders a set of sections needs, in order (one per image, keyed by section and position). */
+export function placeholdersFor(ids: string[]): Placeholder[] {
+  const out: Placeholder[] = []
+  for (const id of ids) {
+    const spec = LAYOUTS.find((l) => l.id === id)
+    if (!spec) continue
+    let n = 0
+    for (const row of spec.rows)
+      for (const col of row.cols)
+        for (const it of col.items)
+          if (it.type === 'image') {
+            const key = `${id}-${++n}`
+            out.push({ key, kind: it.kind, ...phSize(it.kind, it.ratio), url: placeholderUrl(key, it.kind), label: it.label ?? '' })
+          }
+  }
+  return out
+}
+
+/** Encoded placeholder files, keyed by placeholder key (base64 without the data: prefix). */
+export type PlaceholderImages = Record<string, string>
+
 /* ---------- serialising blocks the way WordPress does ---------- */
 
 /** JSON for a block comment: quotes, <, >, & and -- are escaped so the comment can't break. */
@@ -222,21 +272,25 @@ export const brandButtonVariant = (sys: DesignSystem): ButtonItem['variant'] => 
 
 export function sectionBlocks(spec: SectionSpec, build: DiviBuild, prefix: string, version: string, sys: DesignSystem): string {
   const preset = presetFinder(build, prefix)
-  const onColour = spec.kind === 'brand' || spec.kind === 'dark' || spec.kind === 'secondary'
-  // headings on coloured sections need the matching readable colour (heading presets use the normal text colour)
   const tokens = buildTokens(sys, 'light')
   const colour = (key: string, hex: string) => (build.ids.colors[key] ? colorRef(build.ids.colors[key]) : hex)
-  const headingColour = !onColour ? null : spec.kind === 'dark' ? colour('neutral.50', buildScales(sys).neutral[0]) : spec.kind === 'brand' ? colour('on-primary', tokens['on-primary'].hex) : colour('on-secondary', tokens['on-secondary'].hex)
-  const textPreset = (tone?: 'muted') => (onColour ? preset('divi/text', spec.kind === 'dark' ? 'Text on Dark' : 'Text on Brand') : preset('divi/text', tone === 'muted' ? 'Muted Text' : 'Body Text'))
+  // the background a module sits on: a coloured tile, a (light) card, or the section itself
+  let surface: SectionKind = spec.kind
+  const onColour = () => surface === 'brand' || surface === 'dark' || surface === 'secondary'
+  // headings on coloured backgrounds need the matching readable colour (heading presets use the normal text colour)
+  const headingColour = () =>
+    !onColour() ? null : surface === 'dark' ? colour('neutral.50', buildScales(sys).neutral[0]) : surface === 'brand' ? colour('on-primary', tokens['on-primary'].hex) : colour('on-secondary', tokens['on-secondary'].hex)
+  const textPreset = (tone?: 'muted') => (onColour() ? preset('divi/text', surface === 'dark' ? 'Text on Dark' : 'Text on Brand') : preset('divi/text', tone === 'muted' ? 'Muted Text' : 'Body Text'))
   const base = { builderVersion: version }
   const cls = (c: string) => ({ advanced: { htmlAttributes: { desktop: { value: { class: c } } } } })
+  let imageN = 0
   const item = (it: Item, center: boolean): string => {
     const align = center ? { module: { advanced: { text: { text: { desktop: { value: { orientation: 'center' } } } } } } } : {}
     switch (it.type) {
       case 'heading':
         return leaf('divi/heading', {
           ...align,
-          title: { innerContent: { desktop: { value: it.text } }, decoration: { font: { font: { desktop: { value: { headingLevel: `h${it.level}`, ...(headingColour ? { color: headingColour } : {}) } } } } } },
+          title: { innerContent: { desktop: { value: it.text } }, decoration: { font: { font: { desktop: { value: { headingLevel: `h${it.level}`, ...(headingColour() ? { color: headingColour() } : {}) } } } } } },
           ...base,
           modulePreset: preset('divi/heading', `H${it.level} Heading`),
         })
@@ -247,8 +301,18 @@ export function sectionBlocks(spec: SectionSpec, build: DiviBuild, prefix: strin
           module: { advanced: { alignment: { desktop: { value: center ? 'center' : 'left' } } } },
           button: { innerContent: { desktop: { value: { text: it.text, linkUrl: '#' } } } },
           ...base,
-          modulePreset: preset('divi/button', BUTTON_PRESET[spec.kind === 'brand' && it.variant === 'light' ? brandButtonVariant(sys) : it.variant]),
+          modulePreset: preset('divi/button', BUTTON_PRESET[surface === 'brand' && it.variant === 'light' ? brandButtonVariant(sys) : it.variant]),
         })
+      case 'image': {
+        const key = `${spec.id}-${++imageN}`
+        const size = phSize(it.kind, it.ratio)
+        return leaf('divi/image', {
+          module: { advanced: { htmlAttributes: { desktop: { value: { class: it.kind === 'avatar' ? 'd5-avatar' : it.kind === 'logo' ? 'd5-logo' : 'd5-img' } } }, ...(center ? { alignment: { desktop: { value: 'center' } } } : {}) } },
+          image: { innerContent: { desktop: { value: { src: placeholderUrl(key, it.kind), width: String(size.w), height: String(size.h), alt: it.label ?? '' } } } },
+          ...base,
+          modulePreset: ['default'],
+        })
+      }
       case 'accordion':
         return [
           open('divi/accordion', { ...base, modulePreset: ['default'] }),
@@ -276,8 +340,11 @@ export function sectionBlocks(spec: SectionSpec, build: DiviBuild, prefix: strin
     const structure = row.cols.map((c) => c.width).join(',')
     out.push(open('divi/row', { module: { advanced: { columnStructure: { desktop: { value: structure } } } }, ...base, modulePreset: ['default'] }))
     for (const col of row.cols) {
-      out.push(open('divi/column', { module: { advanced: { type: { desktop: { value: col.width } }, ...(col.card ? { htmlAttributes: { desktop: { value: { class: 'd5-card d5-lift' } } } } : {}) } }, ...base, modulePreset: ['default'] }))
+      const colClass = col.tone ? `d5-card d5-tile d5-tile-${col.tone}` : col.card ? 'd5-card d5-lift' : ''
+      out.push(open('divi/column', { module: { advanced: { type: { desktop: { value: col.width } }, ...(colClass ? { htmlAttributes: { desktop: { value: { class: colClass } } } } : {}) } }, ...base, modulePreset: ['default'] }))
+      surface = col.tone === 'brand' ? 'brand' : col.tone === 'dark' ? 'dark' : col.tone || col.card ? 'light' : spec.kind
       col.items.forEach((it) => out.push(item(it, row.align === 'center')))
+      surface = spec.kind
       out.push(close('divi/column'))
     }
     out.push(close('divi/row'))
@@ -291,7 +358,7 @@ export function sectionBlocks(spec: SectionSpec, build: DiviBuild, prefix: strin
 const postId = (seed: string) => String(100000 + (parseInt(stableId('layout:' + seed).slice(0, 6), 36) % 800000))
 
 /** One Divi 5 layout file (import on a page or into the Divi Library) with the chosen sections, presets, colours and variables included. */
-export function buildLayoutFile(sys: DesignSystem, opts: DiviOptions, ids: string[], source?: DiviExport | null): { file: DiviExport & Record<string, unknown>; build: DiviBuild } {
+export function buildLayoutFile(sys: DesignSystem, opts: DiviOptions, ids: string[], source?: DiviExport | null, images: PlaceholderImages = {}): { file: DiviExport & Record<string, unknown>; build: DiviBuild } {
   const build = buildDiviImport(sys, layoutOptions(opts), source)
   const version = latestVersion(source)
   const specs = ids.map((id) => LAYOUTS.find((l) => l.id === id)!).filter(Boolean)
@@ -305,17 +372,24 @@ export function buildLayoutFile(sys: DesignSystem, opts: DiviOptions, ids: strin
     page_settings_meta: null,
     canvases: { local: [], global: [] },
     components: { items: [], order: [] },
-    images: {},
+    images: imagesFor(ids, images),
     thumbnails: [],
   }
   return { file: file as unknown as DiviExport & Record<string, unknown>, build }
 }
 
+/** The file's images list, in Divi's format: { "<url>": { encoded, url } } (Divi uploads them on import). */
+function imagesFor(ids: string[], images: PlaceholderImages) {
+  const out: Record<string, { encoded: string; url: string }> = {}
+  for (const ph of placeholdersFor(ids)) if (images[ph.key]) out[ph.url] = { encoded: images[ph.key], url: ph.url }
+  return out
+}
+
 /** Theme Builder export: one template with the header and footer as global layouts. */
-export function buildThemeBuilderFile(sys: DesignSystem, opts: DiviOptions, source?: DiviExport | null) {
+export function buildThemeBuilderFile(sys: DesignSystem, opts: DiviOptions, source?: DiviExport | null, headerId = 'header', footerId = 'footer') {
   const build = buildDiviImport(sys, layoutOptions(opts), source)
   const version = latestVersion(source)
-  const part = (id: 'header' | 'footer') => {
+  const part = (id: string) => {
     const spec = LAYOUTS.find((l) => l.id === id)!
     const pid = Number(postId(id))
     const title = `${sys.name} ${spec.label}`
@@ -326,7 +400,7 @@ export function buildThemeBuilderFile(sys: DesignSystem, opts: DiviOptions, sour
         data: { [pid]: `<!-- wp:divi/placeholder -->${sectionBlocks(spec, build, opts.prefix, version, sys)}<!-- /wp:divi/placeholder -->` },
         images: [],
         post_title: title,
-        post_type: id === 'header' ? 'et_header_layout' : 'et_footer_layout',
+        post_type: spec.part === 'header' ? 'et_header_layout' : 'et_footer_layout',
         theme_builder: { is_global: true },
         global_colors: [],
         canvases: { local: [], global: [] },
@@ -339,8 +413,8 @@ export function buildThemeBuilderFile(sys: DesignSystem, opts: DiviOptions, sour
       },
     }
   }
-  const header = part('header'),
-    footer = part('footer')
+  const header = part(headerId),
+    footer = part(footerId)
   return {
     context: 'et_theme_builder',
     templates: [

@@ -71,6 +71,14 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [x] PWA: manifest, icons, service worker (network-first pages, cached assets and Google Fonts, never /api)
 - [x] Colour-blindness view in the live preview and section planner
 
+## Layout library v2 ✅
+- [x] 21 more sections (landing, shop, blog & portfolio, components incl. style guide page) + 2nd header/footer; original designs (v0.app galleries were requested as reference but are blocked from the sandbox)
+- [x] Placeholder pictures embedded like a real export (`images: { url: { encoded, url } }` + Image module src), brand-tinted, JPG/PNG
+- [x] Coloured bento tiles (per-column readable colours), CSS helpers (d5-tile-*, d5-img, d5-avatar, d5-logo, d5-table, d5-swatch)
+- [x] Six full pages; group filter; tick-to-combine in click order; header/footer choice for the Theme Builder file
+- [ ] Dynamic Blog / Woo Products modules once the owner sends a sample export with them
+- [ ] Verify on a real Divi 5 site (image import, tiles, tables)
+
 ## Phase 4: Divi 5 ✅
 Built from a real Divi 5 presets export (same file structure, `$variable(...)$` references, option-group presets).
 - [x] Upload the site's current Divi export: summary of global colours (resolving linked/relative colours), variables and presets; open its colours in the generator
