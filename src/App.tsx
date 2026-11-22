@@ -22,6 +22,7 @@ const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
 const AccountPage = lazy(() => import('./pages/AccountPage'))
 const ReviewPage = lazy(() => import('./pages/ReviewPage'))
 import { AccountButton } from './components/account/AccountButton'
+import { LoginGate } from './components/account/LoginGate'
 import { SyncProvider } from './state/SyncContext'
 import { ProjectSwitcher } from './components/projects/ProjectsUI'
 import { getActiveProjectId } from './lib/projects'
@@ -127,7 +128,7 @@ function Shell({ children }: { children: React.ReactNode }) {
         </Routes>
       </Suspense>
     )
-  return <>{children}</>
+  return <LoginGate>{children}</LoginGate>
 }
 
 export default function App() {

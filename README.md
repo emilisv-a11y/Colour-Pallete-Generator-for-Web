@@ -68,6 +68,7 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 
 When the app runs on your own domain with the included PHP server (setup guide: [docs/HOSTINGER.md](docs/HOSTINGER.md)):
 
+- **Sign-in required:** the app opens on a sign-in screen; only people with an account (you and the teammates you add) can use it. Client review links stay public (protected by their own PIN/expiry).
 - **Sign in & sync:** projects, palettes, sessions and saved colours sync between computers. The app still works offline; changes sync when you're back.
 - **Team:** the owner adds teammates, who share the same projects.
 - **Client review links:** a private link (optional PIN and expiry) where the client sees the brand guidelines, the website preview in light and dark mode and colour options, comments, picks a favourite and approves. In English or Lithuanian. You see the feedback and reply from the project.

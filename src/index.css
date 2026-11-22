@@ -4641,3 +4641,27 @@ select {
     transition: none !important;
   }
 }
+
+/* Sign-in screen (own domain with the server) */
+.login-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px 16px;
+  background: var(--bg);
+}
+.login-brand {
+  font-size: 1.3rem;
+}
+.login-screen .account-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
