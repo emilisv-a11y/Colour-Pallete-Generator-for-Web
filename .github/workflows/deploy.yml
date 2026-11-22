@@ -1,8 +1,13 @@
-name: Deploy to GitHub Pages
+name: Retire GitHub Pages copy
 
+# The app now lives on the owner's own domain (Hostinger, behind a sign-in).
+# This replaces the old public GitHub Pages copy with a short "no longer available" page.
 on:
   push:
     branches: [main]
+    paths:
+      - .github/pages-retired/**
+      - .github/workflows/deploy.yml
   workflow_dispatch:
 
 permissions:
@@ -19,16 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm test
-      - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: .github/pages-retired
 
   deploy:
     needs: build

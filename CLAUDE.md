@@ -1,6 +1,6 @@
 # D5 WebTool: project memory
 
-A colour palette and design-system platform for web design, with extra tools for building sites in **Divi 5**. Inspired by Coolors in features, but with its own name, look and code. Live at https://emilisv-a11y.github.io/Colour-Pallete-Generator-for-Web/.
+A colour palette and design-system platform for web design, with extra tools for building sites in **Divi 5**. Inspired by Coolors in features, but with its own name, look and code. Live at https://webtools.emilisvastakas.co.uk (Hostinger, sign-in required). The old GitHub Pages copy is retired: it only shows a "no longer available" page.
 
 ## The owner and how they like to work
 
@@ -20,7 +20,7 @@ A colour palette and design-system platform for web design, with extra tools for
 | 4 | Divi 5: import file builder (colours, variables, presets), section planner, CSS helpers, checklist | live |
 | Extras | Text-on-image checker (`/text-on-image`) + self-hosted fonts (Design system → Type) | live |
 | Projects | Client projects (header switcher, `/projects`) + handoff ZIP (EN/LT) | live |
-| Backend | PHP/MySQL API on Hostinger Business: sign-in, team, sync, client review links (`#/review/<token>`) | code merged = deployed to GitHub Pages (cloud features hidden there); **live at https://webtools.emilisvastakas.co.uk** (setup done; files in `public_html/webtools`). The whole app is behind a sign-in screen there (`LoginGate`). |
+| Backend | PHP/MySQL API on Hostinger Business: sign-in, team, sync, client review links (`#/review/<token>`) | **live at https://webtools.emilisvastakas.co.uk** (setup done; files in `public_html/webtools`). The whole app is behind a sign-in screen there (`LoginGate`). |
 
 The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.md`.
 
@@ -42,7 +42,7 @@ npm run build          # static site in dist/
 npm run fonts:update   # rebuild src/data/google-fonts.json from the npm package google-font-metadata
 ```
 
-Hosting: GitHub Pages via `.github/workflows/deploy.yml` (runs on push to `main` and workflow_dispatch). The repo is public (needed for free Pages). `vite.config.ts` uses `base: './'` and the router uses hash URLs, so the build also works on Hostinger or Cloudflare Pages unchanged.
+Hosting: Hostinger via `.github/workflows/deploy-hostinger.yml` (FTP upload on every push to `main`; it also runs the tests). `.github/workflows/deploy.yml` now only publishes the retired placeholder `.github/pages-retired/index.html` to GitHub Pages (runs when those files change). The repo is public. `vite.config.ts` uses `base: './'` and the router uses hash URLs, so the build also works on Hostinger or Cloudflare Pages unchanged.
 
 ## Code map
 
