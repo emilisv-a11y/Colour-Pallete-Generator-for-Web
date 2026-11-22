@@ -17,6 +17,13 @@ description: How D5 WebTool's Divi 5 layout library works and how to add or chan
 
 `src/lib/layoutHtml.ts` renders specs as HTML for an iframe (`LayoutPreview`): `diviCss(sys)` + preview CSS (sections `.pv-sec-<kind>` use token variables so dark mode works; buttons `.d5-btn-<variant>` with hover; columns stack at ≤980px). New item types need a case there **and** in `sectionBlocks` **and** in the small `SectionPreview`.
 
+## Hover, focus and units
+
+- Link colour + hover live in the text presets (`content.decoration.bodyFont.link.font.desktop.{value,hover}`); on brand/dark backgrounds links keep the text colour.
+- Button lift, link underline, card/image hover, `.d5-nav` menu links and focus rings are CSS in `diviCss()`, timed by `--duration-*`/`--ease-*` (0 with reduced motion). Add new hover effects there and mirror them in the preview CSS in `layoutHtml.ts`.
+- Sizes: `rem` via `rem()` from `effects.ts` (radius, button padding, input height, widths); `clamp()` for type/space; borders stay `px`.
+- Gradient stops use global-colour references when the colour exists in the file (Divi resolves them; confirmed in the dev docs).
+
 ## Writing a section
 
 A section is `{ id, group, label, kind, rows, part? }`. `kind` is the section background (light, surface, subtle, brand, secondary, dark). Rows hold columns `{ width, items, card?, tone? }`; items are `heading`, `text` (HTML, optional `cls` such as `d5-nav`), `button` (primary/secondary/outline/light), `accordion`, `image` (`kind`: photo/avatar/product/logo, `ratio`), `video` (thumbnail placeholder) and `shop` (Divi Shop module).

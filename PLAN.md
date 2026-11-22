@@ -118,4 +118,18 @@ Built from a real Divi 5 presets export (same file structure, `$variable(...)$` 
 - [x] GitHub Action FTP deploy to Hostinger (skips until secrets are added); step-by-step guide
 - [x] Tests: 45 API integration tests on MariaDB, sync unit tests, three-browser end-to-end test
 
-## Next phases (planned with the owner)
+## Staging test checklist (owner, next session: ask how it went)
+The owner is testing imports on a staging site. Ask for results/screenshots and fix what differs.
+- [ ] Import file: colours, variables (now rem), presets incl. Button Size S/M/L and gradient presets (stops linked to global colours)
+- [ ] Text presets: link colour + hover colour show in Divi
+- [ ] CSS & classes tab pasted into Theme Options: tiles, cards, avatars, logo strip, comparison table, hover/focus states
+- [ ] A full page layout (e.g. Home or Restaurant): sections, presets applied, placeholder pictures imported into the Media Library
+- [ ] Shop module section: product styling (title, price, sale badge, rating, rounded images); set product count/columns in the module
+- [ ] Video module: thumbnail placeholder, add a video URL
+- [ ] Theme Builder file: header + footer template, `use_on` assignment
+- [ ] Dark mode CSS + scripts: Divi global colours switch (`--gcid-*`), toggle remembered
+- [ ] Waiting for: presets export with a nested number variable and a variable combination (calc) → then switch semantic variables to nested references
+
+## Ideas not built yet
+- Dynamic Blog module, Contact Form, Email Optin (need a sample export with each module)
+- More starter kits; pricing-table / testimonial module variants; proofread Lithuanian copy
