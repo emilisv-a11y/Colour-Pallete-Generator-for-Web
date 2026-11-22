@@ -156,6 +156,8 @@ export type DiviOptions = {
   presetButtons: boolean
   presetButtonSizes: boolean
   presetSections: boolean
+  /** section presets with brand gradients */
+  presetGradients: boolean
   presetGroups: boolean
   prefix: string
   /** when a colour/variable with the same name already exists on the site */
@@ -176,6 +178,7 @@ export const DEFAULT_DIVI_OPTIONS: DiviOptions = {
   presetButtons: true,
   presetButtonSizes: true,
   presetSections: true,
+  presetGradients: true,
   presetGroups: true,
   prefix: '',
   onConflict: 'update',
@@ -423,6 +426,16 @@ export function buildDiviImport(sys: DesignSystem, opts: DiviOptions, source?: D
     addModulePreset('divi/section', 'Section Dark', section(dark))
   }
 
+  if (opts.presetGradients) {
+    const sc = buildScales(sys)
+    const pad = V('space-xl-3xl', '5rem')
+    const grad = (g: DiviGradient, fallback: string) => ({ module: { decoration: { background: { desktop: { value: { color: fallback, gradient: g } } }, spacing: { desktop: { value: { padding: { top: pad, bottom: pad, syncVertical: 'on' } } } } } } })
+    addModulePreset('divi/section', 'Section Gradient Brand', grad(diviGradient([{ color: tokens.primary.hex, pos: 0 }, { color: tokens.secondary.hex, pos: 100 }], 'linear', '135deg'), tokens.primary.hex))
+    addModulePreset('divi/section', 'Section Gradient Soft', grad(diviGradient([{ color: tokens['primary-subtle'].hex, pos: 0 }, { color: tokens.bg.hex, pos: 100 }], 'linear', '180deg'), tokens.bg.hex))
+    addModulePreset('divi/section', 'Section Gradient Dark', grad(diviGradient([{ color: sc.neutral[9], pos: 0 }, { color: sc.primary[9], pos: 100 }], 'linear', '160deg'), sc.neutral[9]))
+    addModulePreset('divi/section', 'Section Gradient Glow', grad(diviGradient([{ color: sc.primary[3], pos: 0 }, { color: tokens.bg.hex, pos: 70 }], 'circular', 'top left'), tokens.bg.hex))
+  }
+
   if (opts.presetGroups) {
     const r = (k: string, f: string) => {
       const v = V(k, f)
@@ -566,4 +579,48 @@ ${SECTION_KINDS.map(block).join('\n\n')}
 
 ${effectHelpers(sys)}
 `
+}
+
+/* ---------- gradient backgrounds ---------- */
+
+/** Divi 5 gradient background value (as in a real export: background.desktop.value.gradient). */
+export type DiviGradient = { enabled: 'on'; type: 'linear' | 'circular'; direction?: string; directionRadial?: string; stops: { position: number; color: string }[]; length: string }
+
+/**
+ * Gradient in Divi's format. Divi blends in sRGB, so for smoother (OKLab-like) results pass extra stops,
+ * e.g. sampled with sampleGradient() in the gradient tool.
+ */
+export function diviGradient(stops: { color: string; pos: number }[], type: 'linear' | 'circular', direction: string): DiviGradient {
+  return {
+    enabled: 'on',
+    type,
+    ...(type === 'linear' ? { direction } : { directionRadial: direction }),
+    stops: [...stops].sort((a, b) => a.pos - b.pos).map((st) => ({ position: Math.round(st.pos * 10) / 10, color: st.color })),
+    length: '100%',
+  }
+}
+
+/** A tiny import file with one section preset that uses the gradient. */
+export function gradientPresetFile(name: string, g: DiviGradient, source?: DiviExport | null, now = Date.now()): DiviExport {
+  const version = latestVersion(source)
+  const id = stableId('p:' + normLabel(`divi/section ${name}`))
+  const defId = stableId('p:' + normLabel('divi/section default'))
+  const src = source?.presets.module?.['divi/section']
+  const def = src?.default && src.items[src.default] ? { id: src.default, item: src.items[src.default] } : { id: defId, item: { id: defId, name: 'Section Preset 1', moduleName: 'divi/section', version, type: 'module' as const, created: now, updated: now } }
+  const attrs = { module: { decoration: { background: { desktop: { value: { color: g.stops[0]?.color ?? '#ffffff', gradient: g } } } } } }
+  return {
+    context: 'et_builder',
+    data: [],
+    presets: {
+      module: { 'divi/section': { default: def.id, items: { [def.id]: def.item, [id]: { id, name, moduleName: 'divi/section', version, type: 'module', created: now, updated: now, attrs, styleAttrs: attrs } } } },
+      group: {},
+    },
+    global_colors: [],
+    global_variables: [],
+    page_settings_meta: null,
+    canvases: [],
+    components: [],
+    images: [],
+    thumbnails: [],
+  }
 }

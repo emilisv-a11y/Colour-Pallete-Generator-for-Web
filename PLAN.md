@@ -53,6 +53,13 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [x] Divi: number variables, Button Size S/M/L group presets (groupId designButton), helper classes
 - [ ] Verify the Button Size presets on a real Divi 5 import
 
+## Divi extras (Phase B) ✅
+- [x] Layout library: hero, features, pricing, testimonials, FAQ, CTA as Divi 5 layout files (block markup, presets referenced by id) + header/footer as a Theme Builder export; previews
+- [x] Dark mode for Divi: --gcid-* overrides from dark tokens, head + body scripts (device setting + remembered toggle), floating or manual button, logo swap classes, live preview
+- [x] Gradient section presets (brand, soft, dark, glow) + Gradient maker → Divi preset (OKLab kept with extra stops)
+- [x] Logo checker: SVG colours (incl. implicit black), backgrounds with "part fades" warning, recolour, one-colour versions with white details kept, SVG/PNG downloads, file checks, PNG support
+- [ ] Verify layouts, Theme Builder template, gradient presets and dark mode on a real Divi 5 site
+
 ## Phase 4: Divi 5 ✅
 Built from a real Divi 5 presets export (same file structure, `$variable(...)$` references, option-group presets).
 - [x] Upload the site's current Divi export: summary of global colours (resolving linked/relative colours), variables and presets; open its colours in the generator
@@ -85,6 +92,5 @@ Built from a real Divi 5 presets export (same file structure, `$variable(...)$` 
 - [x] Tests: 45 API integration tests on MariaDB, sync unit tests, three-browser end-to-end test
 
 ## Next phases (planned with the owner)
-- **B · Divi extras:** dark-mode toggle (follows device + remembered switch), logo checker + recoloured variants; layout library and gradient presets from the owner's sample files (testpage.json, Divi Theme Builder templates)
 - **C · Brand assets:** favicon/app icons, social image, starter kits (food & hospitality, professional services, health & beauty, shops & creative)
 - **D · Quality of life:** version history with diff, command palette, PWA, colour-blindness view in preview and planner

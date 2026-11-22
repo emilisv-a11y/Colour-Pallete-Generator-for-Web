@@ -21,6 +21,7 @@ import {
 import { downloadText, paletteSlug } from '../lib/exports'
 import { fontStack, loadFonts } from '../lib/fonts'
 import { DiffTab, OPEN_TAB_KEY, ReadSiteModal } from '../components/divi/RoundTrip'
+import { DarkModeTab, LayoutsTab } from '../components/divi/LayoutsDark'
 
 const SRC_KEY = 'd5wt:diviSource'
 const OPT_KEY = 'd5wt:diviOpts'
@@ -44,7 +45,7 @@ function save(key: string, v: unknown) {
   }
 }
 
-type Tab = 'import' | 'diff' | 'planner' | 'css' | 'checklist'
+type Tab = 'import' | 'diff' | 'layouts' | 'dark' | 'planner' | 'css' | 'checklist'
 
 /* ---------- Current Divi site ---------- */
 
@@ -203,6 +204,7 @@ function ImportTab({ sys, source }: { sys: NonNullable<ReturnType<typeof useDesi
           <Check label="Primary, secondary, outline, light buttons" checked={opts.presetButtons} onChange={(presetButtons) => setOpts({ presetButtons })} />
           <Check label="Button sizes S, M, L (option group presets)" checked={opts.presetButtonSizes} onChange={(presetButtonSizes) => setOpts({ presetButtonSizes })} />
           <Check label="Section backgrounds with fluid padding" checked={opts.presetSections} onChange={(presetSections) => setOpts({ presetSections })} />
+          <Check label="Gradient section backgrounds (brand, soft, dark, glow)" checked={opts.presetGradients} onChange={(presetGradients) => setOpts({ presetGradients })} />
           <Check label="Radius and card padding (option group presets)" checked={opts.presetGroups} onChange={(presetGroups) => setOpts({ presetGroups })} />
         </fieldset>
       </div>
@@ -534,6 +536,8 @@ export default function DiviPage() {
             options={[
               { id: 'import', label: 'Import file' },
               ...(source ? [{ id: 'diff' as Tab, label: 'Site differences' }] : []),
+              { id: 'layouts', label: 'Layouts' },
+              { id: 'dark', label: 'Dark mode' },
               { id: 'planner', label: 'Section planner' },
               { id: 'css', label: 'CSS & classes' },
               { id: 'checklist', label: 'Checklist' },
@@ -541,6 +545,8 @@ export default function DiviPage() {
           />
           {shownTab === 'import' && <ImportTab sys={sys} source={source} />}
           {shownTab === 'diff' && source && <DiffTab sys={sys} source={source} />}
+          {shownTab === 'layouts' && <LayoutsTab sys={sys} source={source} />}
+          {shownTab === 'dark' && <DarkModeTab sys={sys} source={source} />}
           {shownTab === 'planner' && <PlannerTab sys={sys} />}
           {shownTab === 'css' && <CssTab sys={sys} />}
           {shownTab === 'checklist' && <ChecklistTab sys={sys} />}
