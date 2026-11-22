@@ -1,6 +1,7 @@
 import { fontStack, googleFontsUrl } from './fonts'
 import { allTokenNames, buildScales, buildTokens, ROLE_KEYS, STEPS, typeOf, type DesignSystem, type Tokens } from './system'
 import { exportType, typeScale } from './typography'
+import { buttonSizes, EASINGS, effectsCss, effectsOf, effectVars, SHADOW_NAMES, shadowCss } from './effects'
 
 export type TokenFormat = 'css' | 'scss' | 'tailwind4' | 'tailwind3' | 'dtcg' | 'tokens-studio' | 'bootstrap' | 'json'
 
@@ -65,7 +66,10 @@ ${cssBlock(dark)}
   color-scheme: dark;
 }
 
-${exportType(typeOf(sys), 'css', sys.fonts, { heading: fontStack(sys.fonts.heading, sys.fonts.meta), body: fontStack(sys.fonts.body, sys.fonts.meta) })}`
+${exportType(typeOf(sys), 'css', sys.fonts, { heading: fontStack(sys.fonts.heading, sys.fonts.meta), body: fontStack(sys.fonts.body, sys.fonts.meta) })}
+
+${effectsCss(sys)}
+`
     case 'scss': {
       const map = (t: Tokens) => names.map((n) => `  '${n}': ${t[n].hex},`).join('\n')
       return `// ${header(sys)}
@@ -87,6 +91,11 @@ $font-heading: ${fontStack(sys.fonts.heading, sys.fonts.meta)};
 $font-body: ${fontStack(sys.fonts.body, sys.fonts.meta)};
 $radius: ${sys.radius}px;
 
+${effectVars(sys).map((v) => `$${v.name}: ${v.value};`).join('\n')}
+$shadows-dark: (
+${SHADOW_NAMES.map((n) => `  '${n}': (${shadowCss(sys, n, 'dark')}),`).join('\n')}
+);
+
 // Usage: @each $name, $value in $theme-light { --#{$name}: #{$value}; }
 `
     }
@@ -102,6 +111,12 @@ ${ROLE_KEYS.map((r) => scales[r].map((h, i) => `  --color-${r}-${STEPS[i]}: ${h}
   --font-heading: ${fontStack(sys.fonts.heading, sys.fonts.meta)};
   --font-body: ${fontStack(sys.fonts.body, sys.fonts.meta)};
   --radius-brand: ${sys.radius}px;
+
+${SHADOW_NAMES.map((n) => `  --shadow-${n}: ${shadowCss(sys, n)};`).join('\n')}
+${EASINGS.map((x) => `  --ease-${x.name}: ${x.css};`).join('\n')}
+  --container-narrow: ${effectsOf(sys).widths.narrow}px;
+  --container-page: ${effectsOf(sys).widths.container}px;
+  --container-wide: ${effectsOf(sys).widths.wide}px;
 }
 
 /* Semantic colours: use bg-bg, bg-surface, text-text, bg-primary, text-on-primary, border-border… */
@@ -138,6 +153,11 @@ ${names
         body: [${JSON.stringify(sys.fonts.body)}, 'sans-serif'],
       },
       borderRadius: { brand: '${sys.radius}px' },
+      boxShadow: { ${SHADOW_NAMES.map((n) => `${n}: 'var(--shadow-${n})'`).join(', ')} },
+      borderWidth: { thin: '${effectsOf(sys).borders.thin}px', base: '${effectsOf(sys).borders.base}px', thick: '${effectsOf(sys).borders.thick}px' },
+      transitionDuration: { fast: '${effectsOf(sys).motion.fast}ms', base: '${effectsOf(sys).motion.base}ms', slow: '${effectsOf(sys).motion.slow}ms' },
+      transitionTimingFunction: { ${EASINGS.map((x) => `${x.name}: '${x.css}'`).join(', ')} },
+      maxWidth: { narrow: '${effectsOf(sys).widths.narrow}px', container: '${effectsOf(sys).widths.container}px', wide: '${effectsOf(sys).widths.wide}px' },
     },
   },
 }
@@ -156,6 +176,7 @@ ${names
               body: { $type: 'fontFamily', $value: [sys.fonts.body, 'sans-serif'] },
             },
             radius: { base: { $type: 'dimension', $value: { value: sys.radius, unit: 'px' } } },
+            ...dtcgEffects(sys),
           },
           null,
           2,
@@ -228,6 +249,7 @@ ${ROLE_KEYS.map((r) => scales[r].map((h, i) => `$${r}-${STEPS[i]}: ${h};`).join(
             fonts: sys.fonts,
             radius: sys.radius,
             typography: Object.fromEntries(typeScale(typeOf(sys)).map((t) => [t.name, { clamp: t.css, minPx: t.min, maxPx: t.max, lineHeight: t.lineHeight }])),
+            effects: Object.fromEntries(effectVars(sys).map((v) => [v.name, v.dark ? { light: v.value, dark: v.dark } : v.value])),
           },
           null,
           2,
@@ -239,4 +261,28 @@ ${ROLE_KEYS.map((r) => scales[r].map((h, i) => `$${r}-${STEPS[i]}: ${h};`).join(
 function hexRgb(hex: string) {
   const n = parseInt(hex.slice(1), 16)
   return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`
+}
+
+/** W3C design-token entries for shadows, borders, sizes, durations, easings and widths. */
+function dtcgEffects(sys: DesignSystem) {
+  const e = effectsOf(sys)
+  const dim = (v: number) => ({ $type: 'dimension', $value: { value: v, unit: 'px' } })
+  const shadow = (css: string) => ({
+    $type: 'shadow',
+    $value: css.split(/,(?![^(]*\))/).map((layer) => {
+      const m = layer.trim().match(/^0 (\d+)px (\d+)px (rgb\(.*\))$/)
+      return { color: m?.[3] ?? '#000000', offsetX: { value: 0, unit: 'px' }, offsetY: { value: Number(m?.[1] ?? 0), unit: 'px' }, blur: { value: Number(m?.[2] ?? 0), unit: 'px' }, spread: { value: 0, unit: 'px' } }
+    }),
+  })
+  return {
+    shadow: {
+      light: Object.fromEntries(SHADOW_NAMES.map((n) => [n, shadow(shadowCss(sys, n))])),
+      dark: Object.fromEntries(SHADOW_NAMES.map((n) => [n, shadow(shadowCss(sys, n, 'dark'))])),
+    },
+    border: { thin: dim(e.borders.thin), base: dim(e.borders.base), thick: dim(e.borders.thick) },
+    size: { ...Object.fromEntries(buttonSizes(sys).map((b) => [`button-${b.name}`, dim(b.height)])), input: dim(e.input) },
+    duration: Object.fromEntries((['fast', 'base', 'slow'] as const).map((n) => [n, { $type: 'duration', $value: { value: e.motion[n], unit: 'ms' } }])),
+    easing: Object.fromEntries(EASINGS.map((x) => [x.name, { $type: 'cubicBezier', $value: x.css.slice(x.css.indexOf('(') + 1, -1).split(',').map(Number) }])),
+    width: { narrow: dim(e.widths.narrow), container: dim(e.widths.container), wide: dim(e.widths.wide) },
+  }
 }

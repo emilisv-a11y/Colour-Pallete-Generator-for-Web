@@ -190,6 +190,7 @@ function ImportTab({ sys, source }: { sys: NonNullable<ReturnType<typeof useDesi
           <Check label={`Fluid type sizes (text-xs … text-5xl)`} checked={opts.typeVars} onChange={(typeVars) => setOpts({ typeVars })} />
           <Check label="Fluid spacing (space-3xs … space-xl-3xl)" checked={opts.spaceVars} onChange={(spaceVars) => setOpts({ spaceVars })} />
           <Check label="Corner radius (radius-s, m, l, full)" checked={opts.radiusVars} onChange={(radiusVars) => setOpts({ radiusVars })} />
+          <Check label="Borders, button sizes, input height, motion, content widths" checked={opts.effectVars} onChange={(effectVars) => setOpts({ effectVars })} hint="border-*, btn-s/m/l-*, input-height, duration-*, width-narrow/container/wide" />
           <label className="field">
             <span className="field-label">Name prefix (optional)</span>
             <input value={opts.prefix} onChange={(e) => setOpts({ prefix: e.target.value })} placeholder='e.g. "D5 " to group the new items' />
@@ -200,6 +201,7 @@ function ImportTab({ sys, source }: { sys: NonNullable<ReturnType<typeof useDesi
           <Check label="Headings H1–H6 (Heading module)" checked={opts.presetHeadings} onChange={(presetHeadings) => setOpts({ presetHeadings })} />
           <Check label="Body, muted, on-brand, on-dark text (Text module)" checked={opts.presetText} onChange={(presetText) => setOpts({ presetText })} />
           <Check label="Primary, secondary, outline, light buttons" checked={opts.presetButtons} onChange={(presetButtons) => setOpts({ presetButtons })} />
+          <Check label="Button sizes S, M, L (option group presets)" checked={opts.presetButtonSizes} onChange={(presetButtonSizes) => setOpts({ presetButtonSizes })} />
           <Check label="Section backgrounds with fluid padding" checked={opts.presetSections} onChange={(presetSections) => setOpts({ presetSections })} />
           <Check label="Radius and card padding (option group presets)" checked={opts.presetGroups} onChange={(presetGroups) => setOpts({ presetGroups })} />
         </fieldset>
