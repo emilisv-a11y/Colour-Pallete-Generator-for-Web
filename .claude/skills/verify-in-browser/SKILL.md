@@ -17,6 +17,17 @@ pkill -f "vite preview"
 
 `vite preview` (and `npm run dev`) proxy `/api` to `127.0.0.1:8080`. With nothing running there the app has no server, so there is no sign-in screen. If the local PHP server **is** running, every page sits behind the sign-in (`LoginGate`): sign in first (see the `hostinger-backend` skill), or stop it. To prove the no-server behaviour for certain, serve `dist/` with `python3 -m http.server 4198 -d dist` instead.
 
+Start servers in the background and wait for them before the first `page.goto`, or you get `ERR_CONNECTION_REFUSED`:
+
+```bash
+(python3 -m http.server 4198 -d dist > /tmp/py.log 2>&1 &)
+end=$((SECONDS+20)); until curl -s localhost:4198 >/dev/null || [ $SECONDS -ge $end ]; do :; done
+```
+
+(Plain `sleep` is blocked here; use deadline loops like this for waiting.) If a feature seems missing in the browser, check the build actually succeeded (`npm run build 2>&1 | tail`): a failed build leaves the old `dist/`.
+
+Quick ways to seed realistic data: `#/starters` → "Start a project with this kit" (accept the name prompt with `p.on('dialog', d => d.accept('Name'))`) creates a project with a full design system.
+
 Pages live at `http://localhost:4173/#/<route>` (hash router). Seed state through the UI or `localStorage` (`d5wt:*` keys). For example, open `#/generate/<hex-hex-...>` first so the generator has a known palette, and use the "Create from current palette" button on `#/system`.
 
 ## Always check
@@ -51,6 +62,13 @@ Run the local full stack, then: open any route and expect `text=Sign in to open 
 ## Service worker (installable app)
 
 Production builds register `sw.js`. A fresh Playwright context starts with no cache, so tests are fine; but in a reused browser profile an old build can be served from the cache. To test offline: load a page, wait for `navigator.serviceWorker.ready`, reload once, then `context.setOffline(true)` and navigate: the app must still render. Never let the service worker cache `/api/`.
+
+## More checks used here
+
+- **Downloads with binaries:** decode and check magic bytes in Python (`ffd8ff` JPEG, `89504e` PNG, `wOF2` fonts), PNG size from bytes 16–24, ZIP contents with `zipfile`, ICO header with `struct.unpack('<HHH', ...)`.
+- **Iframes** (dark-mode preview): `p.frameLocator('.dm-frame')`; scroll the iframe into view first or clicks on fixed elements inside it time out on phones.
+- **Canvas output** (social images, icons): screenshot the canvas element and look at it; check long text and Lithuanian letters (ąčęėįšųūž) fit.
+- **Modals** placed in the wrong JSX branch don't open: if a button seems dead, check the component renders in the branch that is actually showing.
 
 ## Selector pitfalls seen here
 
