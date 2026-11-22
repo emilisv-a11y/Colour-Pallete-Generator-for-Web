@@ -53,6 +53,8 @@ Built from a real Divi 5 presets export (same file structure, `$variable(...)$` 
 - [x] Section colour planner with contrast checks, preset and CSS class per section
 - [x] CSS for Theme Options: tokens (light/dark), fluid type and spacing, helper classes (d5-section-*, d5-card…)
 - [x] Handoff checklist (saved progress)
+- [x] Round trip: read a site's export back into a design system (roles from names/button/usage, fonts, fluid type from clamp/calc, radius, button) with a review step that creates a new project
+- [x] Site differences: changed / new / same / only on site, tick to apply, update file with only those items (dependencies added, nothing deleted)
 - [ ] Verify an import on a real Divi 5 site and adjust anything Divi treats differently
 
 ## Extras ✅

@@ -79,3 +79,11 @@ Not yet confirmed on a real import: whether `button.decoration.button.desktop.va
 1. Inspect the top-level keys and the new attribute paths with `node -e` (escape `$` in shell).
 2. Add a **synthetic** fixture with the same structure; never commit their real file.
 3. Extend `divi.ts` plus its tests, and check against their real file in a temporary test that you delete afterwards.
+
+## Reading a site back (round trip)
+
+- Real sites write sizes in many forms: `12px`, `1.5rem`, our `clamp(Xrem, Arem + Bvw, Yrem)` and Divi-style `clamp(0.875rem, calc(0.001613 * (100vw - 360px) + 14px), 1rem)`. Don't regex them: `evalLength` evaluates the expression and `readFluid` samples it across widths.
+- Divi relative colours: `settings: { lightness: -120 }` etc. are treated as HSL shifts in percentage points (hue in degrees). That's an approximation, so mark such values "approximate" in the UI.
+- Presets reference global fonts with `$variable({"type":"content","value":{"name":"--et_global_heading_font"…}})$`; the family itself is not in the export. Literal `family` strings in presets are used instead, and the user confirms them.
+- The owner's real export had a broken `space-xs` (clamp minimum > maximum, so it's always 8.96px) and an "Accent 1" identical to Primary. Handle both: warn about the first, and skip duplicates as separate roles.
+- Synthetic fixture for these cases: `src/lib/__tests__/fixtures/divi-site.json`; tests in `diviRoundTrip.test.ts`.

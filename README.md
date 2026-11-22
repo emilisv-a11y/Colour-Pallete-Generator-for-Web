@@ -51,6 +51,8 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
   - Merges with your uploaded export by name: existing ids are reused, default presets are kept, and every existing item that would change is listed (old → new), with an option to keep your current values instead.
   - Re-importing updates items instead of duplicating them.
 - **Section planner:** arrange section backgrounds down a page; each shows contrast-checked heading, text, link and button colours with the presets and CSS class to use.
+- **Read a site back (round trip):** upload an existing site's presets export and click *Build design system from this site*. The tool works out the brand roles (from colour names, the main button and usage), fonts, the fluid type scale (it reads px, rem and `clamp()` values, including Divi-style `calc()` formulas), corner radius and the main button, shows where each value came from, and lets you correct anything before it creates a new client project. It also flags broken variables, such as a `clamp()` whose minimum is larger than its maximum.
+- **Site differences:** compare the site with the design system item by item (changes, new, same, only on site) with colour swatches and sizes per screen width, tick what to apply, and download an update file with only those items. Anything a ticked preset needs is added automatically; nothing on the site is deleted.
 - **CSS & classes:** CSS for Theme Options with light/dark tokens, fluid type/spacing and helper classes.
 - **Checklist:** step-by-step handoff with saved progress.
 
