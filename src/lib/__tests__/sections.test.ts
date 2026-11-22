@@ -79,3 +79,64 @@ describe('layout library', () => {
     expect(footer).toMatchObject({ post_type: 'et_footer_layout', post_title: 'Test Footer with call to action' })
   })
 })
+
+describe('layouts v3', () => {
+  const markupOf = (ids: string[]) => Object.values(buildLayoutFile(sys, DEFAULT_DIVI_OPTIONS, ids).file.data as unknown as Record<string, string>)[0]
+  it('adds the new groups with several sections each', () => {
+    for (const g of ['restaurant', 'trust', 'media', 'utility']) expect(LAYOUTS.filter((l) => l.group === g).length, g).toBeGreaterThanOrEqual(4)
+    expect(LAYOUTS.filter((l) => !l.part).length).toBeGreaterThanOrEqual(45)
+  })
+  it('uses Divi’s Shop module styled with the design system', () => {
+    let shop: Node | undefined
+    walk(parseBlocks(markupOf(['products-woo'])) as Node[], (n) => n.name === 'divi/shop' && (shop = n))
+    const a = shop!.attrs as Record<string, Record<string, unknown>>
+    expect(JSON.stringify(a.saleBadge)).toMatch(/\$variable/)
+    expect(JSON.stringify(a.title)).toContain('--et_global_heading_font')
+    expect(JSON.stringify(a.title)).toContain('"hover"')
+  })
+  it('video gets a placeholder thumbnail that is embedded in the file', () => {
+    const phs = placeholdersFor(['video'])
+    expect(phs).toHaveLength(1)
+    expect(markupOf(['video'])).toContain(phs[0].url)
+  })
+  it('text presets have link colours with a hover state, header links get the nav class', () => {
+    const b = buildLayoutFile(sys, DEFAULT_DIVI_OPTIONS, ['header']).build
+    const body = Object.values(b.file.presets.module['divi/text'].items).find((p) => p.name === 'Body Text')!
+    const link = (body.attrs as { content: { decoration: { bodyFont: { link: { font: { desktop: { value: unknown; hover: unknown } } } } } } }).content.decoration.bodyFont.link.font.desktop
+    expect(link.value).toBeTruthy()
+    expect(link.hover).toBeTruthy()
+    expect(markupOf(['header'])).toContain('d5-nav')
+    const css = diviCss(sys)
+    expect(css).toContain('.et_pb_button:hover')
+    expect(css).toContain('.d5-nav a:hover')
+    expect(css).toContain(':focus-visible')
+  })
+  it('sizes use rem instead of px (borders stay px)', () => {
+    const vars = Object.fromEntries(buildLayoutFile(sys, DEFAULT_DIVI_OPTIONS, ['hero']).build.file.global_variables.map((v) => [v.label, v.value]))
+    expect(vars['radius-m']).toMatch(/rem$/)
+    expect(vars['btn-m-pad-x']).toMatch(/rem$/)
+    expect(vars['width-container']).toBe('75rem')
+    expect(vars['border-thin']).toBe('1px')
+  })
+  it('builds a realistic preview page', async () => {
+    const { layoutDocument } = await import('../layoutHtml')
+    const html = layoutDocument(sys, ['hero-split', 'bento', 'products-woo', 'faq-split'], 'dark')
+    expect(html).toContain('data-theme="dark"')
+    expect(html.match(/<section class="pv-sec/g)).toHaveLength(4)
+    expect(html).toContain('d5-tile-brand')
+    expect(html).toContain('.d5-btn-primary:hover')
+    expect(html).toContain('@media (max-width: 980px)')
+    expect(html).toContain('fonts.googleapis.com')
+    expect(html).toContain('<details open>')
+  })
+})
+
+describe('gradient presets', () => {
+  it('link their colour stops to global colours', () => {
+    const b = buildLayoutFile(sys, DEFAULT_DIVI_OPTIONS, ['hero']).build
+    const brand = Object.values(b.file.presets.module['divi/section'].items).find((p) => p.name === 'Section Gradient Brand')!
+    const stops = (brand.attrs as { module: { decoration: { background: { desktop: { value: { gradient: { stops: { color: string }[] } } } } } } }).module.decoration.background.desktop.value.gradient.stops
+    expect(stops.every((s) => s.color.startsWith('$variable('))).toBe(true)
+    expect(findBrokenRefs(b.file)).toEqual([])
+  })
+})

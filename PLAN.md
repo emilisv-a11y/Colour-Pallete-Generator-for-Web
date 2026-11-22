@@ -79,6 +79,14 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [ ] Dynamic Blog / Woo Products modules once the owner sends a sample export with them
 - [ ] Verify on a real Divi 5 site (image import, tiles, tables)
 
+## Layouts v3 ✅
+- [x] Shop module (WooCommerce) section + Shop home page; Video module (format from testpage.json)
+- [x] Restaurant & booking, Services & trust, Media, Utility page groups (19 sections) + 7 more full pages
+- [x] Large preview: iframe mini site (real clamp/vw sizes, hover, dark mode, phone stacking at 980px), device widths, full pages
+- [x] Hover/focus: text-preset link colour + hover, button/link/card/image/nav CSS; rem units for radius, button padding, input height, widths
+- [x] Gradient stops linked to global colours (confirmed in Divi dev docs)
+- [ ] Nested variables + variable combinations: waiting for the owner's sample export (not in the dev docs)
+
 ## Phase 4: Divi 5 ✅
 Built from a real Divi 5 presets export (same file structure, `$variable(...)$` references, option-group presets).
 - [x] Upload the site's current Divi export: summary of global colours (resolving linked/relative colours), variables and presets; open its colours in the generator

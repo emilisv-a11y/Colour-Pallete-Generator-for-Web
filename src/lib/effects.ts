@@ -116,6 +116,9 @@ export const EASINGS: { name: string; css: string; use: string }[] = [
 
 /* ---------- all values as CSS variables ---------- */
 
+/** px → rem (16px root), so sizes follow the visitor's font-size setting. */
+export const rem = (px: number) => `${Math.round((px / 16) * 10000) / 10000}rem`
+
 export type EffectVar = { name: string; value: string; dark?: string; group: 'shadow' | 'border' | 'button' | 'motion' | 'width' }
 
 export function effectVars(sys: DesignSystem): EffectVar[] {
@@ -124,15 +127,15 @@ export function effectVars(sys: DesignSystem): EffectVar[] {
   SHADOW_NAMES.forEach((n) => out.push({ group: 'shadow', name: `shadow-${n}`, value: shadowCss(sys, n, 'light'), dark: shadowCss(sys, n, 'dark') }))
   ;(['thin', 'base', 'thick'] as const).forEach((n) => out.push({ group: 'border', name: `border-${n}`, value: `${e.borders[n]}px` }))
   buttonSizes(sys).forEach((b) => {
-    out.push({ group: 'button', name: `btn-${b.name}-height`, value: `${b.height}px` })
-    out.push({ group: 'button', name: `btn-${b.name}-pad-y`, value: `${b.padY}px` })
-    out.push({ group: 'button', name: `btn-${b.name}-pad-x`, value: `${b.padX}px` })
+    out.push({ group: 'button', name: `btn-${b.name}-height`, value: rem(b.height) })
+    out.push({ group: 'button', name: `btn-${b.name}-pad-y`, value: rem(b.padY) })
+    out.push({ group: 'button', name: `btn-${b.name}-pad-x`, value: rem(b.padX) })
     out.push({ group: 'button', name: `btn-${b.name}-font`, value: `${Math.round((b.fontPx / 16) * 1000) / 1000}rem` })
   })
-  out.push({ group: 'button', name: 'input-height', value: `${e.input}px` })
+  out.push({ group: 'button', name: 'input-height', value: rem(e.input) })
   ;(['fast', 'base', 'slow'] as const).forEach((n) => out.push({ group: 'motion', name: `duration-${n}`, value: `${e.motion[n]}ms` }))
   EASINGS.forEach((x) => out.push({ group: 'motion', name: `ease-${x.name}`, value: x.css }))
-  ;(['narrow', 'container', 'wide'] as const).forEach((n) => out.push({ group: 'width', name: `width-${n}`, value: `${e.widths[n]}px` }))
+  ;(['narrow', 'container', 'wide'] as const).forEach((n) => out.push({ group: 'width', name: `width-${n}`, value: rem(e.widths[n]) }))
   return out
 }
 
