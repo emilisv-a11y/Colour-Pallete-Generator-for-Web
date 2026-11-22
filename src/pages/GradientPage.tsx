@@ -4,7 +4,8 @@ import { Icon } from '../components/Icon'
 import { MiniPalette } from '../components/generator/Panels'
 import { CodeBlock, ColorField, Segmented } from '../components/ui'
 import { readableOn } from '../lib/color'
-import { paletteSlug } from '../lib/exports'
+import { downloadText, paletteSlug } from '../lib/exports'
+import { diviGradient, gradientPresetFile } from '../lib/divi'
 import { gradientCode, gradientCss, gradientPalette, sampleGradient, type Gradient, type GradientSpace, type GradientType, type Stop } from '../lib/gradient'
 import { uid } from '../lib/storage'
 import { useGenerator } from '../state/GeneratorContext'
@@ -32,6 +33,14 @@ export default function GradientPage() {
   const set = (patch: Partial<Gradient>) => setG((x) => ({ ...x, ...patch }))
   const setStop = (id: string, patch: Partial<Stop>) => setG((x) => ({ ...x, stops: x.stops.map((s) => (s.id === id ? { ...s, ...patch } : s)) }))
   const code = gradientCode(g)
+  const [presetName, setPresetName] = useState('Section Gradient')
+  const radialFrom = g.cy < 34 ? (g.cx < 34 ? 'top left' : g.cx > 66 ? 'top right' : 'top center') : g.cy > 66 ? (g.cx < 34 ? 'bottom left' : g.cx > 66 ? 'bottom right' : 'bottom center') : g.cx < 34 ? 'center left' : g.cx > 66 ? 'center right' : 'center'
+  const diviPreset = () => {
+    const sortedStops = [...g.stops].sort((a, b) => a.pos - b.pos)
+    // Divi blends in sRGB: sample the perceptual blend every 10% so it looks the same
+    const stops = g.space === 'srgb' ? sortedStops.map((st) => ({ color: st.color, pos: st.pos })) : Array.from({ length: 11 }, (_, i) => ({ color: sampleGradient(g.stops, i * 10, g.space), pos: i * 10 }))
+    return gradientPresetFile(presetName.trim() || 'Section Gradient', diviGradient(stops, g.type === 'radial' ? 'circular' : 'linear', g.type === 'radial' ? radialFrom : `${g.angle}deg`))
+  }
   const palette = gradientPalette(g, steps)
   const barBg = `linear-gradient(90deg${g.space !== 'srgb' ? ` in ${g.space}` : ''}, ${[...g.stops]
     .sort((a, b) => a.pos - b.pos)
@@ -230,6 +239,29 @@ export default function GradientPage() {
             : 'Plain sRGB blending works in every browser.'}
         </p>
         <CodeBlock code={`bg-[${code.modern.replace(/\s+/g, '_')}]`} label="Tailwind class" />
+      </section>
+
+      <section>
+        <h2>Divi 5 section preset</h2>
+        {g.type === 'conic' ? (
+          <p className="muted small">Divi's gradient backgrounds are linear or radial. Switch the type to use this gradient as a Divi preset.</p>
+        ) : (
+          <>
+            <div className="row wrap">
+              <label className="field">
+                <span className="field-label">Preset name</span>
+                <input value={presetName} onChange={(e) => setPresetName(e.target.value)} />
+              </label>
+              <button className="btn btn-primary" type="button" onClick={() => downloadText(JSON.stringify(diviPreset(), null, 1), `${presetName.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'gradient'}-divi5-preset.json`, 'application/json')}>
+                <Icon name="download" size={16} /> Download Divi preset
+              </button>
+            </div>
+            <p className="muted small">
+              Import it in Divi like a presets export, then pick “{presetName}” in a section's preset menu.{' '}
+              {g.space !== 'srgb' ? 'Divi blends in plain sRGB, so in-between stops are added to keep this smoother blend.' : ''} Radial gradients start at the {radialFrom}.
+            </p>
+          </>
+        )}
       </section>
 
       <section>

@@ -54,11 +54,15 @@ The full feature roadmap is in [PLAN.md](./PLAN.md).
 - **Section planner:** arrange section backgrounds down a page; each shows contrast-checked heading, text, link and button colours with the presets and CSS class to use.
 - **Read a site back (round trip):** upload an existing site's presets export and click *Build design system from this site*. The tool works out the brand roles (from colour names, the main button and usage), fonts, the fluid type scale (it reads px, rem and `clamp()` values, including Divi-style `calc()` formulas), corner radius and the main button, shows where each value came from, and lets you correct anything before it creates a new client project. It also flags broken variables, such as a `clamp()` whose minimum is larger than its maximum.
 - **Site differences:** compare the site with the design system item by item (changes, new, same, only on site) with colour swatches and sizes per screen width, tick what to apply, and download an update file with only those items. Anything a ticked preset needs is added automatically; nothing on the site is deleted.
+- **Layouts:** ready-made sections (hero, feature cards, pricing table, testimonials, FAQ, call to action) built from your presets, with live previews. Download one section, all of them as one page layout, or the header and footer as a Theme Builder file. Each file carries the presets, colours and variables it needs.
+- **Dark mode:** CSS and a small script that switch your Divi global colours to the dark tokens. It follows the visitor's device setting, and a toggle button (floating or placed by hand) overrides it and is remembered. Includes `d5-hide-dark` / `d5-show-dark` classes for swapping logos, and a live preview.
+- **Gradient backgrounds:** brand, soft, dark and glow gradient section presets in the import file; any gradient from the Gradient maker can be downloaded as a Divi section preset (smooth OKLab blends are kept with in-between stops).
 - **CSS & classes:** CSS for Theme Options with light/dark tokens, fluid type/spacing and helper classes.
 - **Checklist:** step-by-step handoff with saved progress.
 
 ## Extras
 
+- **Logo checker** (Tools): upload an SVG (or PNG with transparency) to see it on your brand's backgrounds with a contrast rating that warns when part of the logo fades, change its colours, and download versions in one colour, white, black, brand colour and for brand backgrounds (SVG and PNG).
 - **Text on image checker** (Tools): upload a hero image, position the text, and see the worst-case contrast of every pixel behind it, with a heatmap of failing pixels and desktop/tablet/phone crops. One click finds the lightest solid overlay, edge scrim or text panel that passes WCAG AA for white or black text, with CSS and Divi steps.
 - **Self-hosted fonts** (Design system → Type): download the chosen Google Fonts as a ZIP of WOFF2 files, with `@font-face` CSS and step-by-step Divi instructions, so visitors' browsers never contact Google (EU privacy). Pick weights, italics and languages (e.g. Latin Extended for Lithuanian); file sizes are shown first.
 
