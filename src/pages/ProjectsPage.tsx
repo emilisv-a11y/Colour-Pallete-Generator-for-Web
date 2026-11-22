@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { HandoffModal, ProjectModal, statusLabel, useSwitchProject } from '../components/projects/ProjectsUI'
 import { ClientReviewModal } from '../components/projects/ClientReview'
@@ -23,7 +23,12 @@ export default function ProjectsPage() {
   const navigate = useNavigate()
   const switchTo = useSwitchProject()
   const [view, setView] = useState<'active' | 'archived'>('active')
-  const [editing, setEditing] = useState<Project | null | 'new'>(null)
+  const [params, setParams] = useSearchParams()
+  const [editing, setEditingState] = useState<Project | null | 'new'>(() => (params.get('new') ? 'new' : null))
+  const setEditing = (p: Project | null | 'new') => {
+    setEditingState(p)
+    if (!p && params.get('new')) setParams({}, { replace: true })
+  }
   const [handoff, setHandoff] = useState<Project | null>(null)
   const [review, setReview] = useState<Project | null>(null)
   const sync = useSync()

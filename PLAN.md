@@ -65,6 +65,12 @@ Stack: Vite, React, TypeScript, `culori` (colour maths), hash routing, static ho
 - [x] Social share images: 4 styles × 1200×630 and 1080×1080, auto-fit text (Lithuanian letters), logo, PNG/JPG
 - [x] Starter kits: 8 kits in 4 groups (Latin Extended fonts, all contrast checks pass) → new project with system, palette and section plan
 
+## Quality of life (Phase D) ✅
+- [x] Design system version history: named + automatic versions (15-minute gap, auto pruned to 20), diff, restore (saves current first); per project, synced
+- [x] Command palette (Ctrl/⌘ + K, header search icon): pages, actions, projects, install prompt
+- [x] PWA: manifest, icons, service worker (network-first pages, cached assets and Google Fonts, never /api)
+- [x] Colour-blindness view in the live preview and section planner
+
 ## Phase 4: Divi 5 ✅
 Built from a real Divi 5 presets export (same file structure, `$variable(...)$` references, option-group presets).
 - [x] Upload the site's current Divi export: summary of global colours (resolving linked/relative colours), variables and presets; open its colours in the generator
@@ -97,4 +103,3 @@ Built from a real Divi 5 presets export (same file structure, `$variable(...)$` 
 - [x] Tests: 45 API integration tests on MariaDB, sync unit tests, three-browser end-to-end test
 
 ## Next phases (planned with the owner)
-- **D · Quality of life:** version history with diff, command palette, PWA, colour-blindness view in preview and planner

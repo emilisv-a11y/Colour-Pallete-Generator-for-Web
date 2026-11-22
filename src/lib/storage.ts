@@ -167,7 +167,13 @@ export function toggleSavedColor(hex: string): boolean {
 
 /* ---------- design system ---------- */
 export const getSystem = () => read<DesignSystem | null>(KEYS.system, null)
-export const setSystem = (s: DesignSystem | null) => write(KEYS.system, s)
+let beforeSystemWrite: ((previous: DesignSystem | null) => void) | null = null
+/** Lets the version history keep the previous design system before it is overwritten (avoids an import cycle). */
+export const onBeforeSystemWrite = (fn: (previous: DesignSystem | null) => void) => void (beforeSystemWrite = fn)
+export const setSystem = (s: DesignSystem | null) => {
+  beforeSystemWrite?.(getSystem())
+  write(KEYS.system, s)
+}
 
 /* ---------- sessions ---------- */
 export const getSessions = () => read<Session[]>(KEYS.sessions, [])

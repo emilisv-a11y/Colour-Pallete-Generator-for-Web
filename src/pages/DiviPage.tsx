@@ -22,6 +22,8 @@ import { downloadText, paletteSlug } from '../lib/exports'
 import { fontStack, loadFonts } from '../lib/fonts'
 import { DiffTab, OPEN_TAB_KEY, ReadSiteModal } from '../components/divi/RoundTrip'
 import { DarkModeTab, LayoutsTab } from '../components/divi/LayoutsDark'
+import { simulateDeep, VisionSelect } from '../components/VisionSelect'
+import type { VisionId } from '../lib/color'
 
 const SRC_KEY = 'd5wt:diviSource'
 const OPT_KEY = 'd5wt:diviOpts'
@@ -298,7 +300,9 @@ function short(v?: string) {
 /* ---------- Section planner ---------- */
 
 function PlannerTab({ sys }: { sys: NonNullable<ReturnType<typeof useDesignSystem>['sys']> }) {
-  const styles = sectionStyles(sys)
+  const [vision, setVision] = useState<VisionId>('normal')
+  const real = sectionStyles(sys)
+  const styles = simulateDeep(real, vision)
   const [plan, setPlanState] = useState<SectionKind[]>(() => load(PLAN_KEY, ['dark', 'light', 'surface', 'brand', 'light', 'dark'] as SectionKind[]))
   const setPlan = (p: SectionKind[]) => {
     setPlanState(p)
@@ -312,10 +316,14 @@ function PlannerTab({ sys }: { sys: NonNullable<ReturnType<typeof useDesignSyste
         Plan the order of section backgrounds down a page. Each section shows the heading, text, link and button colours that work on it, checked for contrast, and the
         presets from the import file to use.
       </p>
+      <div className="row wrap" style={{ alignItems: 'flex-end' }}>
+        <VisionSelect value={vision} onChange={setVision} />
+        {vision !== 'normal' && <span className="muted small">Colours are simulated; the contrast checks still use the real colours (contrast barely changes with colour blindness).</span>}
+      </div>
       <div className="planner">
         {plan.map((k, i) => {
           const s = styles[k]
-          const checks = checkSection(s)
+          const checks = checkSection(real[k])
           const same = i > 0 && plan[i - 1] === k
           return (
             <div key={i} className="plan-row">
