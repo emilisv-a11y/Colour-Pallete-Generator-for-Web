@@ -15,6 +15,8 @@ npm run build && (npx vite preview --port 4173 >/dev/null 2>&1 &)
 pkill -f "vite preview"
 ```
 
+`vite preview` (and `npm run dev`) proxy `/api` to `127.0.0.1:8080`. With nothing running there the app has no server, so there is no sign-in screen. If the local PHP server **is** running, every page sits behind the sign-in (`LoginGate`): sign in first (see the `hostinger-backend` skill), or stop it. To prove the no-server behaviour for certain, serve `dist/` with `python3 -m http.server 4198 -d dist` instead.
+
 Pages live at `http://localhost:4173/#/<route>` (hash router). Seed state through the UI or `localStorage` (`d5wt:*` keys). For example, open `#/generate/<hex-hex-...>` first so the generator has a known palette, and use the "Create from current palette" button on `#/system`.
 
 ## Always check
@@ -41,6 +43,10 @@ await m.evaluate(() => document.querySelector('.app-main').scrollWidth)
   - WOFF2: check the magic bytes are `wOF2`.
   - Fonts: serve the extracted folder with `python3 -m http.server` and confirm `document.fonts` shows them loaded, with zero requests to Google.
 - **External URLs:** if the app builds URLs (e.g. Google Fonts css2), fetch a random sample in a throwaway vitest file and assert they all return 200. Delete the file afterwards.
+
+## Sign-in screen checks (own domain behaviour)
+
+Run the local full stack, then: open any route and expect `text=Sign in to open the tool` with no `.app-header`; a wrong password shows `.form-error`; after signing in the requested route opens and survives a reload; avatar (`.account-btn`) → `.account-menu >> text=Sign out` returns to the sign-in screen; `#/review/<token>` opens without signing in.
 
 ## Selector pitfalls seen here
 

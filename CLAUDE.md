@@ -4,11 +4,11 @@ A colour palette and design-system platform for web design, with extra tools for
 
 ## The owner and how they like to work
 
-- Single user for now: a web designer who builds client sites with **Divi 5**, based in the EU (Lithuanian, so Latin Extended matters for fonts, and EU privacy rules matter).
+- The owner (plus a few teammates with accounts): a web designer who builds client sites with **Divi 5**, based in the EU (Lithuanian, so Latin Extended matters for fonts, and EU privacy rules matter).
 - Wants a **plan and feature list before building**, with questions asked up front. **Review after each phase.**
 - Not a developer-first user: explain results in plain language, give clear next steps, and include screenshots of new UI.
-- **No AI features** in the product (declined). **No accounts yet**; a backend is planned later (Hostinger Business PHP/MySQL, or Supabase/Cloudflare).
-- Deploy flow: work on the session's branch, then **ask before merging to `main`**; merging deploys automatically. Every deploy so far was approved with "Merge and deploy", but always ask again.
+- **No AI features** in the product (declined). Accounts exist on the own domain (owner + teammates, PHP/MySQL on Hostinger Business); there is no public sign-up.
+- Deploy flow: work on the session's branch, then **ask before merging to `main`**; merging deploys automatically to Hostinger (FTP action). Every deploy so far was approved with "Merge and deploy", but always ask again.
 
 ## Status
 
@@ -24,8 +24,8 @@ A colour palette and design-system platform for web design, with extra tools for
 
 The full roadmap and checklist are in `PLAN.md`; the feature list is in `README.md`.
 
-**Recommended next** (text-on-image, self-hosted fonts, projects + handoff and the backend are done):
-1. Read a Divi site back into a design system (round trip), with a diff.
+**Recommended next** (text-on-image, self-hosted fonts, projects + handoff, the backend and the sign-in gate are done):
+1. **In progress:** read a Divi site back into a design system (round trip), with a diff.
 2. More tokens: shadows, borders, motion, button sizes, content widths → Divi variables.
 3. Divi layouts library (needs a sample Divi Library layout export), dark-mode toggle for Divi, gradient background presets (needs a sample preset with a gradient), logo checker, favicon/OG image generator, industry starter kits, version history, command palette, PWA.
 
@@ -78,5 +78,6 @@ Hosting: Hostinger via `.github/workflows/deploy-hostinger.yml` (FTP upload on e
 ## Skills in this repo
 
 - `.claude/skills/divi5-export-format`: Divi 5 presets/global colours/variables JSON format and how this app builds and merges it.
-- `.claude/skills/ship-to-live-site`: branch, PR, merge and deploy routine for this repo, and verifying the GitHub Pages run.
+- `.claude/skills/ship-to-live-site`: branch, PR, merge and deploy routine for this repo, and verifying the Hostinger deploy run.
+- `.claude/skills/hostinger-backend`: the PHP API, local full stack, setup and the troubleshooting learned while going live on Hostinger.
 - `.claude/skills/verify-in-browser`: Playwright checks used here (screenshots, phone overflow, console errors, pixel/rendering verification, selector pitfalls).
