@@ -15,7 +15,7 @@ type Ctx = {
   status: Status
   lastSync: number | null
   error: string
-  syncNow: () => Promise<void>
+  syncNow: (opts?: { keepalive?: boolean }) => Promise<void>
   login: (email: string, password: string) => Promise<User>
   logout: () => Promise<void>
   refreshUser: () => Promise<void>
@@ -55,24 +55,36 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   const [lastSync, setLastSync] = useState<number | null>(null)
   const [error, setError] = useState('')
   const busy = useRef(false)
+  const again = useRef(false)
 
-  const syncNow = useCallback(async () => {
-    if (busy.current) return
+  const syncNow = useCallback(async (opts: { keepalive?: boolean } = {}): Promise<void> => {
+    // a sync asked for while one is running (e.g. leaving the tab) runs straight after it, so late changes go too
+    if (busy.current) {
+      again.current = true
+      return
+    }
     busy.current = true
     setStatus('syncing')
     try {
-      const res = await syncOnce(genRef.current.snapshot())
-      if (res.reloadActive !== undefined) genRef.current.loadSnapshot(res.reloadActive ?? freshSnapshot())
-      setLastSync(Date.now())
-      setStatus('idle')
-      setError('')
-    } catch (e) {
-      const err = e as ApiError
-      if (err.status === 401) setUser(null)
-      setStatus(err.status === 0 ? 'offline' : 'error')
-      setError(err.message)
+      do {
+        again.current = false
+        try {
+          const res = await syncOnce(genRef.current.snapshot(), opts)
+          if (res.reloadActive !== undefined) genRef.current.loadSnapshot(res.reloadActive ?? freshSnapshot())
+          setLastSync(Date.now())
+          setStatus('idle')
+          setError('')
+        } catch (e) {
+          const err = e as ApiError
+          if (err.status === 401) setUser(null)
+          setStatus(err.status === 0 ? 'offline' : 'error')
+          setError(err.message)
+          break
+        }
+      } while (again.current)
     } finally {
       busy.current = false
+      again.current = false
     }
   }, [setUser])
 
@@ -104,16 +116,23 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     })()
   }, [setUser])
 
-  // Sync on sign-in, every 45 s while visible, and when the tab regains focus.
+  // Sync on sign-in, every 45 s while visible, when the tab regains focus, and straight away when the
+  // user leaves the tab (switches tab or app, minimises or closes it), so teammates get the latest changes.
   useEffect(() => {
     if (!user || user.mustChangePassword) return
     syncNow()
     const t = setInterval(() => document.visibilityState === 'visible' && syncNow(), INTERVAL)
     const onFocus = () => syncNow()
+    const onHide = () => document.visibilityState === 'hidden' && syncNow({ keepalive: true })
+    const onPageHide = () => syncNow({ keepalive: true })
     window.addEventListener('focus', onFocus)
+    document.addEventListener('visibilitychange', onHide)
+    window.addEventListener('pagehide', onPageHide)
     return () => {
       clearInterval(t)
       window.removeEventListener('focus', onFocus)
+      document.removeEventListener('visibilitychange', onHide)
+      window.removeEventListener('pagehide', onPageHide)
     }
   }, [user, syncNow])
 

@@ -172,7 +172,7 @@ export default function AccountPage() {
               </div>
             </div>
             <span className="small">
-              {sync.status === 'error' ? `Sync problem: ${sync.error}` : sync.status === 'offline' ? 'Offline: your changes are kept and will sync later.' : `Last synced ${timeAgo(sync.lastSync)}. Syncs automatically every minute while the app is open.`}
+              {sync.status === 'error' ? `Sync problem: ${sync.error}` : sync.status === 'offline' ? 'Offline: your changes are kept and will sync later.' : `Last synced ${timeAgo(sync.lastSync)}. Syncs automatically while the app is open, and as soon as you leave the tab.`}
             </span>
             <p className="muted small" style={{ margin: 0 }}>
               If two people edit the same project at the same moment, the most recent save wins. Saved palettes and sessions sync one by one.

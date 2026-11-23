@@ -117,6 +117,13 @@ Built from a real Divi 5 presets export (same file structure, `$variable(...)$` 
 - [x] Client review links (EN/LT): brand guidelines, website preview light/dark, pick between options, comments, approval; PIN, expiry, switch off, "send latest version", owner replies
 - [x] GitHub Action FTP deploy to Hostinger (skips until secrets are added); step-by-step guide
 - [x] Tests: 45 API integration tests on MariaDB, sync unit tests, three-browser end-to-end test
+- [x] Sync also runs as soon as the tab is hidden or closed (keepalive request), not only every 45 s
+
+## Full test pass (23/11/2026) ✅
+- [x] All 20 pages and every tab/option at desktop and 390px: no console errors, no phone overflow
+- [x] Contrast promises hold for all starter kits + 500 random palettes (WCAG, light and dark)
+- [x] Divi import + 63 layouts/pages: no broken references, re-import is stable
+- [x] Fixed: reading back an export of a site set up with this app picked the first tint of each scale; now finds the brand colour (and its anchor) and drops the noisy "same colour" notes
 
 ## Staging test checklist (owner, next session: ask how it went)
 The owner is testing imports on a staging site. Ask for results/screenshots and fix what differs.

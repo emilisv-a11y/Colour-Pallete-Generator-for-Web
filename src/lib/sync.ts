@@ -153,14 +153,14 @@ async function firstPull(): Promise<GeneratorSnapshot | null | undefined> {
 }
 
 /** One round trip: push local changes, pull remote ones. */
-export async function syncOnce(generator?: GeneratorSnapshot | null) {
+export async function syncOnce(generator?: GeneratorSnapshot | null, opts: { keepalive?: boolean } = {}) {
   let firstReload: GeneratorSnapshot | null | undefined = undefined
   if (read<number>(SEQ_KEY, 0) === 0 && read<number>(PUSHED_KEY, 0) === 0) firstReload = await firstPull()
   if (firstReload === undefined) syncActiveIfChanged(generator)
   const started = Date.now()
   const since = read<number>(PUSHED_KEY, 0)
   const items = collectChanges(since)
-  const res = await api<SyncResponse>('POST', 'sync', { since: read<number>(SEQ_KEY, 0), items })
+  const res = await api<SyncResponse>('POST', 'sync', { since: read<number>(SEQ_KEY, 0), items }, {}, opts)
   const applied = applyRemote(res.items)
   localStorage.setItem(SEQ_KEY, JSON.stringify(res.seq))
   localStorage.setItem(PUSHED_KEY, JSON.stringify(started))
