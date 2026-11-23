@@ -37,6 +37,7 @@ const paths = {
   image: 'M3 5h18v14H3zM8 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM21 16l-5-5-9 8',
   chevronDown: 'M6 9l6 6 6-6',
   archive: 'M3 4h18v4H3zM5 8v12h14V8M10 12h4',
+  menu: 'M4 6h16M4 12h16M4 18h16',
 } as const
 
 export type IconName = keyof typeof paths

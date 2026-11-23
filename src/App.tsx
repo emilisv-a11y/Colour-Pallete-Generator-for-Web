@@ -44,6 +44,55 @@ const MORE = [
   { to: '/color', label: 'Colour details' },
 ]
 
+const MAIN = [
+  { to: '/generate', label: 'Generator' },
+  { to: '/explore', label: 'Explore' },
+  { to: '/visualize', label: 'Visualizer' },
+  { to: '/system', label: 'Design system' },
+  { to: '/divi', label: 'Divi 5' },
+  { to: '/contrast', label: 'Contrast' },
+  { to: '/library', label: 'Library' },
+  { to: '/projects', label: 'Projects' },
+]
+
+const isOn = (pathname: string, to: string) => pathname.startsWith(to) || (to === '/system' && pathname.startsWith('/brand-kit'))
+
+/** Narrow screens: one "Menu" button with every page, instead of a row of links that doesn't fit. */
+function MobileMenu() {
+  const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
+  const current = [...MAIN, ...MORE].find((m) => isOn(pathname, m.to))?.label ?? 'Menu'
+  return (
+    <div className="mobile-nav pop-anchor">
+      <button className="mobile-nav-btn" type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-haspopup="menu" aria-label={`Menu, current page: ${current}`}>
+        <Icon name={open ? 'x' : 'menu'} size={18} />
+        <span className="mobile-nav-current">{current}</span>
+      </button>
+      {open && (
+        <Popover onClose={() => setOpen(false)} className="mobile-nav-panel">
+          <nav aria-label="Main">
+            <div className="mobile-nav-grid">
+              {MAIN.map((m) => (
+                <NavLink key={m.to} to={m.to} className={isOn(pathname, m.to) ? 'active' : ''} onClick={() => setOpen(false)}>
+                  {m.label}
+                </NavLink>
+              ))}
+            </div>
+            <p className="mobile-nav-h">Tools</p>
+            <div className="mobile-nav-grid">
+              {MORE.map((m) => (
+                <NavLink key={m.to} to={m.to} className={isOn(pathname, m.to) ? 'active' : ''} onClick={() => setOpen(false)}>
+                  {m.label}
+                </NavLink>
+              ))}
+            </div>
+          </nav>
+        </Popover>
+      )}
+    </div>
+  )
+}
+
 function MoreMenu() {
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
@@ -105,6 +154,7 @@ function Header() {
         <NavLink to="/contrast">Contrast</NavLink>
         <NavLink to="/library">Library</NavLink>
       </nav>
+      <MobileMenu />
       <button className="icon-btn cmdk-btn" type="button" onClick={() => window.dispatchEvent(new Event('d5wt:command-palette'))} title="Search tools and actions (Ctrl/⌘ + K)" aria-label="Search tools and actions">
         <Icon name="search" />
       </button>

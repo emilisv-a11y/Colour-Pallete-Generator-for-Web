@@ -71,6 +71,15 @@ Production builds register `sw.js`. A fresh Playwright context starts with no ca
 - **Large layout preview** (`.lpv iframe`, srcdoc): get the frame with `p.frames().find(f => f !== p.mainFrame())`, wait ~2 s for fonts, then check inside it: section count, `getComputedStyle(h1).fontSize` (fluid: smaller at the 390px device), a button's `transform` after `hover()` (should become `matrix(..., -1)`), `.pv-row` collapsing to one column at Phone width. Use `.lpv button[role=radio]:has-text("Phone")` to switch devices. Placeholders must be `div.ph` boxes; a broken data-URI image shows its alt text.
 - **Modals** placed in the wrong JSX branch don't open: if a button seems dead, check the component renders in the branch that is actually showing.
 
+## Whole-app sweep (used for the Nov 2026 full test pass)
+
+- Page tabs are the shared `Segmented` control: `.segmented` with `button[role=radio]`, **not** `role=tab`. Sweep: for each route, click every button of the first `.app-main .segmented` (the page tabs), then every option of the other `.segmented` groups, checking `pageerror`/console errors and `.app-main` `scrollWidth` after each click. Routes: generate, explore, visualize, system, brand-kit, divi, contrast, library, color/<hex>, image, gradient, mesh, text-on-image, logo, brand-assets, starters, tailwind, collage, projects, account.
+- Seed first with a starter kit (`#/starters` → "Start a project"), or many tabs show empty states.
+- Montage screenshots with Pillow into contact sheets (one PNG per page group) so they can be read in a few images.
+- Logic probes beat screenshots for maths: a throwaway `src/lib/__tests__/zz-probe.test.ts` looping over `STARTER_KITS` + a few hundred seeded random palettes (`checkPairs` in both modes; `buildDiviImport` → `findBrokenRefs`, re-import ids, `readDiviSite` read-back). Delete it afterwards and turn real findings into a proper test.
+- Header/nav: check `.app-header` `scrollWidth <= clientWidth` at 360, 390, 768, 1024, 1200, 1259/1261 and 1400, open `.mobile-nav-btn`, click a link, and check it closes on Esc and outside click.
+- Sticky bars: scroll `.app-main` and compare the bar's `getBoundingClientRect().top` with `.app-main`'s top (must be ≥).
+
 ## Selector pitfalls seen here
 
 - `hasText: 'Serif'` also matches "Sans serif", and `'Brand'` matches "Subtle brand". Use anchored regexes: `{ hasText: /^Serif$/ }`, `{ hasText: /^\s*Brand$/ }`.

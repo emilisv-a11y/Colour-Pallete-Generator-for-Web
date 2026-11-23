@@ -86,6 +86,7 @@ Not yet confirmed on a real import: whether `button.decoration.button.desktop.va
 - Divi relative colours: `settings: { lightness: -120 }` etc. are treated as HSL shifts in percentage points (hue in degrees). That's an approximation, so mark such values "approximate" in the UI.
 - Presets reference global fonts with `$variable({"type":"content","value":{"name":"--et_global_heading_font"…}})$`; the family itself is not in the export. Literal `family` strings in presets are used instead, and the user confirms them.
 - The owner's real export had a broken `space-xs` (clamp minimum > maximum, so it's always 8.96px) and an "Accent 1" identical to Primary. Handle both: warn about the first, and skip duplicates as separate roles.
+- **Sites set up with this app** carry `<prefix><Role> 50 … 950` scales plus token colours ("Accent Text", "Focus Ring"…). `scaleRoot` picks the step that rebuilds the whole scale with `buildScale(hex, step)` (max channel error ≤ 3; ties prefer the step `autoAnchor` would choose) and keeps it as the role's anchor. It is trusted over the near-duplicate check, a colour named exactly after a status role wins, and "same colour" notes are hidden for scale steps and token labels in app-made files. Before this, the first label match ("Secondary 100") became the role.
 - Synthetic fixture for these cases: `src/lib/__tests__/fixtures/divi-site.json`; tests in `diviRoundTrip.test.ts`.
 
 ## Layouts and Theme Builder (from the owner's testpage.json and Theme Builder export, Divi 5.x)
