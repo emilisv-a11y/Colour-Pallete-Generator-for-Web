@@ -2416,7 +2416,7 @@ select {
 }
 .system-tabs {
   position: sticky;
-  top: -28px;
+  top: 0;
   z-index: 5;
   padding: 8px 0;
   background: var(--bg);
@@ -4544,9 +4544,6 @@ select {
   }
   .bk-scale {
     grid-template-columns: 1fr;
-  }
-  .system-tabs {
-    top: -20px;
   }
 }
 
