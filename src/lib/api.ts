@@ -15,14 +15,17 @@ export class ApiError extends Error {
 
 export const apiBase = () => new URL('api/', document.baseURI).toString()
 
-export async function api<T = Record<string, unknown>>(method: string, path: string, body?: unknown, headers: Record<string, string> = {}): Promise<T> {
+export async function api<T = Record<string, unknown>>(method: string, path: string, body?: unknown, headers: Record<string, string> = {}, opts: { keepalive?: boolean } = {}): Promise<T> {
   let res: Response
+  const json = body === undefined ? undefined : JSON.stringify(body)
   try {
     res = await fetch(apiBase() + path.replace(/^\//, ''), {
       method,
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'd5wt', ...headers },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: json,
+      // keepalive lets the request finish while the tab closes; browsers cap it at 64 KB
+      keepalive: !!opts.keepalive && (json?.length ?? 0) < 60_000,
     })
   } catch {
     throw new ApiError(0, 'No connection to the server')
