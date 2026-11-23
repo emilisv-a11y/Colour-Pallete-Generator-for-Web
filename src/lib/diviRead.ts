@@ -9,7 +9,7 @@ import { hexToOklch, oklchToHex } from './color'
 import { metaFor } from './fonts'
 import { parseRef, resolveColor, BUILTIN_COLORS, DIVI_BODY_FONT, DIVI_HEADING_FONT, type DiviExport, type DiviPreset } from './divi'
 import { RATIOS, DEFAULT_TYPE, STEP_NAMES, type TypeSettings } from './typography'
-import { ROLE_KEYS, systemFromPalette, type DesignSystem, type RoleKey } from './system'
+import { allTokenNames, autoAnchor, buildScale, ROLE_INFO, ROLE_KEYS, STEPS, systemFromPalette, type DesignSystem, type RoleKey } from './system'
 
 /* ---------- CSS length evaluation (px) ---------- */
 
@@ -315,7 +315,7 @@ const ROLE_LABELS: Record<RoleKey, RegExp> = {
 }
 
 export type RoleHow = 'label' | 'button' | 'usage' | 'text' | 'generated'
-export type RoleFinding = { role: RoleKey; hex: string; how: RoleHow; source: string; colorId?: string }
+export type RoleFinding = { role: RoleKey; hex: string; how: RoleHow; source: string; colorId?: string; anchor?: number | null }
 
 /* ---------- reading ---------- */
 
@@ -482,6 +482,41 @@ function textColour(colors: SiteColor[]): SiteReading['textColor'] {
 }
 
 /** Rebuild a design system from a Divi 5 export. */
+/** Labels the import file gives semantic token colours ("focus-ring" → "Focus Ring"). */
+const TOKEN_LABELS = allTokenNames().map((n) => n.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join(' '))
+
+/**
+ * A "<Role> 50 … 950" scale, like the one this app's import file creates. The original brand colour is
+ * the step that rebuilds the whole scale (buildScale keeps the exact colour at its anchor step), so the
+ * reader doesn't take the first tint it meets. Null when there is no such scale or no step fits.
+ */
+function scaleRoot(role: RoleKey, colors: (SiteColor & { hex: string })[]): { color: SiteColor & { hex: string }; anchor: number; members: string[] } | null {
+  const name = ROLE_INFO[role].label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const re = new RegExp(`(?:^|\\s)${name}[-_ ]?(\\d{2,3})\\s*$`, 'i')
+  const steps = new Map<number, SiteColor & { hex: string }>()
+  for (const c of colors) {
+    const m = c.label.match(re)
+    const i = m ? STEPS.indexOf(Number(m[1]) as (typeof STEPS)[number]) : -1
+    if (i >= 0 && !steps.has(i)) steps.set(i, c)
+  }
+  if (steps.size < 5) return null
+  const rgb = (hex: string) => [1, 3, 5].map((k) => parseInt(hex.slice(k, k + 2), 16))
+  let best: { color: SiteColor & { hex: string }; anchor: number; err: number; natural: boolean } | null = null
+  for (const [a, c] of steps) {
+    const built = buildScale(c.hex.toLowerCase(), a)
+    let err = 0
+    for (const [i, x] of steps) {
+      const p = rgb(built[i].toLowerCase()),
+        q = rgb(x.hex.toLowerCase())
+      err = Math.max(err, ...p.map((v, k) => Math.abs(v - q[k])))
+    }
+    // on a tie (two steps rebuild the same scale) prefer the step the colour would sit on by itself
+    const natural = autoAnchor(c.hex) === a
+    if (!best || err < best.err || (err === best.err && natural && !best.natural)) best = { color: c, anchor: a, err, natural }
+  }
+  return best && best.err <= 3 ? { color: best.color, anchor: best.anchor, members: [...steps.values()].map((c) => c.id) } : null
+}
+
 export function readDiviSite(src: DiviExport, name = 'Imported site'): SiteReading {
   const notes: ReadNote[] = []
   const colors = siteColors(src)
@@ -500,15 +535,23 @@ export function readDiviSite(src: DiviExport, name = 'Imported site'): SiteReadi
 
   // primary: Divi's own primary colour, a "brand/primary" label, the main button, then the most used colour
   const builtin = chromatic.find((c) => c.id === BUILTIN_COLORS.primary)
-  const labelled = (role: RoleKey) => chromatic.find((c) => c.id !== BUILTIN_COLORS.primary && ROLE_LABELS[role].test(c.label) && free(c.hex))
+  const roots = Object.fromEntries(ROLE_KEYS.map((r) => [r, scaleRoot(r, withHex)])) as Record<RoleKey, ReturnType<typeof scaleRoot>>
+  const fromScale = (role: RoleKey) => {
+    const r = roots[role]
+    return r?.color // a labelled scale is trusted even when it is close to another role
+  }
+  const anchorFor = (role: RoleKey, hex: string) => (roots[role] && roots[role].color.hex.toLowerCase() === hex.toLowerCase() ? roots[role].anchor : null)
+  // a colour named exactly after the role ("Warning", "D5 Warning", "Success Color") is used even when it is close to another role
+  const exact = (role: RoleKey) => chromatic.find((c) => c.id !== BUILTIN_COLORS.primary && new RegExp(`(?:^|\\s)${ROLE_INFO[role].label}(?:\\s+colou?r)?\\s*$`, 'i').test(c.label))
+  const labelled = (role: RoleKey) => fromScale(role) ?? exact(role) ?? chromatic.find((c) => c.id !== BUILTIN_COLORS.primary && ROLE_LABELS[role].test(c.label) && free(c.hex))
   const primaryPick = builtin ?? labelled('primary')
-  if (primaryPick) set('primary', { role: 'primary', hex: primaryPick.hex, how: 'label', source: describe(primaryPick), colorId: primaryPick.id })
+  if (primaryPick) set('primary', { role: 'primary', hex: primaryPick.hex, how: 'label', source: describe(primaryPick), colorId: primaryPick.id, anchor: anchorFor('primary', primaryPick.hex) })
   else if (button?.background && isChromatic(button.background)) set('primary', { role: 'primary', hex: button.background, how: 'button', source: `Background of the button preset “${button.name}”` })
   else if (byUse[0]) set('primary', { role: 'primary', hex: byUse[0].hex, how: 'usage', source: describe(byUse[0]), colorId: byUse[0].id })
 
   for (const role of ['secondary', 'accent', 'success', 'warning', 'error', 'info'] as RoleKey[]) {
     const c = labelled(role)
-    if (c) set(role, { role, hex: c.hex, how: 'label', source: describe(c), colorId: c.id })
+    if (c) set(role, { role, hex: c.hex, how: 'label', source: describe(c), colorId: c.id, anchor: anchorFor(role, c.hex) })
   }
   // unlabelled secondary/accent: the next most used distinct colours
   for (const role of ['secondary', 'accent'] as RoleKey[]) {
@@ -516,16 +559,20 @@ export function readDiviSite(src: DiviExport, name = 'Imported site'): SiteReadi
     const c = byUse.find((x) => free(x.hex) && !Object.values(found).some((f) => f?.colorId === x.id))
     if (c) set(role, { role, hex: c.hex, how: 'usage', source: describe(c), colorId: c.id })
   }
-  const dupes = chromatic.filter((c) => !free(c.hex) && !Object.values(found).some((f) => f?.colorId === c.id))
+  // in a file made by this app, scale steps and token colours ("Accent Text", "Focus Ring") repeat the roles on purpose
+  const inScale = new Set(Object.values(roots).flatMap((r) => r?.members ?? []))
+  const appMade = inScale.size > 0
+  const ownShade = (c: SiteColor) => inScale.has(c.id) || (appMade && TOKEN_LABELS.some((t) => new RegExp(`(?:^|\\s)${t}\\s*$`, 'i').test(c.label)))
+  const dupes = chromatic.filter((c) => !free(c.hex) && !ownShade(c) && !Object.values(found).some((f) => f?.colorId === c.id))
   dupes.forEach((c) => notes.push({ area: 'colours', level: 'info', text: `“${c.label}” is the same (or nearly the same) colour as another role, so it wasn't used as a separate role.` }))
 
   // neutral: a grey label, else the text colour's hue
   const text = textColour(colors)
-  const greyLabel = withHex.find((c) => isGrey(c.hex) && ROLE_LABELS.neutral.test(c.label))
+  const greyLabel = fromScale('neutral') ?? withHex.find((c) => isGrey(c.hex) && ROLE_LABELS.neutral.test(c.label))
   const greyMid = withHex.filter((c) => isGrey(c.hex) && hexToOklch(c.hex).l > 0.2 && hexToOklch(c.hex).l < 0.9).sort((a, b) => b.uses - a.uses)[0]
   const neutralPick = greyLabel ?? greyMid
   let neutralAnchor: number | null = null
-  if (neutralPick) set('neutral', { role: 'neutral', hex: neutralPick.hex, how: 'label', source: describe(neutralPick), colorId: neutralPick.id })
+  if (neutralPick) set('neutral', { role: 'neutral', hex: neutralPick.hex, how: 'label', source: describe(neutralPick), colorId: neutralPick.id, anchor: anchorFor('neutral', neutralPick.hex) })
   else if (text && isGrey(text.hex)) {
     const o = hexToOklch(text.hex)
     set('neutral', { role: 'neutral', hex: oklchToHex(0.55, Math.min(o.c, 0.02), o.h), how: 'text', source: `A grey scale based on the text colour (${text.source})` })
@@ -570,7 +617,7 @@ export function readDiviSite(src: DiviExport, name = 'Imported site'): SiteReadi
   }
   const system: DesignSystem = {
     name,
-    roles: Object.fromEntries(roles.map((r) => [r.role, { hex: r.hex, anchor: r.role === 'neutral' ? (r.how === 'generated' ? base.roles.neutral.anchor : neutralAnchor) : null }])) as DesignSystem['roles'],
+    roles: Object.fromEntries(roles.map((r) => [r.role, { hex: r.hex, anchor: r.anchor ?? (r.role === 'neutral' ? (r.how === 'generated' ? base.roles.neutral.anchor : neutralAnchor) : null) }])) as DesignSystem['roles'],
     overrides: { light: {}, dark: {} },
     fonts: { heading: heading.family, body: bodyF.family, meta: fontsMeta },
     radius: radius.px,

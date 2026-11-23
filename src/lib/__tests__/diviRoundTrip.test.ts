@@ -3,6 +3,7 @@ import { buildDiviImport, DEFAULT_DIVI_OPTIONS, parseDiviExport } from '../divi'
 import { defaultSelection, diffSite, selectiveImport } from '../diviDiff'
 import { applyRelative, applyReview, clampIssue, evalLength, readDiviSite, readFluid, stepForLabel } from '../diviRead'
 import { loadLibrary } from '../googleFonts'
+import { autoAnchor, systemFromPalette } from '../system'
 import site from './fixtures/divi-site.json'
 
 const src = parseDiviExport(JSON.stringify(site))
@@ -79,6 +80,27 @@ describe('reading a site into a design system', () => {
     expect(sys.name).toBe('Renamed')
     expect(sys.overrides.light.text).toBeUndefined()
     expect(sys.fonts.meta?.Inter).toBeTruthy()
+  })
+})
+
+describe('reading a site set up with this app', () => {
+  it('finds the brand colour inside each 50–950 scale, not the first tint', () => {
+    const kits = [
+      // dark primary (not "colourful") and a muted accent close to the neutral
+      { name: 'Studio', roles: { primary: '#111827', secondary: '#d4a017', accent: '#2563eb', neutral: '#6b7280' } },
+      { name: 'Twins', roles: { primary: '#c804c8', secondary: '#bd03c8', accent: '#847778', neutral: '#847778' } },
+    ]
+    for (const k of kits) {
+      const sys = systemFromPalette(Object.values(k.roles), k.name)
+      for (const [role, hex] of Object.entries(k.roles)) sys.roles[role as 'primary'] = { hex, anchor: null }
+      const file = parseDiviExport(JSON.stringify(buildDiviImport(sys, { ...DEFAULT_DIVI_OPTIONS, prefix: 'D5 ' }).file))
+      const read = readDiviSite(file)
+      for (const role of ['primary', 'secondary', 'accent', 'neutral'] as const) {
+        expect(read.system.roles[role].hex.toLowerCase()).toBe(sys.roles[role].hex)
+        expect(read.system.roles[role].anchor).toBe(autoAnchor(sys.roles[role].hex))
+      }
+      expect(read.notes.filter((n) => /same \(or nearly the same\)/.test(n.text)).map((n) => n.text)).toEqual([])
+    }
   })
 })
 
