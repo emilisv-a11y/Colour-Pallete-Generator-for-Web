@@ -15,6 +15,12 @@ Live at **https://webtools.emilisvastakas.co.uk** (files in hPanel at `emilisvas
 
 ## Local full stack
 
+A fresh cloud container has PHP (with `pdo_mysql` once `php-mysql` is installed) but **no MariaDB**. Install it first (takes about a minute; the `policy-rc.d denied` message is harmless, `start.sh` starts the server itself):
+
+```bash
+apt-get install -y mariadb-server php-mysql   # or apt-get update first if it can't find them
+```
+
 ```bash
 mysql -e "DROP DATABASE IF EXISTS d5wt; CREATE DATABASE d5wt CHARACTER SET utf8mb4;"   # fresh DB
 rm -rf /tmp/d5wt-site && (server/dev/start.sh > /tmp/d5wt.log 2>&1 &)                # builds, serves :8080
@@ -29,6 +35,8 @@ curl -s 127.0.0.1:8080/api/health    # {"ok":true,"app":"d5-webtool","ready":tru
 - In Playwright: open `http://127.0.0.1:8080/#/<route>`, fill `input[type=email]` / `input[type=password]`, click `button[type=submit]`, wait for `.app-header`.
 - `node server/dev/api-test.mjs` (45 tests) needs an empty DB, i.e. run it before setup.
 - Stop with `pkill -f "php -S 127.0.0.1:8080"`.
+- `start.sh` copies `dist/` into `/tmp/d5wt-site` **once**. After changing frontend code, `npm run build && cp -r dist/. /tmp/d5wt-site/` (or restart), or the browser still shows the old build.
+- Sync tests with two browsers: create the second `browser.newContext()`, sign in, then reload it to pull. To test "sync when the tab closes", close only the **page** (`page.close({ runBeforeUnload: true })`); closing the whole context also cancels the keepalive request and gives a false failure.
 
 ## How the frontend decides
 

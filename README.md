@@ -92,6 +92,7 @@ Data is stored in the browser's `localStorage`. The data shapes are plain JSON s
 
 ## Quality of life
 
+- **Works on phones and tablets:** below laptop width the header shows one Menu button (with the current page name) that opens every page and tool; changes sync to your team as soon as you leave the tab.
 - **Command palette:** press Ctrl + K (⌘ + K on a Mac) or the search icon in the header to jump to any tool, run an action (new palette, version history, backup, theme, new project, starter kits) or switch project.
 - **Installable app:** the site can be installed from the browser (Chrome/Edge: install icon in the address bar; Safari: Share → Add to Dock / Home Screen) and opens offline after the first visit. The PHP API is never cached, so sign-in, sync and review links always use live data.
 

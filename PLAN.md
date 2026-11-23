@@ -124,6 +124,8 @@ Built from a real Divi 5 presets export (same file structure, `$variable(...)$` 
 - [x] Contrast promises hold for all starter kits + 500 random palettes (WCAG, light and dark)
 - [x] Divi import + 63 layouts/pages: no broken references, re-import is stable
 - [x] Fixed: reading back an export of a site set up with this app picked the first tint of each scale; now finds the brand colour (and its anchor) and drops the noisy "same colour" notes
+- [x] Fixed: Design system tab bar slid under the header when scrolling (sticky top 0)
+- [x] Phone/tablet header: one "Menu" button with every page and tool below 1260px (link row no longer cut off)
 
 ## Staging test checklist (owner, next session: ask how it went)
 The owner is testing imports on a staging site. Ask for results/screenshots and fix what differs.
