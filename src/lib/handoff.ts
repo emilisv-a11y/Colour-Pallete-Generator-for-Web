@@ -152,7 +152,7 @@ ${typeScale(ts)
   .filter((s) => s.el)
   .map(
     (s) =>
-      `<div><span class="muted small">${s.el} · ${Math.round(s.min)}–${Math.round(s.max)}px</span><p style="font-family:var(--${s.el?.startsWith('h') ? 'heading' : 'body'});font-size:${Math.min(s.max, 44)}px;font-weight:${s.el?.startsWith('h') ? 750 : 400};line-height:${s.lineHeight};margin:0">${s.el?.startsWith('h') ? t.headlineExample : esc(t.bodyExample)}</p></div>`,
+      `<div><span class="muted small">${s.el} · ${Math.round(s.min)}–${Math.round(s.max)}px</span><p style="font-family:var(--${s.el?.startsWith('h') ? 'heading' : 'body'});font-size:${s.css};overflow-wrap:break-word;font-weight:${s.el?.startsWith('h') ? 750 : 400};line-height:${s.lineHeight};margin:0">${s.el?.startsWith('h') ? t.headlineExample : esc(t.bodyExample)}</p></div>`,
   )
   .join('\n')}
 <h3>${t.gradient}</h3><div style="height:80px;border-radius:var(--radius);background:linear-gradient(90deg in oklab, ${sys.roles.primary.hex}, ${sys.roles.secondary.hex}, ${sys.roles.accent.hex})"></div></section>
@@ -331,7 +331,7 @@ export async function downloadHandoff(...args: Parameters<typeof buildHandoffZip
 function shapeSection(sys: DesignSystem, t: (typeof T)['en'], light: ReturnType<typeof buildTokens>): string {
   const e = effectsOf(sys)
   return `<section class="break"><h2>${t.shapeMotion}</h2>
-<h3>${t.shadows}</h3><div class="grid g3" style="gap:24px;padding:8px 0 16px">${SHADOW_NAMES.map((n) => `<div style="background:${light.surface.hex};border-radius:var(--radius);padding:18px;box-shadow:${shadowCss(sys, n)}"><strong>shadow-${n}</strong></div>`).join('')}</div>
+<h3>${t.shadows}</h3><div class="grid g3" style="gap:24px;padding:8px 0 16px">${SHADOW_NAMES.map((n) => `<div style="background:${light.surface.hex};color:${light.text.hex};border-radius:var(--radius);padding:18px;box-shadow:${shadowCss(sys, n)}"><strong>shadow-${n}</strong></div>`).join('')}</div>
 <h3>${t.buttonsInputs}</h3><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">${buttonSizes(sys)
     .map((b) => `<span style="display:inline-flex;align-items:center;min-height:${b.height}px;padding:${b.padY}px ${b.padX}px;font-size:${b.fontPx}px;font-weight:700;border-radius:var(--radius);background:${light.primary.hex};color:${light['on-primary'].hex};box-sizing:border-box">${b.name.toUpperCase()} · ${b.height}px</span>`)
     .join('')}<span class="muted small">input ${t.height} ${e.input}px · border ${e.borders.thin}/${e.borders.base}/${e.borders.thick}px</span></div>
