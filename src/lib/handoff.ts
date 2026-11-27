@@ -152,7 +152,7 @@ ${typeScale(ts)
   .filter((s) => s.el)
   .map(
     (s) =>
-      `<div><span class="muted small">${s.el} · ${Math.round(s.min)}–${Math.round(s.max)}px</span><p style="font-family:var(--${s.el?.startsWith('h') ? 'heading' : 'body'});font-size:${Math.min(s.max, 44)}px;font-weight:${s.el?.startsWith('h') ? 750 : 400};line-height:${s.lineHeight};margin:0">${s.el?.startsWith('h') ? t.headlineExample : esc(t.bodyExample)}</p></div>`,
+      `<div><span class="muted small">${s.el} · ${Math.round(s.min)}–${Math.round(s.max)}px</span><p style="font-family:var(--${s.el?.startsWith('h') ? 'heading' : 'body'});font-size:${s.css};overflow-wrap:break-word;font-weight:${s.el?.startsWith('h') ? 750 : 400};line-height:${s.lineHeight};margin:0">${s.el?.startsWith('h') ? t.headlineExample : esc(t.bodyExample)}</p></div>`,
   )
   .join('\n')}
 <h3>${t.gradient}</h3><div style="height:80px;border-radius:var(--radius);background:linear-gradient(90deg in oklab, ${sys.roles.primary.hex}, ${sys.roles.secondary.hex}, ${sys.roles.accent.hex})"></div></section>

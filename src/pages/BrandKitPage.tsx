@@ -189,7 +189,7 @@ export default function BrandKitPage() {
         </div>
         <h3>Type scale</h3>
         <p className="muted small">
-          Fluid sizes from a {typeOf(sys).minVw}px to a {typeOf(sys).maxVw}px wide screen.
+          Fluid sizes from a {typeOf(sys).minVw}px to a {typeOf(sys).maxVw}px wide screen, shown at the size for this window. Make the window narrower to watch them shrink.
         </p>
         <div className="bk-typescale">
           {typeScale(typeOf(sys))
@@ -199,7 +199,7 @@ export default function BrandKitPage() {
                 <span className="muted small">
                   {t.el} · {Math.round(t.min)}–{Math.round(t.max)}px · line height {t.lineHeight}
                 </span>
-                <p style={{ fontFamily: t.el?.startsWith('h') ? heading : body, fontSize: Math.min(t.max, 44), fontWeight: t.el?.startsWith('h') ? 750 : 400, lineHeight: t.lineHeight, margin: 0 }}>
+                <p style={{ fontFamily: t.el?.startsWith('h') ? heading : body, fontSize: t.css, overflowWrap: 'break-word', fontWeight: t.el?.startsWith('h') ? 750 : 400, lineHeight: t.lineHeight, margin: 0 }}>
                   {t.el?.startsWith('h') ? 'Heading example' : 'Body text example for paragraphs'}
                 </p>
               </div>
