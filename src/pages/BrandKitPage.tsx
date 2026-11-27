@@ -215,7 +215,7 @@ export default function BrandKitPage() {
         <h3>Shadows</h3>
         <div className="bk-shadows">
           {SHADOW_NAMES.map((n) => (
-            <div key={n} style={{ background: buildTokens(sys, 'light').surface.hex, borderRadius: sys.radius, boxShadow: shadowCss(sys, n) }}>
+            <div key={n} style={{ background: light.surface.hex, color: light.text.hex, borderRadius: sys.radius, boxShadow: shadowCss(sys, n) }}>
               <strong>shadow-{n}</strong>
             </div>
           ))}

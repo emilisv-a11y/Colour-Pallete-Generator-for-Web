@@ -331,7 +331,7 @@ export async function downloadHandoff(...args: Parameters<typeof buildHandoffZip
 function shapeSection(sys: DesignSystem, t: (typeof T)['en'], light: ReturnType<typeof buildTokens>): string {
   const e = effectsOf(sys)
   return `<section class="break"><h2>${t.shapeMotion}</h2>
-<h3>${t.shadows}</h3><div class="grid g3" style="gap:24px;padding:8px 0 16px">${SHADOW_NAMES.map((n) => `<div style="background:${light.surface.hex};border-radius:var(--radius);padding:18px;box-shadow:${shadowCss(sys, n)}"><strong>shadow-${n}</strong></div>`).join('')}</div>
+<h3>${t.shadows}</h3><div class="grid g3" style="gap:24px;padding:8px 0 16px">${SHADOW_NAMES.map((n) => `<div style="background:${light.surface.hex};color:${light.text.hex};border-radius:var(--radius);padding:18px;box-shadow:${shadowCss(sys, n)}"><strong>shadow-${n}</strong></div>`).join('')}</div>
 <h3>${t.buttonsInputs}</h3><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">${buttonSizes(sys)
     .map((b) => `<span style="display:inline-flex;align-items:center;min-height:${b.height}px;padding:${b.padY}px ${b.padX}px;font-size:${b.fontPx}px;font-weight:700;border-radius:var(--radius);background:${light.primary.hex};color:${light['on-primary'].hex};box-sizing:border-box">${b.name.toUpperCase()} · ${b.height}px</span>`)
     .join('')}<span class="muted small">input ${t.height} ${e.input}px · border ${e.borders.thin}/${e.borders.base}/${e.borders.thick}px</span></div>
